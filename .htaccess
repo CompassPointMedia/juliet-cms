@@ -1,0 +1,11 @@
+#RemoveHandler .html .htm
+#AddType application/x-httpd-php .php .htm .html
+
+ErrorDocument 404 /404.php
+
+#Juliet project - all pages route back to index.php as hub
+
+RewriteEngine on
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule (.*) index.php?__page__=$1 [QSA,L]
