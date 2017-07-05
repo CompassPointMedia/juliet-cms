@@ -1020,12 +1020,12 @@ if($pJBottomRegionWide==2)echo $_bottomRegion_;
 <?php } ?>
 <?php if(!$hideCtrlSection){ ?>
 <div id="ctrlSection" style="display:none;">
-	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
+	<iframe name="w1" src="/blank.htm"></iframe>
 	<iframe name="w2" src="<?php if($returnAction=='getDoc' && $document){
 		//get the requested document
 		echo '/index_01_exe.php?suppressPrintEnv=1&mode=getDoc&document='.$document;
 	}else{
-		echo '/Library/js/blank.htm';
+		echo '/blank.htm';
 	}?>"></iframe>
 </div>
 <?php } ?>

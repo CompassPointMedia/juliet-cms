@@ -209,8 +209,8 @@ if($refreshOpener){
 </div>
 <?php if(!$hideCtrlSection){ ?>
 <div id="ctrlSection" style="display:none">
-	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
-	<iframe name="w2" src="/Library/js/blank.htm"></iframe>
+	<iframe name="w1" src="/blank.htm"></iframe>
+	<iframe name="w2" src="/blank.htm"></iframe>
 </div>
 <?php } ?>
 </body>
