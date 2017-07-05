@@ -542,6 +542,11 @@ if(!$pJModalInclusion){ //----------------------- begin walrus -----------------
 
 if(!$thisfolder && ($thispage=='admin.php' || $thispage=='admin')){
 	if($logout=='1'){
+	    if(strstr($src, 'admin')){
+	        $src = '/'; // Home page
+        }else if(!trim($src)){
+	        $src = '/';
+        }
 		unset($_SESSION['special'][$MASTER_DATABASE]['adminMode']);
 		header('Location: '.$src);
 		?>
