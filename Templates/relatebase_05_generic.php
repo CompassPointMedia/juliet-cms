@@ -676,7 +676,7 @@ ob_start('pJ_modify_document_callback'); //'pJ_modify_document_callback'
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title><?php echo $headRegionTitle ? h($headRegionTitle) : metatags_i1('title');?></title>
 <?php echo metatags_i1('meta');?>
-<link href="/Library/cssreset01.css" type="text/css" rel="stylesheet" />
+<link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
 <?php
 echo $pJCSSLink;
 echo "\n";

@@ -103,7 +103,7 @@ if($method=='static:default'){
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>CMS Editor <?php echo !$adminMode ? ' : Sign In':''?></title>
 
-<link rel="stylesheet" type="text/css" href="/Library/css/cssreset01.css" />
+<link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
 <style type="text/css">
 body{
 	font-family:Arial, Helvetica, sans-serif;
