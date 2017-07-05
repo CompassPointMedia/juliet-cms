@@ -46,7 +46,7 @@ $addedEmbeddedModules=array(
 );
 
 // I have this read-only connection to a db called `z_public` which houses lists such as states, cities, countries, counties, etc.
-$public_cnx=array('localhost','z_public2','secret','z_public');
+$public_cnx=array('localhost','z_public','secret','z_public');
 
 
 
