@@ -15,7 +15,7 @@ function set_test_env(){
     $AppEnv = getenv('AppEnv');
     if($AppEnv == 'production'){
         ini_set('display_errors',false);
-    }else if(strstr($_SERVER['HTTP_HOST'], '-local.')) {
+    }else if(strstr($_SERVER['HTTP_HOST'], '-local.') || strstr($_SERVER['HTTP_HOST'], 'buildingthebatcave.com')) {
         ini_set('display_errors',false);
     }else{
         // for now
