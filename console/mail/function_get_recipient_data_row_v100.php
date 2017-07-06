@@ -73,13 +73,13 @@ function get_recipient_data_row(){
 			if($get_recipient_data_row[query_err])return false;
 			
 			if(!$sqlResultRecipientDataRow){
-				$sqlResultRecipientDataRow=mysql_query(stripslashes($_POST[ComplexQuery]),$db_cnx);
-				if(mysql_error($db_cnx)){
-					$get_recipient_data_row[query_err]= 'Your query returned an error ('. mysql_errno($db_cnx). ')\n\nThis is the text of the error:\n'. addslashes(mysql_error($db_cnx)).')';
+				$sqlResultRecipientDataRow=mysqli_query($db_cnx, stripslashes($_POST['ComplexQuery']));
+				if(mysqli_error($db_cnx)){
+					$get_recipient_data_row[query_err]= 'Your query returned an error ('. mysqli_errno($db_cnx). ')\n\nThis is the text of the error:\n'. addslashes(mysqli_error($db_cnx)).')';
 					return false;
 				}
 			}
-			if($rd=mysql_fetch_array($sqlResultRecipientDataRow)){
+			if($rd=mysqli_fetch_array($sqlResultRecipientDataRow)){
 				return $rd;
 			}else{
 				return false;

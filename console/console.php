@@ -124,14 +124,14 @@ body, td{
 }
 if(!function_exists('rand_alpha')){
 	function rand_alpha($size=8){
-		for($i=1;$i<=$size;$i++)$str.=chr(97+rand(0,25));
+		for($i=1;$i<=$size;$i++) $str.=chr(97+rand(0,25));
 		return $str;
 	}
 }
 if(!function_exists('get_group_members_ids')){
 	function get_group_members_ids($group){
 		global $ids, $groups;
-		if(!trim($group)) continue;
+		if(!trim($group)) return;
 		if($a=q("SELECT
 			a.ID AS Contacts_ID, b.ID AS Groups_ID, a.Email, b.Name
 			FROM

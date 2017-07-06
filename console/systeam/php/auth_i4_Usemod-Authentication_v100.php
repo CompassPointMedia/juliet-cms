@@ -180,7 +180,7 @@ function usemod($options=array()){
 			'table'=>'addr_access',
 			'return'=>'change',
 		));
-	$f4=q_tools(array(
+	if(false) $f4=q_tools(array(
 			'mode'=>'field_exists',
 			'table'=>'addr_access',
 			'field'=>'Category',

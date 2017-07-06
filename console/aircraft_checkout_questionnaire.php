@@ -92,7 +92,7 @@ ob_start(); //form_field_translator
 	  <div id="maininfo">
 		  <h1 class="tac">Aircraft Checkout Questionnaire</h1>
           <p>Pilot's Name: [input:name size=20 ] Date: [input:name size=6 ]<br />
-            Instructor�s Name: [input:name size=20 ] Date: [input:name size=6 ]<br />
+            Instructor s Name: [input:name size=20 ] Date: [input:name size=6 ]<br />
             Aircraft Type: [input:aircrafttype size=20 ] N#: [input:number size=10 ] <br />
             <br />
             * * * * * * * * *              * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * <br />

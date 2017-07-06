@@ -118,7 +118,7 @@ if(count($_REQUEST)){
 <?php
 if($query){
 	$result=q(stripslashes($query));
-	$rowsPresent=mysql_num_rows($result);
+	$rowsPresent=mysqli_num_rows($result);
 }
 
 if($RecipientSource=='import'){
@@ -196,7 +196,7 @@ if($RecipientSource=='import'){
 	!$rowsPresent?$rowsPresent=1:'';
 	for($i=1;$i<=$rowsPresent;$i++){
 		if($i>$numRows){break;}
-		$data=mysql_fetch_array($result);
+		$data=mysqli_fetch_array($result);
 		if($i==1){
 			foreach($data as $n=>$v){
 				$ii++;

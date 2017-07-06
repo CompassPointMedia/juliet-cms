@@ -29,7 +29,7 @@ switch (true){
 			?><script defer>alert('No profile ID passed in setting advanced features');</script><?php
 			exit;
 		}
-		$_SESSION['mail'][$acct]['templates'][$Profiles_ID][advanced][RequiredFields]=stripslashes($_POST[RequiredFields]);
+		$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields']=stripslashes($_POST['RequiredFields']);
 		?><script defer>
 		try{
 			window.parent.opener.form1.ImportHeaders.checked=true;

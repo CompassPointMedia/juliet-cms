@@ -253,7 +253,7 @@ var UserName='<?php echo $UserName?>';
 		}
 		?><br />
 		</div>
-		�<h2 style="color:white"><?php
+		 <h2 style="color:white"><?php
 		echo ($mode==$insertMode ? 'Create a new ' : 'Edit ') . 'Manufacturer';
 		?></h2>
 	</div>

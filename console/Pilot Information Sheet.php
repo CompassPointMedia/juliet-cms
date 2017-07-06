@@ -106,7 +106,7 @@ __________________
 ACC ID#:
 ________________________________
 If applicable
-�
+
 owned aircraft info
 : Aircraft N#: _______________________
 Hangar #:

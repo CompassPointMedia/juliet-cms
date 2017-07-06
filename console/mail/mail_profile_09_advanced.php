@@ -70,7 +70,7 @@ var isEscapable=2
 Advanced Features<br />
 <hr>
 Required Fields:<br />
-	<textarea name="RequiredFields" cols="49" rows="4" id="RequiredFields"><?php echo htmlentities($_SESSION[mail][$acct][templates][$Profiles_ID][advanced][RequiredFields])?></textarea>
+	<textarea name="RequiredFields" cols="49" rows="4" id="RequiredFields"><?php echo htmlentities($_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields'])?></textarea>
 	<br />
 	Required fields work for Imported Files and for Advanced SQL queries.<br />
 	If your page uses logic for output and depends on certain field name, this

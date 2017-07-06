@@ -18,11 +18,11 @@ $qx['defCnxMethod']=C_DEFAULT;
 require('../../systeam/php/auth_v200.php');
 !strlen($Profiles_ID)?$Profiles_ID=0:'';
 
-if($x=$_SESSION[mail][$acct][templates][$Profiles_ID][EmailColumns]){
+if($x=$_SESSION['mail'][$acct]['templates'][$Profiles_ID][EmailColumns]){
 	echo $x;
 	exit;
 	$a=explode(',',$x);
-	if(is_array($a){
+	if(is_array($a)){
 		foreach($a as $v){
 			$v=trim(preg_replace('/Col(umn)*/i','',$v));
 			if($v)$sessionCols[$v]=1;

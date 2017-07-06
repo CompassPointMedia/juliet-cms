@@ -120,7 +120,7 @@ return(r.length==1)?r[0]:r}
 
 /* ------------------ script.js ------------- */
 function ALstart() {	
-	// G�n�ration de l'image
+	// G n ration de l'image
 	
 	if($('top10')) {
 		var lis=$('top10').getElementsByTagName('li');
@@ -134,15 +134,15 @@ function ALstart() {
 	}
 	
 	
-	// Supprime les caract�res invalides de la saisie
+	// Supprime les caract res invalides de la saisie
 	$(colorField).onkeyup=function(e) {
 		var rech=new RegExp(/[^0-9A-Fa-f]/g);
 		this.value=this.value.replace(rech,'');
 	}
 	
-	// G�n�ration du menu
+	// G n ration du menu
 	ALmakeMenu();
-	// G�n�ration du color-picker
+	// G n ration du color-picker
 	ALmakeColorPicker();
 }
 

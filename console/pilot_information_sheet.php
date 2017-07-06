@@ -102,7 +102,7 @@ TSU
 ID#:
 [input:tsuid size=10 ] ACC ID#: [input:accide size=10 ]<br /> 
 If applicable
-�
+
 owned aircraft info: Aircraft N#: [input:aircraftnumber size=10 ] Hangar #: [input:hanger size=10 ] <br />
 LAST NAME: [input:lastname size=10 ] FIRST: [input:firstname size=10 ] M.I: [input:middlename size=10 ] <br />
 LOCAL ADDRESS: [input:localaddress size=30 ]<br />

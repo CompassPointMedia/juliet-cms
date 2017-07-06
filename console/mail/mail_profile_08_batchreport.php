@@ -131,10 +131,10 @@ if($Composition=='template'){
 if(trim($AttachmentList)){
 	$sql="SELECT VOSFileName, CreateDate, LocalFileName FROM relatebase_files WHERE ID IN(".preg_replace('/,$/','',$AttachmentList).") ORDER BY LocalFileName";
 	$fl=__FILE__;$ln=__LINE__ +1;
-	$result=mysql_query($sql, $db_cnx) or sql_handle_exception($fl,$ln);
-	if(mysql_num_rows($result)){
+	$result=mysqli_query($db_cnx, $sql) or sql_handle_exception($fl,$ln);
+	if(mysqli_num_rows($result)){
 		?><table cellpadding="2" cellspacing="0"><?php
-		while($rd=mysql_fetch_array($result)){
+		while($rd=mysqli_fetch_array($result)){
 			$atRow++;
 			if($atRow==1){
 				?>

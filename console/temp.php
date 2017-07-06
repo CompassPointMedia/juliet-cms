@@ -166,7 +166,7 @@ class within the previous [inputnumberofdays size= 3 ] days </li>
                 <td>[input:reqdoc4 size=6 ] </td>
               </tr>
             </table>
-          ��������������������&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pilot
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pilot
           &nbsp;&nbsp;
           <table width="200" border="1">
                     <tr>
@@ -182,7 +182,7 @@ class within the previous [inputnumberofdays size= 3 ] days </li>
                       <td>[input:pilotdoc4 size=6 ] </td>
                     </tr>
                   </table>
-          �</li>
+           </li>
         <li>What is the distress or mayday transponder code? [textarea:maydaycode cols=60 rows=5 ] </li>
         <li>When should you use carburetor heat
           (if installed in the aircraft)

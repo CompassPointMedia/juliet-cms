@@ -191,7 +191,7 @@ var listens=0;
 		}
 		?><br />
 		</div>
-		�<h2><?php echo $adminCompany?> - Settings for My Items</h2>
+		 <h2><?php echo $adminCompany?> - Settings for My Items</h2>
 	</div>
 	<div class="cb" style="font-size:2px;">&nbsp;</div>
 

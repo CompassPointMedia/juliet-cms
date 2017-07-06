@@ -58,11 +58,11 @@ $LockoutTime=q("SELECT LockoutTime FROM rbase_failedlogins WHERE IPAddress='".$G
 if($LockoutTime>time()){
 	//lockout in effect
 	$lockout=LOCKOUT_EFFECTIVE;
-}else if(mysql_num_rows($result)){
+}else if(mysqli_num_rows($result)){
 	//clear probation
 	q("DELETE FROM rbase_failedlogins WHERE IPAddress='".$GLOBALS['REMOTE_ADDR']."' AND UserName='".$UN."'", C_MASTER);
 	$idx=0;
-	while($out = mysql_fetch_array($result,MYSQL_ASSOC)){
+	while($out = mysqli_fetch_array($result,MYSQLI_ASSOC)){
 		prn($out);
 		$idx ++;
 		$acct=$out['AcctName'];

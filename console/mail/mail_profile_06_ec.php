@@ -85,7 +85,7 @@ switch($RecipientMethod){
 				$err[1][Import]='The email column(s) you selected in the import file don\'t contain any email addresses!  Click Select Email Column(s).., look for the column(s) containing an email address, and check the box for the column number.  Then click Use Selected Columns';
 			break;
 			//this code is the same in Advanced SQL 
-			case trim($_SESSION[mail][$acct][templates][$Profiles_ID][advanced][RequiredFields]):
+			case trim($_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields']):
 				//make sure Required columns are present
 				$fileString=$VOS_ROOT."/$acct/tmp_mailprofile".$Profiles_ID.'.txt';
 				$fp=@fopen($fileString,'r');
@@ -98,7 +98,7 @@ switch($RecipientMethod){
 					}
 				}
 				//required fields
-				$q=explode(',',$_SESSION[mail][$acct][templates][$Profiles_ID][advanced][RequiredFields]);
+				$q=explode(',',$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields']);
 				foreach($q as $n=>$v){
 					if(trim($v)){
 						if(!in_array(trim(strtolower($v)), $allFields)){
@@ -110,7 +110,7 @@ switch($RecipientMethod){
 				if($reqFieldsNotPresent){
 					errLevel(1);
 					$x= $err[1][Import]='This profile specifies some required fields: '.
-					$_SESSION[mail][$acct][templates][$Profiles_ID][advanced][RequiredFields].
+					$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields'].
 					'\nThe following field(s) are missing: '. implode(', ',$missingReqFields).
 					'\nMake sure that you check "First Row Contains Column Names", and that the first row fields are properly named'.
 					'\nTo remove required fields, click on Select Recipients > Advanced';
@@ -154,26 +154,26 @@ switch($RecipientMethod){
 			break;
 		}
 		ob_start();
-		$result=q(stripslashes($_POST[ComplexQuery]), ERR_ECHO);
+		$result=q(stripslashes($_POST['ComplexQuery']), ERR_ECHO);
 		$errOut=ob_get_contents();
 		ob_end_clean();
 		
 		if($errOut){
 			errLevel(1);
-			$err[1]['Complex']='Your query returned an error ('. mysql_errno().'\n\nThis is the text of the error:\n'. addslashes(mysql_error());
+			$err[1]['Complex']='Your query returned an error ('. mysqli_errno($db_cnx).'\n\nThis is the text of the error:\n'. addslashes(mysqli_error($db_cnx));
 			break;
 		}
-		if(!mysql_num_rows($result)){
+		if(!mysqli_num_rows($result)){
 			errLevel(1);
 			$err[1]['Complex']='Your query did not return any records.  The mailer must have at least one record with a valid email column to work';
 			break;
 		}else{
 			//used for required fields check below
-			$checkColumns=mysql_fetch_array($result,MYSQL_ASSOC);
-			mysql_data_seek($result, 0);
+			$checkColumns=mysqli_fetch_array($result,MYSQLI_ASSOC);
+			mysqli_data_seek($result, 0);
 		}
 		//2004-09-28 handle required columns
-		if(trim($_SESSION[mail][$acct][templates][$Profiles_ID][advanced][RequiredFields])){
+		if(trim($_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields'])){
 			//make sure Required columns are present
 			$r=$checkColumns;
 			//we presume at this point that there are columns present
@@ -187,7 +187,7 @@ switch($RecipientMethod){
 				}
 			}
 			//required fields
-			$q=explode(',',$_SESSION[mail][$acct][templates][$Profiles_ID][advanced][RequiredFields]);
+			$q=explode(',',$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields']);
 			foreach($q as $n=>$v){
 				if(trim($v)){
 					if(!in_array(trim(strtolower($v)), $allFields)){
@@ -204,7 +204,7 @@ switch($RecipientMethod){
 				'\nTo remove required fields, click on Select Recipients > Advanced';
 			}
 		}
-		while($rd=mysql_fetch_array($result)){
+		while($rd=mysqli_fetch_array($result)){
 			//DEVNOTES 2004-07-17: note that if we go over 30 records with no matching emails, we need to email the administrator that they are clogging my server and we're not happy about that..
 			foreach($_emailColumns as $v){
 				if(preg_match('/[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+/i',$rd[$v])){
@@ -262,15 +262,15 @@ for($i=1;$i<=1;$i++){
 	}
 	//see if the compostion has been proofed since compileTime
 	if(
-	$compileTime>$_SESSION[mail][$acct][templates][$Profiles_ID]['compileTime']
+	$compileTime>$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['compileTime']
 	){
 		errLevel(1);
 		$err[1]['Composition']='You have not composed your email yet!';
 		break;
 	}
 	//if a blank email, alert them -- blank meaning the regions for the selected template
-	foreach($_SESSION[mail][$acct][templates][$Profiles_ID]['rName'] as $v){
-		if(strlen($_SESSION[mail][$acct][templates][$Profiles_ID]['r'][$v])){
+	foreach($_SESSION['mail'][$acct]['templates'][$Profiles_ID]['rName'] as $v){
+		if(strlen($_SESSION['mail'][$acct]['templates'][$Profiles_ID]['r'][$v])){
 			$regionsHaveText=true;
 			break;
 		}
@@ -283,7 +283,7 @@ for($i=1;$i<=1;$i++){
 	
 	
 	//if no subject line alert them
-	if(!strlen($_SESSION[mail][$acct][templates][$Profiles_ID]['subj'])){
+	if(!strlen($_SESSION['mail'][$acct]['templates'][$Profiles_ID]['subj'])){
 		errLevel(1);
 		$err[1]['Composition']='You do not have a subject line on the email.  Are you sure?\nClick the Compose Email Tab, then click  Compose and Proofread.. and enter a subject line.  If you really do not want a subject line, enter a space character';
 		break;

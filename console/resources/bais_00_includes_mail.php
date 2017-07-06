@@ -130,7 +130,7 @@ if(!function_exists('rand_alpha')){
 if(!function_exists('get_group_members_ids')){
 	function get_group_members_ids($group){
 		global $ids, $groups;
-		if(!trim($group)) continue;
+		if(!trim($group)) return;
 		if($a=q("SELECT
 			a.ID AS Contacts_ID, b.ID AS Groups_ID, a.Email, b.Name
 			FROM

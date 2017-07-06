@@ -29,7 +29,7 @@ Array
     [Views_ID] => 
     [ViewEmialColumns] => 
     [OverrideViewFilters] => 
-    [ComplexQuery] => 
+    ['ComplexQuery'] =>
     [recipientMethods_status] => import
     [ManualList] => 
     [ImportType] => csv
@@ -68,7 +68,7 @@ switch($RecipientMethod){
 		//------------------------------------------------------------------
 		function get_group_members_ids($group){
 			global $ids, $groups;
-			if(!trim($group)) continue;
+			if(!trim($group)) return;
 			if($a=q("SELECT
 				a.ID AS Contacts_ID, b.ID AS Groups_ID, a.Email, b.Name
 				FROM
@@ -89,7 +89,7 @@ switch($RecipientMethod){
 		}
 		//------------------------------------------------------------------
 		foreach($Groups_ID as $group){
-			if(!trim($group)) continue;
+			if(!trim($group)) return;
 			if(!in_array($group, $groups)) get_group_members_ids($group);
 		}
 		//2006-07-16: NOTE this is a slow query
@@ -154,7 +154,7 @@ switch($RecipientMethod){
 		}
 		//get the rowCount
 		$result=q(stripslashes($ComplexQuery));
-		if(!($rowCount=mysql_num_rows($result))){
+		if(!($rowCount=mysqli_num_rows($result))){
 			exit("<script defer>alert('No records found for the SQL (Structured Query Language) Query')</script>");
 		}
 	break;
@@ -229,7 +229,7 @@ if($BatchRecord || $BatchRecordEmail){
 	$sql="SELECT COUNT(*) AS Ct from relatebase_mail_batches";
 	$fl=__FILE__;$ln=__LINE__ +1;
 	$btchCt=q($sql);
-	$rd=mysql_fetch_array($btchCt);
+	$rd=mysqli_fetch_array($btchCt);
 	$seq=str_pad($rd['Ct'], 5, "0", STR_PAD_LEFT);
 	$receipt=date('y-m-d h:i ').$seq.'-'.$acct;
 	
@@ -255,41 +255,41 @@ if($BatchRecord || $BatchRecordEmail){
 	//insert the batch record
 	$fl=__FILE__;$ln=__LINE__ +1;
 	$id=q("INSERT INTO relatebase_mail_batches SET
-	CreateDate�= '$dateStamp',
-	Creator�= '".($cu?$cu:$acct)."',
-	EditDate�= '$timeStamp',
-	Profiles_ID�= ".($Profiles_ID==0?"NULL":$Profiles_ID).",
-	Name�= '$BatchName',
-	BatchNumber�= '$receipt',
-	RecipientSource�= '$RecipientMethod',
-	Views_ID�= $iViews_ID,
-	ComplexQuery�= $iComplexQuery,
-	HTMOrText�= '$HTMLOrText',
-	Composition�= '$Composition',
-	TemplateLocationURL�= '".($Composition=="template" && $TemplateMethod=="url"?$TemplateLocationURL:'')."',
-	Files_ID�= ".($Composition=="template" && $TemplateMethod=="file" && strlen($Files_ID)?$Files_ID:'NULL').",
+	CreateDate = '$dateStamp',
+	Creator = '".($cu?$cu:$acct)."',
+	EditDate = '$timeStamp',
+	Profiles_ID = ".($Profiles_ID==0?"NULL":$Profiles_ID).",
+	Name = '$BatchName',
+	BatchNumber = '$receipt',
+	RecipientSource = '$RecipientMethod',
+	Views_ID = $iViews_ID,
+	ComplexQuery = $iComplexQuery,
+	HTMOrText = '$HTMLOrText',
+	Composition = '$Composition',
+	TemplateLocationURL = '".($Composition=="template" && $TemplateMethod=="url"?$TemplateLocationURL:'')."',
+	Files_ID = ".($Composition=="template" && $TemplateMethod=="file" && strlen($Files_ID)?$Files_ID:'NULL').",
 	FileName = '".$FileName."',
-	Subject�= '".addslashes($_SESSION[mail][$acct][templates][$Profiles_ID][subj])."',
-	Body�= NULL, /** we insert this later **/
-	FromName�= '$FromName',
-	FromEmail�= '$FromEmail',
-	ReplyToName�= '$ReplyToName',
-	ReplyToEmail�= '$ReplyToEmail',
-	Importance�= '$Importance',
-	AttachedVCard�= '$AttachVCard',
-	ReturnReceipt�= '$ReturnReceipt',
+	Subject = '".addslashes($_SESSION['mail'][$acct]['templates'][$Profiles_ID][subj])."',
+	Body = NULL, /** we insert this later **/
+	FromName = '$FromName',
+	FromEmail = '$FromEmail',
+	ReplyToName = '$ReplyToName',
+	ReplyToEmail = '$ReplyToEmail',
+	Importance = '$Importance',
+	AttachedVCard = '$AttachVCard',
+	ReturnReceipt = '$ReturnReceipt',
 	StartTime = '$dateStamp', /** stop time to be entered later **/
-	BounceEmail�= '$BounceEmail',
-	BatchRecordEmail�= '$BatchRecordEmail',
-	BatchNotes�= '$BatchRecordComment',
-	RecordVersion�= '1.0',
-	MailerVersion��= '1.0'", O_INSERTID);
+	BounceEmail = '$BounceEmail',
+	BatchRecordEmail = '$BatchRecordEmail',
+	BatchNotes = '$BatchRecordComment',
+	RecordVersion = '1.0',
+	MailerVersion  = '1.0'", O_INSERTID);
 	/*** add always preview ***/
 	//prn($qr);
 	
 	//last usage time in session and db
 	if($Profiles_ID>0){
-		$_SESSION[mail][$acct][templates][$Profiles_ID]['lastUsageTime']=$dateStamp;
+		$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['lastUsageTime']=$dateStamp;
 		$sql="UPDATE relatebase_mail_profiles SET LastUsageTime = '$dateStamp' WHERE ID='$Profiles_ID'";
 		$fl=__FILE__;$ln=__LINE__ +1;
 		q($sql);
@@ -303,8 +303,8 @@ if(trim($AttachmentList)){
 		if(!trim($attachment))continue;
 		$sql="SELECT LocalFileName, VOSFileName FROM relatebase_files WHERE ID='$attachment'";
 		$fl=__FILE__;$ln=__LINE__ +1;
-		$result=mysql_query($sql, $db_cnx) or sql_handle_exception($fl,$ln);
-		if(!mysql_num_rows($result)){
+		$result=mysqli_query($db_cnx, $sql) or sql_handle_exception($fl,$ln);
+		if(!mysqli_num_rows($result)){
 			//the RBVOS record has been deleted
 			//send alert to RB Staff
 			$fileErr[$attachment]='An attachment ID was passed in a mail profile post but no record was located.  The file was most likely deleted between proof and send but highly unlikely!';
@@ -315,7 +315,7 @@ if(trim($AttachmentList)){
 			User: $cu", "From: bugreports@relatebase.com");
 			continue;
 		}
-		$rdAttach=mysql_fetch_array($result);
+		$rdAttach=mysqli_fetch_array($result);
 		if(!file_exists("$VOS_ROOT/$acct/".$rdAttach[VOSFileName])){
 			//VOS and files are not in synch
 			$fileErr[$attachment]='An attachment ID was passed in a mail profile post and the record was present; however the actual file does not exist in the account folder.  Check for file and VOS folder presence and proper permissions';
@@ -397,7 +397,7 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 		$emailBody=get_email_body($Profiles_ID);
 		$sql="UPDATE relatebase_mail_batches SET Body='".addslashes($emailBody)."' WHERE ID = '$id'";
 		$fl=__FILE__;$ln=__LINE__ +1;
-		$result=mysql_query($sql, $db_cnx) or sql_handle_exception($fl,$ln);
+		$result=mysqli_query($db_cnx, $sql) or sql_handle_exception($fl,$ln);
 	}
 
 	//If this happens we need to report this row was skipped in batch report
@@ -514,8 +514,8 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 			//2004-10-23 handle batch recovery
 			if($CrossCheckBatch && $CrossCheckBatchNumber){
 				$sql="SELECT Email FROM relatebase_mail_batches_logs WHERE Profiles_ID = '$Profiles_ID' AND Email = '$v' AND Batches_ID='$CrossCheckBatchNumber'";
-				$resultCrossCheck=mysql_query($sql) or die(mysql_error());
-				if(mysql_num_rows($resultCrossCheck)){
+				$resultCrossCheck=mysqli_query($db_cnx, $sql) or die(mysqli_error($db_cnx));
+				if(mysqli_num_rows($resultCrossCheck)){
 					echo "[Batch Recovery Mode]-already sent to $v<br />";
 					continue;
 				}
@@ -543,8 +543,8 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 			Profiles_ID='$Profiles_ID' AND
 			Batches_ID='$id' AND
 			Email = '$v'";
-			$result=mysql_query($sql, $db_cnx) or sql_handle_exception($fl,$ln);
-			if(!mysql_num_rows($result)){
+			$result=mysqli_query($db_cnx, $sql) or sql_handle_exception($fl,$ln);
+			if(!mysqli_num_rows($result)){
 				//enter record	
 				$sql="INSERT INTO relatebase_mail_batches_logs SET 
 				Profiles_ID=$Profiles_ID,
@@ -552,7 +552,7 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 				Email='$v',
 				SentTime='".date('Y-m-d H:i:s')."'";
 				$fl=__FILE__;$ln=__LINE__ +1;
-				$result=mysql_query($sql, $db_cnx) or sql_handle_exception($fl,$ln);
+				$result=mysqli_query($db_cnx, $sql) or sql_handle_exception($fl,$ln);
 			}else{
 				//this is a duplicate email being sent, we haven't set this up for entry.  When recoving a failed batch, suppose the batch would have sent 3 emails to the email address x, but only 2 were sent.  Unfortunately on the level of complexity we have, the third email will NOT be sent out.
 			}
@@ -567,7 +567,7 @@ if($mode!=='previewbatch'){
 	$stopTime=date('Y-m-d H:i:s');
 	$sql="UPDATE relatebase_mail_batches SET StopTime='$stopTime' WHERE ID = '$id'";
 	$fl=__FILE__;$ln=__LINE__ +1;
-	$result=mysql_query($sql, $db_cnx) or sql_handle_exception($fl,$ln);
+	$result=mysqli_query($db_cnx, $sql) or sql_handle_exception($fl,$ln);
 	echo '<br />finished at ' . $stopTime;
 }
 ob_start();

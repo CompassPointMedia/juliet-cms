@@ -22,13 +22,13 @@ if($submode=='testquery'){
 	$err=ob_get_contents();
 	ob_end_clean();
 	if($err){
-		error_alert('Your query returned an error ('.mysql_errno().'\n\nThis is the text of the error:\n'.addslashes(mysql_error()));
+		error_alert('Your query returned an error ('.mysqli_errno($db_cnx).'\n\nThis is the text of the error:\n'.addslashes(mysqli_error($db_cnx)));
 	}else{
-		if(!mysql_num_rows($result)){
+		if(!mysqli_num_rows($result)){
 			error_alert('Query is valid, but it returns no records (empty set)');
 		}else{
-			$rows=mysql_num_rows($result);
-			$rd=mysql_fetch_array($result);
+			$rows=mysqli_num_rows($result);
+			$rd=mysqli_fetch_array($result);
 			$cols=count($rd)/2;
 			error_alert('Query returned a total of '.$rows.' records ('. $cols.' fields)');
 		}
@@ -111,41 +111,41 @@ if($submode=='testquery'){
 	}
 	***/
 	
-	$sql.=" EditDate�= '$timeStamp',
-	Name = '$Name',�
-	RecipientSource�= '$RecipientSource',
-	Views_ID�= '$Views_ID',
+	$sql.=" EditDate = '$timeStamp',
+	Name = '$Name', 
+	RecipientSource = '$RecipientSource',
+	Views_ID = '$Views_ID',
 	Groups_ID='$Groups_ID',
-	OverrideViewFilters�= '', /** undeveloped **/
-	ImportType�= '$ImportType',
-	ImportHeaders�= '$ImportHeaders',
-	HTMLOrText�= '$HTMLOrText', /** 1=HTML, 0=Text **/
+	OverrideViewFilters = '', /** undeveloped **/
+	ImportType = '$ImportType',
+	ImportHeaders = '$ImportHeaders',
+	HTMLOrText = '$HTMLOrText', /** 1=HTML, 0=Text **/
 	Composition = '$Composition',
-	EditableRegion�= '".($Composition=="template"?$EditableRegion:'')."',
-	EditableRegionName�= '', /** undeveloped **/
-	TemplateMethod�= '".($Composition=="template"?$TemplateMethod:'')."', /** file or url **/
-	TemplateFileOrURL�= '".($Composition=="template"?$TemplateFileOrURL:'')."',
-	TemplateDefaultDirectory�= '', /** not developed **/
-	AttachmentDefaultDirectory�= 0, /** not developed **/
-	FromName�= '$FromName',
-	FromEmail�= '$FromEmail',
-	ReplyToName��= '".($ReplyToName!=="(optional)"?$ReplyToName:"")."',
-	ReplyToEmail��= '".($ReplyToEmail!=="(optional)"?$ReplyToEmail:"")."',
-	BounceEmail��= '".($BounceEmail!=="(optional)"?$BounceEmail:"")."',
+	EditableRegion = '".($Composition=="template"?$EditableRegion:'')."',
+	EditableRegionName = '', /** undeveloped **/
+	TemplateMethod = '".($Composition=="template"?$TemplateMethod:'')."', /** file or url **/
+	TemplateFileOrURL = '".($Composition=="template"?$TemplateFileOrURL:'')."',
+	TemplateDefaultDirectory = '', /** not developed **/
+	AttachmentDefaultDirectory = 0, /** not developed **/
+	FromName = '$FromName',
+	FromEmail = '$FromEmail',
+	ReplyToName  = '".($ReplyToName!=="(optional)"?$ReplyToName:"")."',
+	ReplyToEmail  = '".($ReplyToEmail!=="(optional)"?$ReplyToEmail:"")."',
+	BounceEmail  = '".($BounceEmail!=="(optional)"?$BounceEmail:"")."',
 	TestEmail = '$TestEmail',
 	TestEmailBatch = '$TestEmailBatch',
 	TestEmailStart = '$TestEmailStart',
 	AlwaysPreview = '$AlwaysPreview',
-	Importance��= '$Importance',
-	AttachVCard��= '$AttachVCard',
-	ReturnReceipt��= '$ReturnReceipt',
-	DefaultBatchName��= '$DefaultBatchName',
-	DefaultBatchNameAutoinc��= '$DefaultBatchNameAutoinc',
-	BatchRecordEmail��= '$BatchRecordEmail',
+	Importance  = '$Importance',
+	AttachVCard  = '$AttachVCard',
+	ReturnReceipt  = '$ReturnReceipt',
+	DefaultBatchName  = '$DefaultBatchName',
+	DefaultBatchNameAutoinc  = '$DefaultBatchNameAutoinc',
+	BatchRecordEmail  = '$BatchRecordEmail',
 	AttachmentString='$AttachmentString',
 	ResourceType=1,
-	RecordVersion��= '1.0',
-	MailerVersion��= '1.0' 
+	RecordVersion  = '1.0',
+	MailerVersion  = '1.0' 
 	WHERE ID = $ID";
 	q($sql);
 	prn($qr);
