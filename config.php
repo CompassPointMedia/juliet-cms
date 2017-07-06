@@ -15,7 +15,7 @@ function set_test_env(){
     $AppEnv = getenv('AppEnv');
     if($AppEnv == 'production'){
         ini_set('display_errors',false);
-    }else if(strstr($_SERVER['HTTP_HOST'], '-local.') || strstr($_SERVER['HTTP_HOST'], 'buildingthebatcave.com')) {
+    }else if($AppEnv == 'vagrant') {
         ini_set('display_errors',false);
     }else{
         // for now
@@ -37,14 +37,14 @@ $removeThispageExtension=true;
 $lowercaseThispage=true;
 $JULIET_COMPONENT_ROOT=$_SERVER['DOCUMENT_ROOT'].'/components-juliet';
 
-if($fromCRON)goto compend;
+if(!empty($fromCRON)) goto compend;
 
 if(!function_exists('q'))require_once($_SERVER['DOCUMENT_ROOT'].'/functions/function_q_v130.php');
 if(!function_exists('prn'))require_once($_SERVER['DOCUMENT_ROOT'].'/functions/function_prn.php');
 $qx['useRemediation']=true;
 $qx['defCnxMethod']=C_MASTER;
 
-if(!$pJulietTemplate)$pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
+if(empty($pJulietTemplate)) $pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
 $overrideGeneric5tDecoding=true;
 
 //$sql="SELECT

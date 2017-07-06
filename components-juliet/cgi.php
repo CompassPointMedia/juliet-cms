@@ -423,9 +423,6 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin i break loop ------
 if($adminMode && $_POST['_sendEmail']=='2' && !valid_email($_POST['_sendEmailTo']))error_alert('You selected an alternate email to send notifications to; however it is not valid.  Please change your selection or enter a valid email address');
 
 if($comboMode=='insertUpdate'){
-
-    exit('point 1');
-
 	if(isset($_q) && isset($_r)){
 		//jasperandwendy
 		$r=$_POST['_res'][$_POST['_r']];
@@ -776,9 +773,6 @@ if($comboMode=='insertUpdate'){
 	$assumeErrorState=false;
 	exit;		
 }else if($mode=='componentControls'){
-
-    exit('point 2');
-
     if($submode=='eventHandle'){
 		//error checking
 
@@ -796,9 +790,6 @@ if($comboMode=='insertUpdate'){
 		goto placeholder_sectionstart; 
 	}
 }else if($mode=='componentEditor'){
-
-    exit('point 3');
-
     if($submode=='import'){
 		$ImportString=trim($ImportString);
 		if(!preg_match('/^[+a-zA-Z0-9=]+$/',$ImportString))error_alert('The string you are attempting to import does not appear to be valid.  It must be a base 64-encoded serialized array');
@@ -867,9 +858,6 @@ if($comboMode=='insertUpdate'){
 	}
 	break;
 }else if($formNode=='default'){
-
-    exit('point 4');
-
     $tabVersion=3;
 	ob_start();
 	?>
@@ -932,7 +920,6 @@ placeholder_sectionstart:
 
 switch(true){
 	case $thispage=='usemod':
-	    exit('case a');
 		//add_modify.php
 		if($_GET['Email'] && $_GET['src'] /** coming in from email **/){
 			if($thisUN=q("SELECT UserName FROM addr_contacts WHERE Email='".$_GET['Email']."'", O_VALUE)){
@@ -1298,8 +1285,6 @@ switch(true){
 		}
 	break;
 	case $thispage=='addresult':
-
-                                                                                                            exit('case c');
 		//add_result.php
 		if($n=$message[$messageCode]){
 			echo $n;
@@ -1332,7 +1317,6 @@ switch(true){
 		}
 	break;
 	case $thispage=='updated':
-	    exit('case d');
 		?>
 		<h1>Your Information Has Been Updated</h1>
 		<?php
@@ -1356,7 +1340,6 @@ switch(true){
 		}
 	break;
 	case $thispage=='resetpassword':
-	    exit('case e');
 		//reset password
 		if(!$usemod['passwordResetTimeout'] || $usemod['passwordResetTimeout']>72)$usemod['passwordResetTimeout']=24;
 		if($_POST){
@@ -1444,7 +1427,6 @@ switch(true){
 		}
 	break;
 	case $thispage=='forgotpassword':
-	    exit('case f');
 		if($_POST){
 			if($a=q("SELECT UserName, Email, Password, PasswordMD5 FROM ".$MASTER_DATABASE.".addr_contacts WHERE (Email='$UN' OR UserName='$UN')", O_ARRAY)){
 				if(count($a)>1){
@@ -1521,7 +1503,6 @@ switch(true){
 		}
 	break;
 	case $thispage=='tools':
-	    exit('case g');
 		switch(true){
 			case $mode=='rejectWholesale':
 			case $mode=='rejectWholesaleNotify':
