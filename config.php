@@ -24,14 +24,13 @@ function set_test_env(){
 }
 set_test_env();
 
-require(str_replace('/config.php', '/../private/config.php', __FILE__));
-
-//if they have juliet, they are going to have the console and site creator
-
-
 //2017-07-04 - this is the simplest possible globalizer; _GET vars have precedence
 if(!empty($_POST)) extract($_POST);
 if(!empty($_GET)) extract($_GET);
+
+require(str_replace('/config.php', '/../private/config.php', __FILE__));
+
+//if they have juliet, they are going to have the console and site creator
 
 $removeThispageExtension=true;
 $lowercaseThispage=true;

@@ -110,7 +110,6 @@ if($qr['count']>1 && !$usemod['allowLoginForDuplicateUserTokens']){
 		}else{
 			//enroll them
 			q("UPDATE $table SET EnrollmentAuthToken=NULL, Editor='".$MASTER_USERNAME."' WHERE ".$usemod['dbLoginFieldPrimary']."='".$rd[$usemod['dbLoginFieldPrimary']]."'",$v280cnx);
-			exit;
 
 			//you have been successfully enrolled [1]
 			$loginCode=100;
@@ -264,4 +263,3 @@ if($setLoginVars==true){
 		unset($rd);
 	}
 }
-?>

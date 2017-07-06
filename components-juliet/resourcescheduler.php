@@ -571,7 +571,7 @@ if($mode=='componentControls'){
 		<?php if(false){ ?></div><?php }
 		$content=str_replace("\t",'',ob_get_contents());
 		ob_end_clean();
-		mail('txphi470@gmail.com,sfullman@compasspointmedia.com','Booking made on field: '.$record['Name'],$content,'From: booking@wingedrepublic.com');
+		mail('txphi470@gmail.com,sam-git@compasspointmedia.com','Booking made on field: '.$record['Name'],$content,'From: booking@wingedrepublic.com');
 		error_alert('Good job, you successfully booked this field!',1);
 		?><script language="javascript" type="text/javascript">
 		window.parent.location='/members/<?php echo strtolower($record['Identifier']);?>/confirmed?key=<?php echo $key;?>';
