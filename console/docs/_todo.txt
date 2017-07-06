@@ -1,0 +1,110 @@
+2011-01-06
+----------
+* Employee Hour Logs
+	Ability for single employee to log into the console
+	Create List View of employees
+	Create List View of employees' hours this week/month/year (Mostly for editing, probably the best way to do it)
+	
+
+2010-08-29
+----------
+* Have the slide-show be self-upgrading; e.g. for Anne Wait + others
+* Probably, the biggest thing is integration of dataobjects to the focus view as I've done with GC on at least one interface; shunting the sql query
+
+2010-03-07
+----------
+DONE need to improve the top nav and make all links work including adds
+
+
+2010-02-08
+----------
+* the hours feature works like follows (hours.php)
+	if hours are present that's what total is, NOT the hours diff
+	but normally the hours will be based on timer - they need to turn timer off and manually enter prev. dates otherwise
+	once they change the hours the timer goes off
+	if timer is off and they enter two dates, as soon as this happens the first time the total fills and it only happens once
+	on submission
+	000= error
+	001= OK
+	010= error
+	011= back fill start
+	100= error
+	101= back fill end
+	110= create total
+	111= error ? doesn't sum up
+	
+
+2009-06-27
+----------
+* new classified - invoice data not pulling over right
+* new member - not yet clean on companyname and clientname
+* classified - need fetchMemberCardData() onchange of the list
+* orders.php - customer list wonky and needs improved
+			 - use account needs filtering
+			 - interlock against opening an invoice in cash sale and vice versa
+* save and new not working on classifieds.php now
+
+
+2009-06-17
+----------
+* a BIG GOAL is to integrate the dataset query into the FOCUS view as well as the current sort and etc. for the ids
+* export data from dataset needs column filters
+* RTE_JoinDate - needs field formatting and error checking on receiving end - ALSO IF IT COULD BE A DROPDOWN/CHECKBOX THAT WOULD BE GOOD
+* cookie hold last selected tab
+
+2009-06-10
+----------
+* up to now I have had several cases where the focus view utilizes the filters and sort of the list view; however with the recent changes in the filterGadget, these are obsolete; INTEGRATE FILTERS AND SORT INTO THE FOCUS VIEW for that dataset
+* overview of members.php
+  -----------------------
+	1. this interface is all about the CLIENT table, the client is the primary key.  Clients-specific items:
+		a. Statuses_ID - for the client (company)
+		b. ResourceToken - if we need adhoc relationships
+		c. Company Name and quickbooks specific items
+		d. NOTE HOWEVER
+			* WholesaleAccess is tied to the addr_contacts table
+			* _ContactsAccesses is tied to the addr_contacts side
+			* the client address nodes are Address1|2-City-State-Zip-Country + (Shipping)Address1|2-etc.
+			  the contact address nodes are HomeAddress.. and BusAddress
+			  (remember that finan_invoices has ShippingAddress|2 + BillingAddress)
+			  you can see the compatibility issues here
+	2. eventually I want to have the ability for 8-8 rlx to pass both Clients_ID and Contacts_ID and show the contact on the tab, and use iframes to refresh between members of a company
+* things needed for members.php
+	5. settings - change password
+	6. assign accesses and ADD accesses
+
+
+2009-06-04
+----------
+DONE	mode=sort passes directly -> mode=refreshComponent w/o break -- really the component itself should handle its own sort by the query string so that we only pass
+	mode=refreshComponent&component=[component]&sort=[colname:recognized_in_component]
+	
+	and it takes it from there
+	
+* components/comp-24 - heading toward generic I found that I needed to simplify the whole system.  I have uncovered a major shortcoming in the var datasetTable - since the "table" could be any combination of tables based on what's needed for cols and search and abilities (editability, deletability)
+* "Email" in whereclause ambiguous on the search - how do I overcome this?
+* here is the sequence I saw that I need to have stable:
+
+	statuses
+		set a search in place
+		clear a search
+		SEARCH HELP IN THE WIKI
+		make sure statuses are stable and even have setting to create the status table if needed - NEED A MOST CURRENT INSTANCES DATABASE!!!!
+		save search 
+	sort
+		clean up the query string, make truly generic
+	set active/inactive = MOVE TO 3-LEVEL STATE VS 2
+	add
+	edit
+	**** NOT DONE?? delete
+	ability to override the filterMemberQuery
+	ability to have the window be a popup (subset of clients)
+	list of what I need for this branch to work for a database
+	settings available to change this branch
+
+
+
+* need to export single order
+* need to remove/show shipping and add orders based on moduleConfig array settings
+* need to hide dropdown list for items if !adminControls[editOrders]
+

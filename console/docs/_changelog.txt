@@ -1,0 +1,66 @@
+2013-09-11
+* updated list_orders.php to redirect to SystemEntry; NO MORE HARD-CODED DATASET COMPONENTS!!!
+* cleaned up and merged the view _v_finan_invoices_cash_sales to include TT joins
+
+2013-06-26
+* the Usemod-Authentication method is now in use with a few test account such as TSU.  Goal for this coding is to employ every good thing I have developed for logins.  See to-do's in auth_i4_Usemod-Authentication_v100.php
+* for mode=insert|updateClient, I am no longer supporting PrimaryFirstName|lastName|etc any "name part" in clients.  Eventually the members.php will be a true multi-contact many-many system joining the concepts I've learned from Raiser's Edge and Outlook|QuickBooks
+
+
+2013-01-04
+* changed folder name from console-rbrfm to just console (good new start for 2013)
+* have nearly completed rfm_payments.php
+
+
+2011-06-02
+----------
+[following is also in console/mail/mail.php]
+* success on the mailer; used for 2nd TSA flying club email; I have been able to save and send out with both mail merge fields and logic.  Also, set up in cpm155 (TSA) file m.php which serves as a validator for the email (IF they receive remote content), and fills in globals and user agent.  There are several things that I observe from this experience:
+	1. it took a long time :)
+	2. we are dealing with email validity
+	3. we also need a way to forward bounce notices to an automated process like console.cpm155@tsaviation.com with a code in the subject line, which will update the email validity between 0=unknown, 1=validated, -255=BOUNCED, or -128=delayed
+	4. NEXT STEP, the following needs done:
+		aa. SQL queries are nice but I need to globalize some settings:
+			* my contacts [if in a KNO environment]
+			* members
+			* all my friends
+			* specific groups
+		bb. send the mail to the mailqueue, make the history tab USABLE;
+		cc. have the list view present; add as one tab of several the other being mailer history across all profiles, very nice and readable, lots of analytics on it.
+		a. ability to unsubscribe in a very fine-grained method (including, do not receive email FROM {THIS USER} - so consider the variable environment - means individual logins into the console
+		b. working on the URL's
+			* add http://www.tsaviation to them if not absolute already
+			* add to the query string, so that the receiving (Juliet) page validates the campaign
+		c. from here to move to a one-section template
+			* control stylesheet
+			* control layout or store somewhere
+	5. I want to compete with Constant Contact
+	6. I want a general mail log, kind of like a readers list, which SPANS ACROSS *ALL* PROFILES, so I can see history on any of them
+	7. ability to attach a ics calendar file, as Jenn sends me :)
+
+2010-08-29
+----------
+* ditched extreeme.com - started using the sothink free menu creator - much more manageable but still some manual work involved
+
+
+2009-12-06
+----------
+* successfully added MembershipStart/End for Mr. Garbage Can - refined list_members_v105 more, nearly generic
+* fully defined the display logic for cells using availableCols array
+* added function output_logical() which receives a forma (YN, YESNO, TF etc.) and outputs by this if the value is_logical()
+
+2009-06-03
+----------
+* comp_01-filtergadget - made truly generic with bais_settings remaining; it handles its own post and is used as such in the exe page
+* mode=sort passing directly on to mode=refreshcomponent
+* in auth_i2_v100 changed the username used in bais_settings - login and settings are getting to be more and more critical
+
+
+2009-05-25
+----------
+* added exportmanager - just need to press the button and it works
+
+2009-05-22
+----------
+* development of this folder console-rbrfm began in earnest.  The goal is only bring in good things from here
+

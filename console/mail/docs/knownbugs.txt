@@ -1,0 +1,2 @@
+2006-07-10:	there is a gap on the right hand side of the tabs ever since we either went strict or ??
+2006-07-10: the compose email js that yahav developed is buggy

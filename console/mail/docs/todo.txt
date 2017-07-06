@@ -1,0 +1,80 @@
+2006-10-07
+OK, very clear on what I need to do for the mailer.
+---------------------------------------------------
+DONE	0. do those things first to be able to get something out!!! PRIORITY
+DONE	3. testDelivery must be present now
+DONE	9. saved query with >= got saved as &gt;=
+1. store the texarea region for an onchagne comparison setTimeout method that's 100% accurte
+2. show the view template button OK, switch naem to "print preview"
+4. I tried to send out just one row and got back no valid email addresses
+5. remove
+	DONE	always preview before sending out
+	return receipt requested?
+6. auto - check template validity
+7. email columns is not showing and needs to
+8. imported file and attachments needs hooking up to RFS
+10. save as new template - 
+11. refresh parent root when save as new, or save
+12. cancel on compose 04 - "you've made changes, save them"
+13. pop-up big texstarea for modifying things
+14. "type of data" needs moved into the from imported file window - alos first row contains.. checkbox
+15. import the help section above into the mailer
+16. have send batch go to iframe, have green bar increment
+17. TEST runs should not be a batch
+18. default name of batches should be profile name
+19. fix broken javascript
+	a. template - compose mail tab
+	b. your records tab
+
+
+
+0. multiple views work
+1. compose email stores values and is more readable and viewable for HTML
+2. groups works for multiple
+	2006-07-10: major step on the road to this, much better than I thought possible heere's the scoop:
+		DONE	a. "Open" button id openCMSGroup must be enabled dynamically
+		DONE	b. initial div list must be populated dynamically along with the combo list selected
+		DONE	c. the array selectedCMSGroups should be initially declared, and the var CMSGroupSelCount
+		DONE	e. have the system RECEIVE multiple groups
+
+		d. [NOTE: adding suspended for now] after we add a group with callback cb1016, we need to add it in alphabetically to the options, change the array and count, and change the div list dynamically
+		f. use addr_u to include groups in the groups - highlight these a different color, and debate use of color on other groups (like empty groups in light gray)
+
+3. re-HTML the file import and compose email windows to be strict
+4. get nav v1.2 buttons in upper right
+2006-10-08:
+-----------
+5. VIP!!!!!!!!! on "from imported file" move type of data and first row contains, over to the sub-window
+6. Column 15, column 16 is clumsy.
+7. issues with "from imported file" persistence -"store this file in RFS " or better yet, shouldn't I integrate this into the file system now?????
+
+
+bugs and IMPORTANT:
+-------------------
+abolish the replace into feature - or make sure that the 3-way index is present each time
+
+
+
+other:
+--------------
+checking email columns is more automatic
+when we save the profile have detectChange revert to 0 - and implement save profile
+can I send out an unsaved profile?  should be able to
+
+not saving email body in database
+ability to view template - not working
+ability to store email in a "library" or as a .eml file
+
+so the entire process needs reworked from the beginning.  we need to get a session key and a quasi resource like with rtb or new accounts
+
+setAdvanced
+testquery
+previewbatch
+sendbatch
+composeEmail
+checkURL
+selectEmailCols
+uploadfile
+saveprofile
+deleteProfile
+

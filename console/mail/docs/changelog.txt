@@ -1,0 +1,31 @@
+2006-09-15:
+minor improvements, NEXT MAIN PROJECTS will be the following:
+	get mail feature internal and working
+	make preview more sensible, have it not record a batch, etc. etc.
+	make a list of THINGS to do which are yet deficient
+	-- one of the most important things to do after this is work on the file manager and file explorer - integrate windows look with web-ap functionality
+	
+
+2006-07-16:
+OK so at about 11:52 I got the mailer sending out and to multiple groups.  The priorities are (and can be found in todo also):
+	1. the mail sending interface is user-unfriendly - need progress bar
+	2. compiling needs tested but
+		a. doesn't get white space right
+		b. case - sensitive anywhere ?
+		c. docs on it for the help section
+	3. help needs activated
+	4. need a "yes" confirm
+	5. review needs to work in a better method - without looping through in the same way
+	6. for groups, really need a function INGROUP('Deep 6 Crew') and NUM_GROUPS() and GROUP_POSITION('Deep 6 Crew')
+	7. need a way to say "this person from this group was mailed something on this day" - thus opening path for a timeline
+	8. 
+	
+	Appearance: gradient at the top with letters in white, nice envelope graphic as well.  Cancel becomes close, and probably move save and cancel to upper right.  I've got a drawing of what the sender should look like
+
+2006-07-10:
+OK so I 've started with the ability to do multiple groups.  Since groups can be a part of groups, the logic is going to have some complexity.  I think it'd be better just to develop a list of id's and then use the records from there.  The goal for now is to send out the USER information only 
+
+I'm going to have to study and undertsand that user vs. groups join query - 
+
+At some point we need to have a value of "groups you are in" which is a list of sorts, and also when mailing to a single group, be able to list the head of the group, and what the INDIVIDUAL'S TITLE IN THE GROUP IS.
+

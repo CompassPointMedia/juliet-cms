@@ -1,0 +1,12 @@
+Tje folliwng need included when I get to them:
+
+[ ] Include opened-email analytic
+[ ] Add responded-logic for links (logs how many people click-through)
+[ ] unsubscribe text
+
+[HELP] button on these items
+
+
+we log only when we are sending an actual batch
+
+
