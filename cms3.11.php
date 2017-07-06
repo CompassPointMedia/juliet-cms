@@ -14,9 +14,7 @@ cms3.11.php -
 
 
 */
-?><?php
 require('./config.php'); //for all
-?><?php
 $qx['defCnxMethod']=C_MASTER;
 
 
@@ -541,7 +539,7 @@ var ab='<?php echo $nullAbs?>';
 				<strong>Seema Nikam</strong> - coder and fearless testing Ninja<br />
 				<strong>Josh Higgins</strong> - 
 		graphic designer and &quot;skin&quot; guy [<a href="mailto:josh@compasspointmedia.com">email</a>] <br />
-			and <a href="mailto:sfullman@compasspointmedia.com">Samuel Fullman</a>, who has an occasional development and improvement idea </p>
+			and <a href="mailto:sam-git@compasspointmedia.com">Samuel Fullman</a>, who has an occasional development and improvement idea </p>
 			<p>For help (itself a work in progress), go to the <a href="http://www.compasspointmedia.com/mediawiki-1.13.2/index.php?title=CMS_Bridge_Public_Documentation" target="help">CMSB Wiki Section</a><br />
 				For assistance and suggestions contact us at the emails above
 </p>

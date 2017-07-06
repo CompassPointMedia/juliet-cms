@@ -7,7 +7,6 @@ Starting 1/28/2012, I am using this more for a physical file and putting the exe
 
 */
 require_once($_SERVER['DOCUMENT_ROOT'].'/config.php');
-?><?php
 $qx['defCnxMethod']=C_MASTER;
 
 if(!$suppressPrintEnv){
@@ -455,7 +454,7 @@ echo '<?xml version="1.0" encoding="utf-8"'.'?'.'>
 		}
 	break;
 	default:
-		require('/home/phplib/public_html/devteam/php/a_f/function_what_happened_v100.php');
+		require($_SERVER['DOCUMENT_ROOT'] . '/functions/function_what_happened_v100.php');
 		what_happened();
 		mail($developerEmail, 'Error file '.__FILE__.', line '.__LINE__,get_globals(),$fromHdrBugs);
 		?><script language="javascript" type="text/javascript">
