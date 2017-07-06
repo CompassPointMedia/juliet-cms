@@ -283,7 +283,7 @@ todo
 <title><?php echo $mode=='pageManager'?'Page Manager':'Block Manager';?></title>
 
 <link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
-<link href="/site-local/_juliet_.settings.css" type="text/css" rel="stylesheet" />
+<link href="/Library/css/_juliet_.settings.css" type="text/css" rel="stylesheet" />
 <style type="text/css">
 body{
 	margin:5px 20px;
@@ -757,8 +757,8 @@ if(!strstr(trim($Content),"\n")){
 </div>
 <?php if(!$hideCtrlSection){ ?>
 <div id="ctrlSection" style="display:none">
-	<iframe name="w1" src="/blank.htm"></iframe>
-	<iframe name="w2" src="/blank.htm"></iframe>
+	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
+	<iframe name="w2" src="/Library/js/blank.htm"></iframe>
 </div>
 <?php } ?>
 </body>

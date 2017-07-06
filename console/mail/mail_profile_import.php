@@ -229,10 +229,10 @@ isEscapable=2;
 <?php
 if(!$hideCtrlSection){
 	?><div class="controlSection" id="ctrlSection" style="display:<?php echo $testmode?'block':'none'?>;">
-	<iframe src="..//console/blank.htm" name="w0"></iframe>
-	<iframe src="..//console/blank.htm" name="w1"></iframe> 
-	<iframe src="..//console/blank.htm" name="w2"></iframe>
-	<iframe src="..//console/blank.htm" name="w3"></iframe>
+	<iframe src="/Library/js/blank.htm" name="w0"></iframe>
+	<iframe src="/Library/js/blank.htm" name="w1"></iframe>
+	<iframe src="/Library/js/blank.htm" name="w2"></iframe>
+	<iframe src="/Library/js/blank.htm" name="w3"></iframe>
 	</div><?php
 }
 ?></body>

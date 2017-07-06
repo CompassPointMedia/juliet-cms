@@ -71,10 +71,10 @@ require('components/comp_50_focus_properties_v100.php');
 </div>
 <?php if(!$hideCtrlSection){ ?>
 <div id="ctrlSection" style="display:<?php echo $testModeC ? 'block':'none'?>">
-	<iframe name="w1" src="../Library/blank.htm"></iframe>
-	<iframe name="w2" src="../Library/blank.htm"></iframe>
-	<iframe name="w3" src="../Library/blank.htm"></iframe>
-	<iframe name="w4" src="../Library/blank.htm"></iframe>
+	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
+	<iframe name="w2" src="/Library/js/blank.htm"></iframe>
+	<iframe name="w3" src="/Library/js/blank.htm"></iframe>
+	<iframe name="w4" src="/Library/js/blank.htm"></iframe>
 </div>
 <?php } ?>
 </body>

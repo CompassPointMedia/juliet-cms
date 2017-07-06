@@ -1,10 +1,10 @@
 .idea
 tmp/*
 /images/*
-/admin/file_explorer/*
 /site-local/*
 /components/*
-/emails/*
 /functions/*
 /pages/*
 
+#This can be deleted later
+/emails/cpm*

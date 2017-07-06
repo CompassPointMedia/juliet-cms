@@ -87,7 +87,7 @@ foreach($defaultCrossModelUpdateFields as $n=>$v){
 </p>
 </form>
 <div id="ctrlSection" style="display:<?php echo $testModeC ? 'block':'none'?>">
-	<iframe name="w2" src="/console/blank.htm"></iframe>
+	<iframe name="w2" src="/Library/js/blank.htm"></iframe>
 </div>
 </body>
 </html>

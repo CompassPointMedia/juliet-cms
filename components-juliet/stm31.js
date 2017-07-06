@@ -1,5 +1,7 @@
 //2010-04-18: hack because topRegion is position:relative
 
+// this file was in the root.  Only one file /components-juliet/relatebase_03_topnavcalculator_v110.php refers to it.  If it doesn't work try root again.
+
 // Ver: 3.77
 var nOP=0,nOP5=0,nIE=0,nIE4=0,nIE5=0,nNN=0,nNN4=0,nNN6=0,nMac=0,nIEM=0,nIEW=0,nSTMENU=0,NS4=0,nVer=0.0;
 bDelBorder=0;bAddBorder=0;detectNav();
@@ -32,7 +34,9 @@ if(nIE4||nNN4)	window.onerror=function(sMsg,sUrl,sLine)
 	return !confirm("Java Script Error\n"+"\nDescription:"+sMsg+"\nSource:"+sUrl+"\nLine:"+sLine+"\n\nSee more details?");
 }
 
-if(nSTMENU)		window.onload=st_onload;
+//if(nSTMENU)		window.onload=st_onload; -- 2011-04-27
+AddOnloadCommand('st_onload()');
+if(nSTMENU)			
 if(nIEM||nOP5)	window.onunload=function(){if(st_rl_id){clearInterval(st_rl_id);st_rl_id=null;}return true;}
 
 if(typeof(st_jsloaded)=='undefined'){
@@ -876,6 +880,7 @@ function getrect(mbit)
 	{
 		var l=0,t=0;
 		var obj=getlayer(mbit);
+
 		var w=parseInt(nOP ? obj.style.pixelWidth : obj.offsetWidth);
 		var h=parseInt(nOP ? obj.style.pixelHeight : obj.offsetHeight);
 		if(!nOP&&!nIEM&&typeof(mbit.iti)=='undefined')
@@ -905,7 +910,11 @@ function getrect(mbit)
 				t+=getpar(mbit).bd_sz;
 			}
 		}
-		return [l,t,w,h];
+		//2010-04-18: hack because topRegion is position:relative
+		var lfix=(browser=='IE'?0:g('topRegion').offsetLeft);
+		var tfix=(browser=='Moz'?0:g('topRegion').offsetTop);
+		return [l-lfix,t-207,w,h];
+		//return [l,t,w,h];
 	}
 }
 

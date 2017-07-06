@@ -518,15 +518,15 @@ if($pJInBlogMode){
 ob_start();
 if(!($pJulietCSSCustomFile=file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.css'))){
 	//create from daughter css sheet
-	$pJulietNewCSSCreated=copy($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$templateName.'.css', $_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.css');
+	$pJulietNewCSSCreated=copy($_SERVER['DOCUMENT_ROOT'].'/Library/css/'.$templateName.'.css', $_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.css');
 }
 if(!$pJulietCSSCustomFile && !$pJulietNewCSSCreated){
-	?><link href="/site-local/<?php echo $pJCSSIncludedFile=($templateName.'.css')?>" type="text/css" rel="stylesheet" /><?php 
+	?><link href="/Library/css/<?php echo $pJCSSIncludedFile=($templateName.'.css')?>" type="text/css" rel="stylesheet" /><?php
 }else{ 
 	?><link href="/site-local/<?php echo $pJCSSIncludedFile=($acct.'.'.$templateName.'.css');?>" type="text/css" rel="stylesheet" /><?php 
 }
-$f=$_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.css';
-if(file_exists($f)){
+
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.css')){
 	echo "\n";
 	?><link href="/site-local/<?php echo $acct.'.'.$templateName.'.global.css';?>" type="text/css" rel="stylesheet" /><?php
 }
@@ -727,8 +727,8 @@ var ab='<?php echo $nullAbs?>';
 CMSBEditorURL='cms3.11.php';
 </script>
 <?php
-$f=$_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.js';
-if(file_exists($f)){
+
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.js')){
 	echo "\n";
 	?><script language="javascript" type="text/javascript" src="/site-local/<?php echo $acct.'.'.$templateName.'.global.js';?>"></script><?php
 }
@@ -1025,7 +1025,7 @@ if($pJBottomRegionWide==2)echo $_bottomRegion_;
 <?php } ?>
 <?php if(!$hideCtrlSection){ ?>
 <div id="ctrlSection" style="display:none;">
-	<iframe name="w1" src="/blank.htm"></iframe>
+	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
 	<iframe name="w2" src="<?php if($returnAction=='getDoc' && $document){
 		//get the requested document
 		echo '/index_01_exe.php?suppressPrintEnv=1&mode=getDoc&document='.$document;

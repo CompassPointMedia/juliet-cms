@@ -14,7 +14,7 @@ todo
 <title>Posts</title>
 
 <link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
-<link href="/site-local/_juliet_.settings.css" type="text/css" rel="stylesheet" />
+<link href="/Library/css/_juliet_.settings.css" type="text/css" rel="stylesheet" />
 
 <script src="/Library/js/global_04_i1.js" language="javascript" type="text/javascript"></script>
 <script src="/Library/js/common_04_i1.js" language="javascript" type="text/javascript"></script>
@@ -78,8 +78,8 @@ foreach($posts as $post){
 </div>
 <?php if(!$hideCtrlSection){ ?>
 <div id="ctrlSection" style="display:none">
-	<iframe name="w1" src="/blank.htm"></iframe>
-	<iframe name="w2" src="/blank.htm"></iframe>
+	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
+	<iframe name="w2" src="/Library/js/blank.htm"></iframe>
 </div>
 <?php } ?>
 </body>

@@ -26,7 +26,7 @@ if($a=q("SELECT n.*, m.Title
 			'title'=>$v['Title'],
 		);
 	}
-	?><script type="text/javascript" language="JavaScript1.2" src="/site-local/stm31.js"></script>
+	?><script type="text/javascript" language="JavaScript1.2" src="/components-juliet/stm31.js"></script>
 	<script type="text/javascript" language="JavaScript1.2">
 	<?php
 	ob_start();
