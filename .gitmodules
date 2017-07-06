@@ -1,0 +1,15 @@
+[submodule "functions"]
+	path = functions
+	url = https://github.com/CompassPointMedia/packages-functions.git
+[submodule "components"]
+	path = components
+	url = https://github.com/CompassPointMedia/packages-components
+[submodule "Library/js"]
+	path = Library/js
+	url = https://github.com/CompassPointMedia/assets-js
+[submodule "Library/css"]
+	path = Library/css
+	url = https://github.com/CompassPointMedia/assets-css
+[submodule "Library/ckeditor_3.4"]
+	path = Library/ckeditor_3.4
+	url = https://github.com/CompassPointMedia/assets-ckeditor_3.4-modified
