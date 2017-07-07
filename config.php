@@ -25,8 +25,17 @@ function set_test_env(){
 set_test_env();
 
 //2017-07-04 - this is the simplest possible globalizer; _GET vars have precedence
-if(!empty($_POST)) extract($_POST);
-if(!empty($_GET)) extract($_GET);
+//extractor
+$extract = ['_POST'=>1, '_GET'=>1];
+foreach($extract as $_GROUP => $clean){
+    if(empty($GLOBALS[$_GROUP])) continue;
+    if($clean){
+        foreach($GLOBALS[$_GROUP] as $n => $v){
+            $GLOBALS[$_GROUP][$n] = addslashes($v);
+        }
+    }
+    extract($GLOBALS[$_GROUP]);
+}
 
 require(str_replace('/config.php', '/../private/config.php', __FILE__));
 

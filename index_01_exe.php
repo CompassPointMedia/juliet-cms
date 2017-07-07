@@ -87,13 +87,13 @@ switch(true){
 			if(preg_match('/recaptcha|mode/',$n))continue;
 			$str.=$n . ': '. stripslashes($v)."\n";
 		}
-		$to="chris@wingedrepublic.com"; //($adminEmail ? $adminEmail : $developerEmail);
+		$to=($adminEmail ? $adminEmail : $developerEmail);
 		if($to!==$developerEmail)$to.=','.$developerEmail;
-		mail($to,'Contact form submission',str_replace("\t",'', "The following information was submitted:\n\n
+		$result1 = mail($to,'Contact form submission',str_replace("\t",'', "The following information was submitted:\n\n
 		$str"),'From: '.$Email);
 		//customer copy
-		mail($Email,'Contact form submission',str_replace("\t",'', "The following is your copy of the request you submitted:\n\n
-		$str"),'From: '."chris@wingedrepublic.com");
+		$result2 = mail($Email,'Contact form submission',str_replace("\t",'', "The following is your copy of the request you submitted:\n\n
+		$str"),'From: '.$to);
 		?><script language="javascript" type="text/javascript">
 		alert('Thank you for your request.  We will be replying as soon as possible.');
 		window.parent.location='/';
@@ -109,13 +109,13 @@ switch(true){
 			if(preg_match('/recaptcha|mode/',$n))continue;
 			$str.=$n . ': '. stripslashes($v)."\n";
 		}
-		$to="chris@wingedrepublic.com";
+		$to=($adminEmail ? $adminEmail : $developerEmail);
 		if($to!==$developerEmail)$to.=','.$developerEmail;
 		mail($to,'Message submission',str_replace("\t",'', "The following information was submitted:\n\n
 		$str"),'From: '.$Email);
 		//customer copy
 		mail($Email,'Message submission',str_replace("\t",'', "The following is your copy of the message you submitted:\n\n
-		$str"),'From: '."chris@wingedrepublic.com");
+		$str"),'From: '.$adminEmail);
 		?><script language="javascript" type="text/javascript">
 		alert('Thank you for your request. We will be replying as soon as possible.');
 		window.parent.location='/';

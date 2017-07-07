@@ -25,7 +25,9 @@ $MASTER_USERNAME = $acct;
 $MASTER_HOSTNAME = 'localhost';
 $MASTER_PASSWORD = 'still-secret';
 $companyName = 'Compass Point Media';
+$adminPhone = '512-555-1212'; //not sure if this should be companyPhone or adminPhone
 $adminEmail = 'email@yourdomain.com';
+$developerEmail = 'email.samuel.fullman@gmail.com';
 
 $suppressWrappers['mainWrapSub']=false;
 

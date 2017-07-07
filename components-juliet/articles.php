@@ -36,8 +36,8 @@ if(!$articlesRegion)$articlesRegion='mainRegionCenterContent';
     </div>
 </form>
 
-<p>Chris@wingedrepublic.com</p>
-<p>512-557-2945</p>
+<p><?php echo $adminEmail;?></p>
+<p><?php echo $adminPhone;?></p>
 
 <?php
 $articlesRegion=ob_get_contents();

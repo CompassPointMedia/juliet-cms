@@ -62,8 +62,17 @@ if(!function_exists('gmicrotime')){
 }
 
 //2017-07-04 - this is the simplest possible globalizer; _GET vars have precedence
-if(!empty($_POST)) extract($_POST);
-if(!empty($_GET)) extract($_GET);
+//extractor
+$extract = ['_POST'=>1, '_GET'=>1];
+foreach($extract as $_GROUP => $clean){
+    if(empty($GLOBALS[$_GROUP])) continue;
+    if($clean){
+        foreach($GLOBALS[$_GROUP] as $n => $v){
+            $GLOBALS[$_GROUP][$n] = addslashes($v);
+        }
+    }
+    extract($GLOBALS[$_GROUP]);
+}
 
 //standardize the date and time stamps for long or repeated queries
 $dateStamp=date('Y-m-d H:i:s');
