@@ -13,3 +13,6 @@
 [submodule "Library/ckeditor_3.4"]
 	path = Library/ckeditor_3.4
 	url = https://github.com/CompassPointMedia/assets-ckeditor_3.4-modified
+[submodule "admin/file_explorer"]
+	path = admin/file_explorer
+	url = https://github.com/CompassPointMedia/assets-file_explorer
