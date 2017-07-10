@@ -430,7 +430,7 @@ if($comboMode=='insertUpdate'){
 		for($i=2; $i<=min($r-2,22); $i++){
 			if( round(sqrt($i) / pow($r - $i, .3333),4) == round($q,4))$pass=true;
 		}
-		if(!$pass)error_alert('You are either not a human being or you made a simple math error.  Hit the "back" button on your browser and try again.');
+		if(!$pass)error_alert('You are either not a human being or you made a simple math error.  Check the sum of the two numbers and try again.');
 	}
 	//for email logging - 2013-09-11 I am not sure how often this was used, only in cpm160 PENN
 	if(file_exists($_SERVER['DOCUMENT_ROOT'].'/components-juliet/'.$acct.'.cgiprecoding.php')){
