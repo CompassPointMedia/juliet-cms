@@ -112,6 +112,7 @@ if($mode=='componentEditor'){
             $section = $m[2];
             continue;
         }
+        // this is necessary to handle PHP break-out lines below
         if(!trim($line)) continue;
         if($state == 'begin'){
             $sections[$section][] = $line;
@@ -119,10 +120,17 @@ if($mode=='componentEditor'){
     }
     if(!empty($sections)){
         foreach($sections as $section => $lines){
-            if(trim($lines[0]) == '?>' && trim($lines[count($lines)-1]) == '<?php'){
-                unset($lines[count($lines)-1]);
-                unset($lines[0]);
+            $last = $lines[count($lines)-1];
+
+            if(preg_match('/^\s*\?>/i', $line[0], $m)){
+                $line[0] = substr($line[0], strlen($m[0]));
             }
+            if(preg_match('/<\?php\s*$/i', $last, $m)){
+                $line[count($lines)-1] = substr($last, 0, strlen($last) - strlen($m[0]) - 1);
+            }
+            //Clean up
+            if(!trim($last)) unset($lines[count($lines)-1]);
+            if(!trim($lines[0])) unset($lines[0]);
             ?><h3><?php echo $section;?></h3>
             <p class="gray">(You are in HTML!  If you want PHP you must add PHP tags)</p>
             <textarea name="sections[<?php echo $section;?>]" rows="7" cols="85%"><?php echo htmlspecialchars(implode('', $lines));?></textarea>
