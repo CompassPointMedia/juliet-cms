@@ -120,16 +120,14 @@ if($mode=='componentEditor'){
     }
     if(!empty($sections)){
         foreach($sections as $section => $lines){
-            $last = $lines[count($lines)-1];
-
-            if(preg_match('/^\s*\?>/i', $line[0], $m)){
-                $line[0] = substr($line[0], strlen($m[0]));
+            if(preg_match('/^\s*\?>/i', $lines[0], $m)){
+                $lines[0] = substr($lines[0], strlen($m[0]));
             }
-            if(preg_match('/<\?php\s*$/i', $last, $m)){
-                $line[count($lines)-1] = substr($last, 0, strlen($last) - strlen($m[0]) - 1);
+            if(preg_match('/<\?php\s*$/i', $lines[count($lines)-1], $m)){
+                $lines[count($lines)-1] = substr($lines[count($lines)-1], 0, strlen($lines[count($lines)-1]) - strlen($m[0]));
             }
             //Clean up
-            if(!trim($last)) unset($lines[count($lines)-1]);
+            if(!trim($lines[count($lines)-1])) unset($lines[count($lines)-1]);
             if(!trim($lines[0])) unset($lines[0]);
             ?><h3><?php echo $section;?></h3>
             <p class="gray">(You are in HTML!  If you want PHP you must add PHP tags)</p>
