@@ -48,9 +48,13 @@ if($mode=='componentEditor'){
             fwrite($fp, $string);
             fclose($fp);
 
-            $fp = fopen($path, 'w');
-            fwrite($fp, $working);
-            fclose($fp);
+            try{
+                $fp = fopen($path, 'w');
+                fwrite($fp, $working);
+                fclose($fp);
+            }catch(Exception $e){
+                mail($developerEmail, 'Error in page creator', 'In '.__FILE__.' line '.__LINE__, 'From: errors@'.$adminDomain);
+            }
 
         }
 
@@ -192,10 +196,24 @@ if(!file_exists($PAGE_ROOT.'/'.$str)){
     ?>';
 	$code=str_replace('$str',$str,$code);
 	$code=str_replace('$date',date('F jS Y \a\t g:iA'),$code);
-	$fp=fopen($PAGE_ROOT.'/'.$str,'w');
-	fwrite($fp,$code,strlen($code));
+	// 2017-07-15 SF: bug - this is not working in prod even though permissions seem right to me
+    try{
+        $fp=fopen($PAGE_ROOT.'/'.$str,'w');
+        fwrite($fp,$code,strlen($code));
+        fclose($fp);
+    }catch(Exception $e){
+        mail($developerEmail, 'Error in page creator', 'In '.__FILE__.' line '.__LINE__, 'From: errors@'.$_SERVER['SERVER_NAME']);
+    }
 }
-require($PAGE_ROOT . '/' . $str);
+
+try{
+    // 2017-07-15 SF: bug - this is not working in prod even though permissions seem right to me
+    // using include() vs require
+    include($PAGE_ROOT . '/' . $str);
+}catch(Exception $e){
+    mail($developerEmail, 'Error in page creator', 'In '.__FILE__.' line '.__LINE__, 'From: errors@'.$_SERVER['SERVER_NAME']);
+}
+
 
 
 
