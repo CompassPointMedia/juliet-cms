@@ -110,6 +110,8 @@ $COMPONENT_ROOT = 		$_SERVER['DOCUMENT_ROOT'].'/console/components'; //this need
 $CONSOLE_COMPONENT_ROOT=$_SERVER['DOCUMENT_ROOT'].'/console/components'; //new as of 2013-12-05 - preferred use for var above
 $FUNCTION_ROOT	= 		$_SERVER['DOCUMENT_ROOT'].'/functions';
 $MASTER_COMPONENT_ROOT= $_SERVER['DOCUMENT_ROOT'].'/components';			  //this needs to die
+$JULIET_COMPONENT_ROOT= $_SERVER['DOCUMENT_ROOT'].'/components-juliet';
+$PAGE_ROOT=$_SERVER['DOCUMENT_ROOT'].'/pages';
 
 $globalSetCtrlFields=true;
 $tabVersion=3.0;

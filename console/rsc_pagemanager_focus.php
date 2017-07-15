@@ -521,7 +521,6 @@ Alternate URL:
 <?php
 $buffer=$COMPONENT_ROOT;
 $COMPONENT_ROOT=$_SERVER['DOCUMENT_ROOT'].'/components';
-$JULIET_COMPONENT_ROOT=$_SERVER['DOCUMENT_ROOT'].'/components-juliet';
 require_once($FUNCTION_ROOT.'/function_pJprocess_folder.php');
 pJprocess_folder(array(
 	'files'=>get_file_assets($JULIET_COMPONENT_ROOT),

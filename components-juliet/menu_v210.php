@@ -93,7 +93,7 @@ ob_start();?>
 		background-color:#133613; /* was gold */
 		}
 	.submenu .off{
-		background-color:none;
+		background-color:transparent;
 		}
 	.julietMenu li{
 		position:relative;
@@ -441,25 +441,12 @@ foreach($menuDef as $n=>$v){
 	if(!function_exists('create_menu_nav')){
 	function create_menu_nav($nav, $level=1, $node){
 		$handle='navMenu';
-		global $pJ,$settings,$acct,$_SERVER['DOCUMENT_ROOT'];
+		global $pJ,$settings,$acct;
 		$cf=$pJ['componentFiles'][$handle]['data'];
 	
 		if(!$nav[$level][$node])return;
 		
-		/*
-		echo '</div></li></ul>';
-		prn($nav[$level],1);
-		*/
-		/*
-		?><style type="text/css">
-		#topRegionNav{
-		position:static;
-		}
-		</style><?php
-		*/
 		if($e=$cf['menu']['priority']){
-		#prn($e);
-		#prn($nav[$level][$node]);
 			foreach($nav[$level][$node] as $n=>$v){
 				$nav[$level][$node][$n]['priority']=(($w=$cf['menu']['priority'][$v['id']]) ? $w : 1);
 			}

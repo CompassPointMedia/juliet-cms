@@ -1,4 +1,10 @@
 <?php
+/*
+ * 2017-07-15 SF: So, this whole system of a component editor has a lot of very MVC-like features.
+ * The _juliet_.editor.php page is basically a shell but bases on the logic that whatever component is called will be inside a form
+ * Note that we call the $pJulietTemplate page so there's a little abstraction there.
+ * There are component settings which are stored in the db
+ */
 require_once($_SERVER['DOCUMENT_ROOT'].'/config.php');
 require_once($FUNCTION_ROOT.'/function_CSS_parser_v100.php');
 
@@ -134,58 +140,66 @@ function exporter(n){
 }
 </script>
 <div id="mainWrap">
-<form id="form1" name="form1" method="post" target="w2" action="/index_01_exe.php">
-<div class="fr">
-  <input type="button" name="Submit" value="Export" onclick="exporter('export');" />
-  &nbsp;&nbsp;
-  <div id="exportAnchor" style="float:right;"><input type="submit" name="Submit" value="Import.." onclick="return exporter('import');" />
-  <div id="exportOptions" style="visibility:hidden;">
-  	<div class="cxl" onclick="exporter('importCxl');">x</div>
-    <textarea name="ImportString" cols="35" rows="3" id="ImportString"><?php echo h($ImportString);?></textarea><br />
-	<label><input type="checkbox" name="ImportMerge" id="ImportMerge" value="1" checked="checked" onchange="dChge(this);if(!this.checked)alert('Warning! Unchecking this box will OVERWRITE all component settings versus merging over them.  Do not uncheck this box unless you are sure of what you are doing.  Additionally it is recommended that you export settings first in case you muck it up like always');" />Merge these settings over old settings</label> <span class="gray">(vs. overwriting old settings)</span><br />
-	<input type="submit" name="Submit" value="GO" onclick="return exporter('importGo');" />
-  </div>
-  </div>
-</div>
-<h1>Component Editor</h1>
-<?php if($mode=='viewSource'){ ?>
-	<?php
-	$c=file($$location.'/'.$file);
-	highlight_string(implode('',$c));
-	?><br />
+    <form id="form1" name="form1" method="post" target="w2" action="/index_01_exe.php">
+        <div class="fr">
+            <input type="button" name="Submit" value="Export" onclick="exporter('export');" />
+            &nbsp;&nbsp;
+            <div id="exportAnchor" style="float:right;"><input type="submit" name="Submit" value="Import.." onclick="return exporter('import');" />
+                <div id="exportOptions" style="visibility:hidden;">
+                    <div class="cxl" onclick="exporter('importCxl');">x</div>
+                    <textarea name="ImportString" cols="35" rows="3" id="ImportString"><?php echo h($ImportString);?></textarea><br />
+                    <label><input type="checkbox" name="ImportMerge" id="ImportMerge" value="1" checked="checked" onchange="dChge(this);if(!this.checked)alert('Warning! Unchecking this box will OVERWRITE all component settings versus merging over them.  Do not uncheck this box unless you are sure of what you are doing.  Additionally it is recommended that you export settings first in case you muck it up like always');" />Merge these settings over old settings</label> <span class="gray">(vs. overwriting old settings)</span><br />
+                    <input type="submit" name="Submit" value="GO" onclick="return exporter('importGo');" />
+                </div>
+            </div>
+        </div>
+        <h1>Component Editor</h1>
+        <?php
+        if($mode=='viewSource'){
+            ?>
+            <?php
+            $c=file($$location.'/'.$file);
+            highlight_string(implode('',$c));
+            ?><br />
+            <?php
 
-<?php }else{ ?>
-	<p>
-	<?php
-	require($$location.'/'.$file);
-	?>
-	<br />
-	<div class="fr">
-	<?php
-	$a=stat($$location.'/'.$file);	
-	?><span class="gray">File last modified <?php echo date('n/j/Y \a\t g:iA',$a['mtime']);?></span><br />
-	<a href="_juliet_.editor.php?mode=viewSource&location=<?php echo $location;?>&file=<?php echo $file;?>" onclick="return ow(this.href,'l1_viewsource','900,500');" tabindex="-1">View source code</a>
-	</div>
-<?php } ?>
+        }else{
+
+            ?><br /><?php
+            require($$location.'/'.$file);
+            ?>
+            <br />
+            <div class="fr">
+                <?php
+                $a=stat($$location.'/'.$file);
+                ?><span class="gray">File last modified <?php echo date('n/j/Y \a\t g:iA',$a['mtime']);?></span><br />
+                <a href="_juliet_.editor.php?mode=viewSource&location=<?php echo $location;?>&file=<?php echo $file;?>" onclick="return ow(this.href,'l1_viewsource','900,500');" tabindex="-1">View source code</a>
+            </div>
+            <?php
+        }
+        ?>
 
 
-<input name="pJCurrentContentRegion" type="hidden" id="pJCurrentContentRegion" value="<?php echo $pJCurrentContentRegion;?>" />
-<input name="thissection" type="hidden" id="thissection" value="<?php echo $thissection;?>" />
-<input name="_thisnode_" type="hidden" id="_thisnode_" value="<?php echo $_thisnode_;?>" />
-<input name="handle" type="hidden" id="handle" value="<?php echo $handle;?>" />
-<input name="location" type="hidden" id="location" value="<?php echo $location;?>" />
-<input name="file" type="hidden" id="file" value="<?php echo $file?>" />
-<input name="formNode" type="hidden" id="formNode" value="<?php echo $formNode?$formNode:'default';?>" />
-<input name="mode" type="hidden" id="mode" value="componentEditor" />
-<input name="submode" type="hidden" id="submode" />
-<input name="suppressPrintEnv" type="hidden" id="suppressPrintEnv" />
-<input type="submit" name="Submit" id="Submit" value="Submit" />
-<input type="button" name="Submit" value="Cancel" onclick="window.close();" /> 
-<a href="/admin/file_explorer/?uid=ced" onclick="return ow(this.href,'l1_fex','700,700');">FEX</a>
-</p>
-<label><input name="refreshOpener" type="checkbox" id="refreshOpener" value="1" checked="checked" /> Refresh the page </label>
+        <input name="pJCurrentContentRegion" type="hidden" id="pJCurrentContentRegion" value="<?php echo $pJCurrentContentRegion;?>" />
+        <input name="thissection" type="hidden" id="thissection" value="<?php echo $thissection;?>" />
+        <input name="_thisnode_" type="hidden" id="_thisnode_" value="<?php echo $_thisnode_;?>" />
+        <input name="handle" type="hidden" id="handle" value="<?php echo $handle;?>" />
+        <input name="location" type="hidden" id="location" value="<?php echo $location;?>" />
+        <input name="file" type="hidden" id="file" value="<?php echo $file?>" />
+        <input name="formNode" type="hidden" id="formNode" value="<?php echo $formNode?$formNode:'default';?>" />
+        <input name="mode" type="hidden" id="mode" value="componentEditor" />
 
-</form>
+        <!-- 2017-07-15 SF - these show to be set dynamically by JS -->
+        <input name="submode" type="hidden" id="submode" />
+        <input name="suppressPrintEnv" type="hidden" id="suppressPrintEnv" />
+
+        <input type="submit" name="Submit" id="Submit" value="Submit" />
+        <input type="button" name="Submit" value="Cancel" onclick="window.close();" />
+        <a href="/admin/file_explorer/?uid=ced" onclick="return ow(this.href,'l1_fex','700,700');">FEX</a>
+        </p>
+        <label><input name="refreshOpener" type="checkbox" id="refreshOpener" value="1" checked="checked" /> Refresh the page </label>
+
+    </form>
 </div>
 
 <?php
@@ -200,6 +214,7 @@ if($refreshOpener){
 	</script><?php
 }
 ?>
+<span>
 <div id="showTester" title="Javascript Tester" onclick="g('tester').style.display='block';">&nbsp;</div>
 <div id="tester" >
 	<a href="#" onclick="g('ctrlSection').style.display='block';return false;">Show Control Section</a><br />
@@ -207,11 +222,12 @@ if($refreshOpener){
 	<input type="button" name="button" value="Test" onclick="jsEval(g('test').value);"><br />
 	<textarea id="result" name="result" cols="65" rows="3" ></textarea>
 </div>
-<?php if(!$hideCtrlSection){ ?>
-<div id="ctrlSection" style="display:none">
+    <?php if(!$hideCtrlSection){ ?>
+        <div id="ctrlSection" style="display:none">
 	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
 	<iframe name="w2" src="/Library/js/blank.htm"></iframe>
 </div>
-<?php } ?>
+    <?php } ?>
+</span>
 </body>
 </html>

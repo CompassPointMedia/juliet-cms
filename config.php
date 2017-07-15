@@ -51,7 +51,9 @@ require(str_replace('/config.php', '/../private/config.php', __FILE__));
 
 $removeThispageExtension=true;
 $lowercaseThispage=true;
+
 $JULIET_COMPONENT_ROOT=$_SERVER['DOCUMENT_ROOT'].'/components-juliet';
+$PAGE_ROOT=$_SERVER['DOCUMENT_ROOT'].'/pages';
 
 if(!empty($fromCRON)) goto compend;
 

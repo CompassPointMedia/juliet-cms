@@ -11,73 +11,50 @@ if($Parameters=q("SELECT Settings FROM gen_nodes_settings WHERE Nodes_ID='".($_t
 	unset($pJ['componentFiles'][$handle]);
 }
 
-
-/*
-//default variables
-if(!$doSomething)$doSomething=pJ_getdata('doSomething',true);
-
-//default CSS
-if($thisComponentAdditionalCSS)$pJLocalCSS[$handle]=$thisComponentAdditionalCSS;
-
-//for local css links in head of document
-if(false)$pJLocalCSSLinks[$handle]='/site-local/somefile.css';
-*/
-
 for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin i break loop ---------------
 
 if($mode=='componentEditor'){
 	//be sure and fulfill null checkbox fields
-	/*
-	2012-03-12: this is universal code which should be updated on ALL components.	
-	*/
+
 	if($submode=='export')ob_start();
-	if($thissection){
-		/* ----------  stored in cmsb_sections -------------- */
-		!is_array($pJ['componentFiles'][$handle]) ? $pJ['componentFiles'][$handle]=array() : '';
-		//now integrate the form post
-		$pJ['componentFiles'][$handle]['data'][$formNode]=stripslashes_deep($_POST[$formNode]);
-		$Parameters[$handle]['data'][$formNode]=$pJ['componentFiles'][$handle]['data'][$formNode];
-	
-		//unlike gen_templates_blocks, place as part of a larger array
-		if(q("SELECT * FROM cmsb_sections WHERE Section='$thissection'", O_ROW)){
-			//OK
-		}else{
-			q("INSERT INTO cmsb_sections SET Section='$thissection', EditDate=NOW()");
-		}
-		q("UPDATE cmsb_sections SET Options='".base64_encode(serialize($Parameters))."' WHERE Section='$thissection'");
-		prn($qr);
-	}else if($_thisnode_){
-		/* ----------  this is a single-page, cross-block settings update ---------------  */
-		!is_array($pJ['componentFiles'][$handle]) ? $pJ['componentFiles'][$handle]=array() : '';
-		//now integrate the form post
-		$pJ['componentFiles'][$handle]['data'][$formNode]=stripslashes_deep($_POST[$formNode]);
-		$Parameters[$handle]['data'][$formNode]=$pJ['componentFiles'][$handle]['data'][$formNode];
-	
-		//unlike gen_templates_blocks, place as part of a larger array
-		if(q("SELECT * FROM gen_nodes_settings WHERE Nodes_ID='$_thisnode_'", O_ROW)){
-			//OK
-		}else{
-			q("INSERT INTO gen_ncdes_settings SET Nodes_ID='$_thisnode_', EditDate=NOW()");
-		}
-		q("UPDATE gen_nodes_settings SET Settings='".base64_encode(serialize($Parameters))."' WHERE Nodes_ID='$_thisnode_'");
-		prn($qr);
-	}else{
-		/* ----------  this is a cross-page, single-block settings update ---------------  */
-		if($Parameters=q("SELECT Parameters FROM gen_templates_blocks WHERE Templates_ID=$Templates_ID AND Name='$pJCurrentContentRegion'", O_VALUE)){
-			$a=unserialize(base64_decode($Parameters));
-		}else{
-			$a=array();
-		}
-		!is_array($pJ['componentFiles'][$handle]) ? $pJ['componentFiles'][$handle]=array() : '';
-		foreach($a as $n=>$v){
-			$pJ['componentFiles'][$handle][$n]=$v;
-		}
-		//now integrate the form post
-		$pJ['componentFiles'][$handle]['data'][$formNode]=stripslashes_deep($_POST[$formNode]);
-		$Parameters=$pJ['componentFiles'][$handle];
-		q("UPDATE gen_templates_blocks SET Parameters='".base64_encode(serialize($Parameters))."' WHERE Templates_ID='$Templates_ID' AND Name='$pJCurrentContentRegion'");
-		prn($qr);
-	}
+    if($submode == 'updateFile'){
+        if(empty($editlocation) || empty($editfile)) error_alert('Missing values for $editlocation or $editfile');
+        if(!file_exists($$editlocation.'/'.$editfile)) error_alert('File does not exist: '.$editlocation.'/'.$editfile);
+        if(!is_writable($$editlocation.'/'.$editfile)) error_alert('That file is not writable for me ('.trim(`whoami`).')!  Check permissions for the folder(s) and file: '.$$editlocation.'/'.$editfile);
+
+        $path = $$editlocation.'/'.$editfile;
+        $string = implode('', file($path));
+        $working = $string;
+        $modified = false;
+
+        foreach($sections as $name => $section){
+            // Assume form post has been escaped
+            $section = stripslashes($section);
+            /*
+             * Note the ? in the regex to be non-greedy or you'll only get the last one
+             */
+            if(!preg_match('/\/\/-{3,} begin '.$name.' -{3,}(.|\s)+?\/\/-{3,} end '.$name.' -{3,}/i', $working, $m)) continue;
+            // build replacement string, remember to break out of PHP
+            $new = '//--------------- begin '.$name.' ---------------' . "\n" . '?> ';
+            $new .= $section;
+            $new .= '<?php ' . "\n" . '//--------------- end '. $name . ' ---------------';
+            $working = str_replace($m[0], $new, $working);
+            $modified = true;
+        }
+        if($modified){
+
+            $backup = preg_replace('/\.php$/', '.bk'.date('YmdHis').'.php', $path);
+            $fp = fopen($backup, 'w');
+            fwrite($fp, $string);
+            fclose($fp);
+
+            $fp = fopen($path, 'w');
+            fwrite($fp, $working);
+            fclose($fp);
+
+        }
+
+    }
 	if($submode=='import'){
 		if($ImportMerge){
 			$a=unserialize(base64_decode($ImportString));
@@ -110,7 +87,55 @@ if($mode=='componentEditor'){
 
 	break;
 }else if($formNode=='default' /* ok this is something many component files will contain */){
-	?><p>Default Settings Form Here</p><?php
+
+    prn($$editlocation.'/'.$editfile);
+
+    //get file
+    $c=file($$editlocation.'/'.$editfile);
+
+    ob_start();
+    highlight_string(implode('',$c));
+    $c_highlighted = ob_get_contents();
+    ob_end_clean();
+
+    $sections = [];
+    $state = '';
+    $section = '';
+    foreach ($c as $line){
+
+        if($delimiter = preg_match('/^\/\/[-]{3,} (begin|end) ([ a-z0-9]+) [-]{3,}$/', trim($line), $m)){
+            $state = $m[1];
+            $section = $m[2];
+            continue;
+        }
+        if(!trim($line)) continue;
+        if($state == 'begin'){
+            $sections[$section][] = $line;
+        }
+    }
+    if(!empty($sections)){
+        foreach($sections as $section => $lines){
+            if(trim($lines[0]) == '?>' && trim($lines[count($lines)-1]) == '<?php'){
+                unset($lines[count($lines)-1]);
+                unset($lines[0]);
+            }
+            ?><h3><?php echo $section;?></h3>
+            <p class="gray">(You are in HTML!  If you want PHP you must add PHP tags)</p>
+            <textarea name="sections[<?php echo $section;?>]" rows="7" cols="85%"><?php echo htmlspecialchars(implode('', $lines));?></textarea>
+            <br /><br />
+            <?php
+        }
+    }
+    ?>
+    <input type="hidden" name="editlocation" value="<?php echo $editlocation;?>" />
+    <input type="hidden" name="editfile" value="<?php echo $editfile;?>" />
+
+    <script language="javascript" type="text/javascript">
+		$(document).ready(function(){
+			g('submode').value='updateFile';
+		});
+    </script><?php
+
 	break;
 }else if($formNode=='additional'){
 	?><p>Additional Settings Form Here</p><?php
@@ -122,50 +147,56 @@ if($mode=='componentEditor'){
 
 
 $str=$acct.($thisfolder?'.'.$thisfolder:'').($thissubfolder?'.'.$thissubfolder:'').($thispage?'.'.$thispage:'').'.php';
-if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/pages') && !mkdir($_SERVER['DOCUMENT_ROOT'].'/pages'))error_alert('Unable to create folder "pages" for the page creator');
-if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/pages/'.$str)){
+if(!is_dir($PAGE_ROOT) && !mkdir($PAGE_ROOT))error_alert('Unable to create folder "/pages" for the page creator');
+if(!file_exists($PAGE_ROOT.'/'.$str)){
 	$code='<?php
-/*
-This is a code block created account.file=$str on $date by pagecreator.php.  It is designed to be a vertical component for this page only and regardless of QS parameters.  Currently you will need to edit it using your FTP program such as dreamweaver.
-
-2012-06-18
-* initial code string created (what you read here)
-
-*/
-
-//------------- mainRegionCenterContent ---------
-ob_start();
-//edit call
-pJ_call_edit(array(
-	\'level\'=>ADMIN_MODE_DESIGNER,
-	\'location\'=>\'JULIET_COMPONENT_ROOT\',
-	\'file\'=>end(explode(\'/\',__FILE__)),
-	\'thisnode\'=>$thisnode,
-));
-//--------------- begin block content here --------------
-?>
-
-<?php
-if($adminMode){
-	?><h2>The Juliet system has just created a file in the /pages directory - please edit this page accordingly (and remove this message as well on line <?php echo __LINE__;?>)</h2>
-	<?php
-}
-?>
-
-<?php
-//--------------- end block content --------------
-$mainRegionCenterContent=ob_get_contents();
-ob_end_clean();
-?>';
+    /*
+    This is a code block created account.file=$str on $date by pagecreator.php.  It is designed to be a vertical component for this page only and regardless of QS parameters.
+    */
+    //------------- mainRegionCenterContent ---------
+    ob_start();
+    //edit call
+    pJ_call_edit(array(
+        \'level\'=>ADMIN_MODE_DESIGNER,
+        \'location\'=>\'JULIET_COMPONENT_ROOT\',
+        \'file\'=>\'pagecreator.php\',
+        \'thisnode\'=>$thisnode,
+        \'parameters\'=>array(
+            \'editlocation\'=>\'PAGE_ROOT\',
+            \'editfile\'=>end(explode(\'/\',__FILE__)),
+        ),
+    ));
+    // Define as many page blocks as you want to here:
+    ?>
+    <?php
+    if($adminMode){
+        //--------------- begin administrator content ---------------
+        ?>
+        <h2>The Juliet system has just created a content file</h2>
+        <p>This file named <?php echo $str;?> is found in the /pages directory - please edit this page accordingly (and remove this message you\'ll see as well, found on line <?php echo __LINE__;?>)</p>
+        <?php
+        //--------------- end administrator content ---------------
+    }
+    
+    //--------------- begin public content ---------------
+    ?>
+    
+    <h2>Juliet CMS</h2>
+    
+    <?php
+    //--------------- end public content ---------------
+    
+    // This id mainRegionCenterContent
+    $mainRegionCenterContent=ob_get_contents();
+    ob_end_clean();
+    ?>';
 	$code=str_replace('$str',$str,$code);
 	$code=str_replace('$date',date('F jS Y \a\t g:iA'),$code);
-	$fp=fopen($_SERVER['DOCUMENT_ROOT'].'/pages/'.$str,'w');
+	$fp=fopen($PAGE_ROOT.'/'.$str,'w');
 	fwrite($fp,$code,strlen($code));
 }
-require($_SERVER['DOCUMENT_ROOT'].'/pages/'.$str);
-
+require($PAGE_ROOT . '/' . $str);
 
 
 
 }//---------------- end i break loop ---------------
-?>

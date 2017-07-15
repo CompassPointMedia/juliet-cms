@@ -10,7 +10,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/console/systeam/php/config.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/console/resources/bais_00_includes.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/console/systeam/php/auth_i4_Usemod-Authentication_v100.php');
 $_thisnode_=36;
-$JULIET_COMPONENT_ROOT=$_SERVER['DOCUMENT_ROOT'].'/components-juliet';
 require($FUNCTION_ROOT.'/group_pJ_v100.php');
 require($JULIET_COMPONENT_ROOT.'/buy-now.php');
 

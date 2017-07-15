@@ -4,13 +4,13 @@
 //description of what the component file does here
 
 /*
-2012-05-15:
-	pulled over import and export functionality from slidenav_v120 - sweet!
-2012-04-15:
-	building this:
-		1. choose one $Parameters method
-2012-03-14:
-
+ * 2017-07-15 SF - components will go inside /_juliet_.editor.php; note structure and form fields
+ * 2012-05-15:
+ *  pulled over import and export functionality from slidenav_v120 - sweet!
+ * 2012-04-15:
+ * 	building this:
+ * 		1. choose one $Parameters method
+ * 2012-03-14:
 */
 
 
@@ -199,4 +199,3 @@ ob_end_clean();
 
 
 }//---------------- end i break loop ---------------
-?>
