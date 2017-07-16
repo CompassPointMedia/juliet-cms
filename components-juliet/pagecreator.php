@@ -23,29 +23,55 @@ if($mode=='componentEditor'){
         if(!is_writable($$editlocation.'/'.$editfile)) error_alert('That file is not writable for me ('.trim(`whoami`).')!  Check permissions for the folder(s) and file: '.$$editlocation.'/'.$editfile);
 
         $path = $$editlocation.'/'.$editfile;
-        $string = implode('', file($path));
-        $working = $string;
-        $modified = false;
 
-        foreach($sections as $name => $section){
-            // Assume form post has been escaped
-            $section = stripslashes($section);
-            /*
-             * Note the ? in the regex to be non-greedy or you'll only get the last one
-             */
-            if(!preg_match('/\/\/-{3,} begin '.$name.' -{3,}(.|\s)+?\/\/-{3,} end '.$name.' -{3,}/i', $working, $m)) continue;
-            // build replacement string, remember to break out of PHP
-            $new = '//--------------- begin '.$name.' ---------------' . "\n" . '?> ';
-            $new .= $section;
-            $new .= '<?php ' . "\n" . '//--------------- end '. $name . ' ---------------';
-            $working = str_replace($m[0], $new, $working);
-            $modified = true;
+
+        $lines = file($path);
+        $inSection = false;
+        $newFile = [];
+        $position = '';
+        $name = '';
+        foreach($lines as $line){
+            if(preg_match('/\/\/-{3,} (begin|end) ([ a-z0-9-]+) -{3,}/i', $line, $m)){
+                $position = $m[1];
+                $name = $m[2];
+            }
+            if($position == 'begin' && isset($sections[$name])){
+                // write the start of the line as-is
+                $newFile[] = $line;
+
+                //rewrite the PHP break-out
+                $newFile[] = '?>'."\n";
+
+                //add the new content
+                $newFile[] = rtrim( stripslashes($sections[$name]) ) . "\n";
+
+                $position = '';
+                $inSection = true;
+                continue;
+            }
+            if($position == 'end'){
+                //write the PHP break-in
+                $newFile[] = '<?php '."\n";
+
+                //rewrite the end of line as-is
+                $newFile[] = $line;
+
+                $position = '';
+                $inSection = false;
+                continue;
+            }
+
+            if($inSection) continue;
+            $newFile[] = $line;
         }
-        if($modified){
+        $working = trim( implode('',$newFile) ) . "\n";
+        prn('------------------');
+        prn($working);
+        if($working){
 
             $backup = preg_replace('/\.php$/', '.bk'.date('YmdHis').'.php', $path);
             $fp = fopen($backup, 'w');
-            fwrite($fp, $string);
+            fwrite($fp, implode('', $lines));
             fclose($fp);
 
             try{
