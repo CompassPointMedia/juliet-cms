@@ -1,14 +1,9 @@
 <?php
 /*
-priorities:
-* identify an account for this
-* get the public_html folder pulling 100% symlinks exc. possibly a posting page like for file explorer or console
-
-todo:
-components like nav or flex in a library with their own self-contained editing form
-link to a single product and refine this method
-
-
+Juliet CMS
+2017-07-16:
+ * Added ability to get multiple config files by precedence, for example ../private/config.php and ../private/vagrant/config.php
+ * Updates to CMSB
 */
 
 require(str_replace('/index.php','/config.php',__FILE__));

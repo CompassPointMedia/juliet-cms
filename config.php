@@ -9,6 +9,9 @@
 	_SESSION related information **MUST** be placed/declared after the master config include
 
 --------------------------------------------------------------------- */
+
+$appEnv = getenv('AppEnv');
+
 //standard error reporting/display coding
 function set_test_env(){
     error_reporting(E_ALL | E_STRICT);
@@ -45,7 +48,55 @@ foreach($extract as $_GROUP => $clean){
     extract($GLOBALS[$_GROUP]);
 }
 
-require(str_replace('/config.php', '/../private/config.php', __FILE__));
+if(!function_exists('config_get')){
+    /**
+     * config_get: return defined variables for multiple config(.php) files in order called.  File paths must be readable as-is.
+     *
+     * @created = 2017-07-13
+     * @author = Sam Fullman <sam-git@compasspointmedia.com>
+     * @param $__files
+     * @param array $__config (Note: this position is reserved if needed)
+     * @param array $__args
+     * @return array
+     */
+    function config_get($__files, $__config = [], $__args = []){
+        /*
+         * Example of use:
+         * ---------------
+         * $files = ['../private/config.php', '../private/qa/config.php'];
+         * print_r(config_get($files, [], ['foo'=>'bar']));
+         */
+
+        // File input list must be valid
+        if(empty($__files) || !is_array($__files)) return $__args;
+
+        // Accept only valid readable files
+        foreach($__files as $__n=>$__v){
+            unset($__files[$__n]);
+            if(!is_readable($__v) || !is_file($__v)) continue;
+
+            // Read the file
+            require($__v);
+            break;
+        }
+
+        // Collect defined vars in config file, or array if none present
+        $__working = get_defined_vars();
+
+        foreach(['__files', '__config', '__args', '__n', '__v'] as $__unset) unset($__working[$__unset]);
+        $__args = array_merge($__args, $__working);
+
+        return config_get($__files, $__config, $__args);
+    }
+}
+
+// Get config files by precedence
+$config = [str_replace('/config.php', '/../private/config.php', __FILE__)];
+if($appEnv){
+    $config[] = str_replace('/private/config.php', '/private/'.$appEnv.'/config.php', $config[0]);
+}
+$config = config_get($config);
+extract($config);
 
 //if they have juliet, they are going to have the console and site creator
 
@@ -64,102 +115,6 @@ $qx['defCnxMethod']=C_MASTER;
 
 if(empty($pJulietTemplate)) $pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
 $overrideGeneric5tDecoding=true;
-
-//$sql="SELECT
-//a.ID AS RECORD_ACCOUNT_ID,
-//a.AcctName AS RECORD_MASTER_DATABASE,
-//IF(a.DbseName, a.DbseName, a.AcctName) AS MASTER_DATABASE,
-//a.UserName AS MASTER_USERNAME,
-//a.HostName AS MASTER_HOSTNAME,
-//pivot.Password AS MASTER_PASSWORD,
-//IF(ctc.FirstName IS NULL, CONCAT(pivot.FirstName,' ',pivot.LastName),pivot.Company) AS adminCompany,
-//
-//IF(ctc.Email IS NULL, pivot.Email, ctc.Email) AS adminEmail,
-//IF(ctc.FirstName IS NULL, pivot.FirstName, ctc.FirstName) AS adminFirstName,
-//IF(ctc.LastName IS NULL, pivot.LastName, ctc.LastName) AS adminLastName,
-//
-//IF(ctc.FirstName IS NULL, CONCAT(pivot.FirstName,' ',pivot.LastName),pivot.Company) AS companyName,
-//IF(ctc.Phone IS NULL, pivot.Phone, ctc.Phone) AS companyPhone,
-//IF(ctc.Fax IS NULL, pivot.Fax, ctc.Fax) AS companyFax,
-//IF(ctc.Address IS NULL, pivot.Address, ctc.Address) AS companyAddress,
-//IF(ctc.City IS NULL, pivot.City, ctc.City) AS companyCity,
-//IF(ctc.State IS NULL, pivot.State, ctc.State) AS companyState,
-//IF(ctc.Zip IS NULL, pivot.Zip, ctc.Zip) AS companyZip,
-//m.ID AS mid,
-//m.Status AS ModuleStatus,
-//mi.Source AS ExtractConfig
-//FROM
-//rbase_account a
-//LEFT JOIN rbase_userbase pivot ON a.AcctName=pivot.UserName
-//LEFT JOIN rbase_UserbaseUserbase ub ON pivot.UserName = ub.Parent_UserName AND ub.Type='Primary'
-//LEFT JOIN rbase_userbase ctc ON Child_UserName=ctc.UserName,
-//rbase_AccountModules am,
-//rbase_modules m LEFT JOIN rbase_modules_items mi ON m.ID=mi.Modules_ID AND mi.Types_ID=5
-//WHERE
-//a.ID=am.Account_ID AND
-//am.Modules_ID=m.ID AND
-//a.AcctName='".$acct."' AND
-//m.SKU='051'
-//GROUP BY a.AcctName";
-//$err1='Unable to pull your RelateBase module for account '.$acct.' - either <br />
-//<br />
-//(1) your RelateBase account or module have not been set up, in which case you can go to <a href="http://www.relatebase.com/admin/accounts/accounts.php?AcctName='.$acct.'&ResourceToken='.substr(date('YmdHis').rand(10000,99999),3,16).'" onclick="window.open(this.href,\'l1_account\',\'width=700,height=700,menubar,resizable,scrollbars\');return false;">the account settings</a> or <br />
-//<br />
-//(2) Your module has a configuration error (a) SKU!=051 or (b)No item with Type=Configuration.  An email has been sent to the developer';
-//$err2='You currently have an error in your RelateBase account '.$acct.' - more than one "051" type module was present.  An email has been sent to the developer';
-//if($acctData=q($sql, O_ARRAY, C_SUPER)){
-//	if(count($acctData)>1){
-//		mail($developerEmail,'Error file '.__FILE__.', line '.__LINE__,get_globals(),$fromHdrBugs);
-//		exit($err2);
-//	}else{
-//		$acctData=$acctData[1];
-//		@extract($acctData);
-//
-//		//legacy from config.pre.cpm___.php
-//		if(!$pJulietTemplate)$pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
-//		if(!isset($pJInDevelopment))$pJInDevelopment =true;
-//		if(!isset($pJulietBalanceColumns))$pJulietBalanceColumns=false;
-//		//new coding - saved me from having to go to v104 on master_config
-//		$overrideGeneric5tDecoding=true;
-//
-//		if(preg_match('/<serialized[^>]*>([^<]+)<\/serialized>/i',$ExtractConfig,$a)){
-//			$moduleConfig=@unserialize(base64_decode($a[1]));
-//			@extract($moduleConfig);
-//		}else{
-//			if(is_null($ExtractConfig)){
-//				mail($developerEmail,'Error file '.__FILE__.', line '.__LINE__,get_globals(),$fromHdrBugs);
-//				q("INSERT INTO relatebase_rfm.rbase_modules_items SET
-//				Modules_ID=$mid,
-//				Mst_Items_ID=1,
-//				Types_ID=5,
-//				CreateDate=NOW(),
-//				Creator='".$_SESSION['systemUserName']."'",C_SUPER);
-//			}
-//			$moduleConfig=array();
-//
-//			//some things we MUST have
-//			$settings['ClientWord']='Customer';
-//			$settings['ItemWord']='Item';
-//		}
-//	}
-//	if($ModuleStatus<50){
-//		ob_start();
-//		print_r($GLOBALS);
-//		$err=ob_get_contents();
-//		ob_end_clean();
-//		$msg='Your Ecommerce Console module is currently expired or not active.  Please contact an administrator';
-//		mail($developerEmail,'module status < 50; Error file '.__FILE__.', line '.__LINE__,$msg."\n\n".$err,$fromHdrBugs);
-//		exit($msg);
-//	}
-//}else{
-//	ob_start();
-//	print_r($GLOBALS);
-//	$err=ob_get_contents();
-//	ob_end_clean();
-//	$msg='Cannot find RelateBase Juliet Project Account';
-//	mail($developerEmail,'module status < 50; Error file '.__FILE__.', line '.__LINE__,$msg."\n\n".$err,$fromHdrBugs);
-//	exit($msg.'<br />'.$err1);
-//}
 
 require($_SERVER['DOCUMENT_ROOT'].'/components/master_config_v103.php');
 
