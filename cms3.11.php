@@ -23,7 +23,8 @@ switch($mode){
 		mail($developerEmail,'error file '.__FILE__.', line '.__LINE__,get_globals(),$fromHdrBugs);
 		$assumeErrorState=false;
 	break;
-	case 'CMSBEdit':		ob_start();
+	case 'CMSBEdit':
+	    ob_start();
 		prn($QUERY_STRING);
 		prn($_POST);
 		
@@ -249,17 +250,6 @@ var editorCreated=false;
 var editorEmailsSent=0;
 function createEditor(field, container){
 	if(editorCreated)return;
-	/*
-	var fck = new FCKeditor(field);
-	var sBasePath= '/Library/fck6/';
-	fck.BasePath= sBasePath ;
-	fck.Value=g(container).innerHTML;
-	fck.ToolbarSet = "xTransitional";
-	fck.Config[ 'ToolbarLocation' ] = 'Out:xToolbar' ;
-	fck.Height = 350 ;
-	g(container).innerHTML = fck.CreateHtml();
-	g(container).style.visibility='visible';
-	*/
 	editorCreated=true;
 	return;
 	
@@ -302,7 +292,9 @@ function CMSUpdater(){
 		comparepage=(window.opener.thispage ? window.opener.thispage.toLowerCase() : '');
 		if(cmspage==comparepage && cmsfolder==window.opener.thisfolder && cmsquery==(cmsquerypassed ? window.opener.cmsquery : (window.opener.location+'').toLowerCase())){
 			cmsOriginalPagePresent=true;
-			window.opener.g(cmssection).innerHTML=(oEditor.getData());
+			if(typeof g('refreshParentContent')=='undefined' || g('refreshParentContent').checked){
+				window.opener.g(cmssection).innerHTML=(oEditor.getData());
+            }
 		}else{
 			cmsOriginalPagePresent=false;
 		}
@@ -397,6 +389,7 @@ var ab='<?php echo $nullAbs?>';
 	}
 	?>
 	<div id="CMSBSection">
+        <div class="fr"><label><input type="checkbox" id="refreshParentContent" value="1" checked="checked" /> Update while I type </label></div>
 		<div id="tabs">
 			<ul>
 				<li id="b_editor" class="tabactive"><a href="#" onClick="return tabs('editor');">Editor</a></li>

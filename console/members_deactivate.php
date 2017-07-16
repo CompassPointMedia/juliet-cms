@@ -13,5 +13,6 @@ $qx['defCnxMethod']=C_MASTER;
 $qx['useRemediation']=true;
 
 q("UPDATE finan_clients SET Active =  '0'");
+q("UPDATE addr_contacts SET Active = '0'");
 
 error_alert("Done");
