@@ -63,7 +63,7 @@ if(!function_exists('config_get')){
         /*
          * Example of use:
          * ---------------
-         * $files = ['../private/config.php', '../private/qa/config.php'];
+         * $files = ['../private/conf.php', '../private/qa/conf.php'];
          * print_r(config_get($files, [], ['foo'=>'bar']));
          */
 
@@ -97,6 +97,22 @@ if($appEnv){
 }
 $config = config_get($config);
 extract($config);
+
+// Add authentication for non-production, non-local environments (qa, develop, etc.)
+if($appEnv !== 'production' && !($appEnv == 'vagrant' || $appEnv == 'local')) {
+    if (empty($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != $MASTER_USERNAME || $_SERVER['PHP_AUTH_PW'] != $MASTER_PASSWORD) {
+        header('WWW-Authenticate: Basic realm="Development site"');
+        header('HTTP/1.0 401 Unauthorized');
+        exit('This is a development server and requires a username and password; hit F5 and try again!');
+    } else {
+        if (strtolower($_SERVER['PHP_AUTH_USER']) != $MASTER_USERNAME) {
+            exit('Invalid username; use the MASTER_USERNAME for your site.  Hit F5 and try again.');
+        }
+        if ($_SERVER['PHP_AUTH_PW'] !== $MASTER_PASSWORD) {
+            exit('Invalid password; Hit F5 and try again.');
+        }
+    }
+}
 
 //if they have juliet, they are going to have the console and site creator
 
