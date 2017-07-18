@@ -98,22 +98,6 @@ if($appEnv){
 $config = config_get($config);
 extract($config);
 
-// Add authentication for non-production, non-local environments (qa, develop, etc.)
-if($appEnv !== 'production' && !($appEnv == 'vagrant' || $appEnv == 'local')) {
-    if (empty($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != $MASTER_USERNAME || $_SERVER['PHP_AUTH_PW'] != $MASTER_PASSWORD) {
-        header('WWW-Authenticate: Basic realm="Development site"');
-        header('HTTP/1.0 401 Unauthorized');
-        exit('This is a development server and requires a username and password; hit F5 and try again!');
-    } else {
-        if (strtolower($_SERVER['PHP_AUTH_USER']) != $MASTER_USERNAME) {
-            exit('Invalid username; use the MASTER_USERNAME for your site.  Hit F5 and try again.');
-        }
-        if ($_SERVER['PHP_AUTH_PW'] !== $MASTER_PASSWORD) {
-            exit('Invalid password; Hit F5 and try again.');
-        }
-    }
-}
-
 //if they have juliet, they are going to have the console and site creator
 
 $removeThispageExtension=true;
@@ -129,10 +113,59 @@ if(!function_exists('prn'))require_once($_SERVER['DOCUMENT_ROOT'].'/functions/fu
 $qx['useRemediation']=true;
 $qx['defCnxMethod']=C_MASTER;
 
-if(empty($pJulietTemplate)) $pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
+if(empty($pJulietTemplate)){
+    $pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
+}
 $overrideGeneric5tDecoding=true;
 
+// Responsible for session_start();
 require($_SERVER['DOCUMENT_ROOT'].'/components/master_config_v103.php');
+
+// Add authentication for non-production, non-local environments (qa, develop, etc.)
+if($appEnv !== 'production' && !($appEnv == 'vagrant' || $appEnv == 'local')) {
+    // Very simple login form - see deprecated approach below this
+    if(empty($_SESSION['develop_mode'])){
+        if(isset($_REQUEST['develop_username'])){
+            if(strtolower($_REQUEST['develop_username']) == $MASTER_USERNAME && $_REQUEST['develop_password'] == $MASTER_PASSWORD){
+                $_SESSION['develop_mode'] = 'Develop site, logged in as '.$MASTER_USERNAME.' at '.date('Y-m-d H:i:s');
+                if(!empty($_REQUEST['src'])){
+                    header('Location: '.$src);
+                    exit;
+                }
+            }else{
+                exit('Your username and password were not correct.  You must use the account username and password for the site.  Go back and try again');
+            }
+        }else{
+            ?>
+            <form>
+                <h1>Developer Site</h1>
+                <p><strong>Enter your site's primary account name and password to edit this site.  Note, this is a development site, not production</strong></p>
+                <p>User name: <input type="text" name="develop_username" /></p>
+                <p>Password: <input type="password" name="develop_password" /> </p>
+                <input type="submit" value="Submit" />
+            </form>
+            <?php
+            exit;
+        }
+    }
+    /*
+    /!\ NOTE: this was conflicting with auth passwords in sub-folders, so I removed it.  Left here for legacy but I think relying on session is much better
+    if (empty($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != $MASTER_USERNAME || $_SERVER['PHP_AUTH_PW'] != $MASTER_PASSWORD) {
+        header('WWW-Authenticate: Basic realm="Development site"');
+        header('HTTP/1.0 401 Unauthorized');
+        exit('This is a development server and requires a username and password; hit F5 and try again!');
+    } else {
+        if (strtolower($_SERVER['PHP_AUTH_USER']) != $MASTER_USERNAME) {
+            exit('Invalid username; use the MASTER_USERNAME for your site.  Hit F5 and try again.');
+        }
+        if ($_SERVER['PHP_AUTH_PW'] !== $MASTER_PASSWORD) {
+            exit('Invalid password; Hit F5 and try again.');
+        }
+    }
+    */
+}
+
+
 
 $thisnode=q("SELECT ID FROM gen_nodes WHERE Type='Object' AND Category='Website Page' AND ".
 ($thisfolder /* this means a component */ ? "PageType='$thisfolder:$thispage'" : 
