@@ -186,7 +186,7 @@ $overrideConsoleEmbeddedModules=array(
 );
 $usemod=array(
 	'logmail' => pJ_getdata('logmail',true),
-	'usemodURLRoot' => 'http://'.$SERVER_NAME.'/cgi',
+	'usemodURLRoot' => 'http://'.$_SERVER['SERVER_NAME'].'/cgi',
 	'replytoEmail' => '',
 	'errFromHdr' => pJ_getdata('errFromHdr',$fromHdrBugs), /*2013-09-11*/
 	'CGI_COMPONENT_ROOT' => '',
@@ -1130,7 +1130,7 @@ switch(true){
 			--------------- 2009-12-23: delete this later on ---------------
 			this old code made the assumption that you had go somewhere after a logout - whereas, with no src declared, you'll just be at the login screen which is very useful in cases
 			if(!$src){
-				$src=$PHP_SELF;
+				$src=$_SERVER['PHP_SELF'];
 				if($qs=preg_replace('/logout=[1-2]/','',$QUERY_STRING)){
 					$qs=str_replace('&&','&',$qs);
 					$src.='?'.$qs;

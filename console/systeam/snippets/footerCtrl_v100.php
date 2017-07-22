@@ -13,12 +13,12 @@ if(!$footerCtrlLabelSiteMap)$footerCtrlLabelSiteMap='[Site Map]';
 <?php
 if(!$hideSiteEditorLink){
 	if($siteEditorLinkType=='cgi'){
-		$link=(stristr($SERVER_NAME,'relatebase-rfm.com') ? '/~'.$MASTER_DATABASE : '').'/cgi/login.php?'.($adminMode ? 'logout=1&' : '').'src='.urlencode($REQUEST_URI);
+		$link=(stristr($_SERVER['SERVER_NAME'],'relatebase-rfm.com') ? '/~'.$MASTER_DATABASE : '').'/cgi/login.php?'.($adminMode ? 'logout=1&' : '').'src='.urlencode($_SERVER['REQUEST_URI']);
 	}else if($siteEditorLinkType=='console'){
-		$link=(stristr($SERVER_NAME,'relatebase-rfm.com') ? '/~'.$MASTER_DATABASE : '').'/console/admin.php?'.($adminMode ? 'logout=1&' : '').'src='.urlencode($REQUEST_URI);
+		$link=(stristr($_SERVER['SERVER_NAME'],'relatebase-rfm.com') ? '/~'.$MASTER_DATABASE : '').'/console/admin.php?'.($adminMode ? 'logout=1&' : '').'src='.urlencode($_SERVER['REQUEST_URI']);
 	}else{
 		//basic login method
-		$link=(stristr($SERVER_NAME,'relatebase-rfm.com') ? '/~'.$MASTER_DATABASE : '').'/admin.php?'.($adminMode ? 'logout=1&' : '').'src='.urlencode($REQUEST_URI);
+		$link=(stristr($_SERVER['SERVER_NAME'],'relatebase-rfm.com') ? '/~'.$MASTER_DATABASE : '').'/admin.php?'.($adminMode ? 'logout=1&' : '').'src='.urlencode($_SERVER['REQUEST_URI']);
 	}
 	?>
 	<span class="editor">[<a href="<?php echo $link?>" title="<?php echo $siteName?> real-time site editor"><?php echo $adminMode?'Leave ':''?><?php echo $footerCtrlLabelEditor ?></a>]</span>

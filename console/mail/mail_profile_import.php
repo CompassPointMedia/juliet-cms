@@ -96,7 +96,7 @@ isEscapable=2;
 </style>
   <form action="" method="post">
     Settings and Javascript Tester <br />
-    <a id="pageHelp" href="/client/help/help_v200.php?scriptID=<?php echo $localSys[scriptID]?>&scriptVersion=<?php echo $localSys[scriptVersion]?>&src=<?php echo urlencode($PHP_SELF.'?'.$QUERY_STRING.'&component=')?>" onClick="newWindow(this.href,'l2_helpv200','width=650,height=500,resizable,scrollbars,status,menu');return false;">Page 
+    <a id="pageHelp" href="/client/help/help_v200.php?scriptID=<?php echo $localSys[scriptID]?>&scriptVersion=<?php echo $localSys[scriptVersion]?>&src=<?php echo urlencode($_SERVER['PHP_SELF'].'?'.$QUERY_STRING.'&component=')?>" onClick="newWindow(this.href,'l2_helpv200','width=650,height=500,resizable,scrollbars,status,menu');return false;">Page
     Help</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="#" onClick="sub_bugrpt(keyFormName);return false">Submit 
     Bug Report</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="#" onClick="g('ctrlSection').style.display=op[g('ctrlSection').style.display];return false">CtrlSection</a> 
     <textarea class="thinWire" name="ftest" cols="100%" rows="3" id="test"></textarea>

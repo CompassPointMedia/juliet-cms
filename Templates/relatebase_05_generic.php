@@ -540,12 +540,12 @@ ob_end_clean();
 
 if(!$pJModalInclusion){ //----------------------- begin walrus -------------------------
 
-if(!$thisfolder && ($thispage=='admin.php' || $thispage=='admin')){
+if(!$thisfolder && ($thispage=='juliet-site-editor')){
 	if($logout=='1'){
-	    if(strstr($src, 'admin')){
+
+	    if(empty($src) || strstr($src, 'juliet-site-editor')){
 	        $src = '/'; // Home page
-        }else if(!trim($src)){
-	        $src = '/';
+
         }
 		unset($_SESSION['special'][$MASTER_DATABASE]['adminMode']);
 		header('Location: '.$src);
@@ -555,9 +555,9 @@ if(!$thisfolder && ($thispage=='admin.php' || $thispage=='admin')){
 		window.location='<?php echo $src?>';
 		</script><?php
 		exit;
-	}else if($UN==$MASTER_USERNAME && $PW==$MASTER_PASSWORD){
+	}else if($julietsiteeditor_UN==$MASTER_USERNAME && $julietsiteeditor_PW==$MASTER_PASSWORD){
 		$_SESSION['special'][$MASTER_DATABASE]['adminMode']=($_COOKIE['setAdminMode'] ? $_COOKIE['setAdminMode'] : 2);
-		$location=($src ? $src : '/');
+		$location=(!empty($src) ? $src : '/');
 		header('Location: '.$location);
 		?><script>window.location='<?php echo $location?>'</script><?php
 		exit;
@@ -948,22 +948,21 @@ echo $str1.$str2;
 			}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
 				if($test==17)exit('at 2');
 				eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-			}else if($thisfolder=='' && ($thispage=='admin.php' || $thispage=='admin')){
+			}else if($thisfolder=='' && $thispage=='juliet-site-editor'){
 				?><h1>Administrative Access</h1>
 				<?php if($error){ ?>
 				<div style="color:darkred;font-weight:bold;">Your username or password is incorrect</div>
 				<?php } ?>
 				<p>Enter your username and password:</p>
-				<form name="form1" id="form1" method="post" action="admin.php">
-					<input name="UN" type="text" id="UN" />
+				<form name="form1" id="form1" method="post" action="juliet-site-editor">
+					<input name="julietsiteditor_UN" type="text" id="UN" />
 					<br />
-					<input name="PW" type="password" id="PW" />
+					<input name="julietsiteditor_PW" type="password" id="PW" />
 					<input type="hidden" name="src" value="<?php echo h(stripslashes($src));?>" id="src" />
 					<br />
 					<input type="submit" name="Submit" value="Sign In" />
 				</form><?php
 			}else{
-					if($test==17)exit('asdf');
 				CMSB($pJCurrentContentRegion.'_1');
 			} 
 			?>

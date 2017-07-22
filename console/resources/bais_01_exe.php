@@ -1903,7 +1903,7 @@ switch(true){
 							'to'=> ($testing ? 'sam-git@compasspointmedia.com' : $v[$o]),
 							'subject'=> stripslashes($Title),
 							'body'=> $mailBody,
-							'from'=> 'do-not-reply@'.$SERVER_NAME,
+							'from'=> 'do-not-reply@'.$_SERVER['SERVER_NAME'],
 							'mode'=> 'html',
 							'important'=> $markImportant,
 							'fSwitchEmail'=> $developerEmail,

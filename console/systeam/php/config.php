@@ -403,7 +403,7 @@ $moduleVersion='2.0';
 $moduleRevision='1';
 $ctime=time();
 //this is the system configuration file, created by user systeam 
-if(!isset($localSys['scriptID']) || !isset($localSys['scriptVersion']))exit('CONFIG.PHP: Script ID (handle) and version not declared for '.$PHP_SELF.', componentID is optional');
+if(!isset($localSys['scriptID']) || !isset($localSys['scriptVersion']))exit('CONFIG.PHP: Script ID (handle) and version not declared for '.$_SERVER['PHP_SELF'].', componentID is optional');
 
 
 //name of this page

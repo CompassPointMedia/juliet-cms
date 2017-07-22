@@ -205,11 +205,11 @@ function toggleToolbar(o){
 	<?php
 	if($thisnode){ 
 		?>
-		<a href="http://<?php echo $SERVER_NAME; /*echo $a[count($a)-2].'.'.$a[count($a)-1];*/?>/console/rsc_pagemanager_focus.php?Nodes_ID=<?php echo $thisnode?>" title="Edit this page with the page manager in console" onClick="return ow(this.href,'l1_pagemanager','701,702');">Edit Page</a>
+		<a href="http://<?php echo $_SERVER['SERVER_NAME'];?>/console/rsc_pagemanager_focus.php?Nodes_ID=<?php echo $thisnode?>" title="Edit this page with the page manager in console" onClick="return ow(this.href,'l1_pagemanager','701,702');">Edit Page</a>
 		<?php 
 	}else if(!$thisfolder && !$thissubfolder && $thispage){
 		?>
-		<a href="http://www.<?php $a=explode('.',$SERVER_NAME);echo $a[count($a)-2].'.'.$a[count($a)-1];?>/console/rsc_pagemanager_focus.php?Name=<?php echo $thispage?>&Title=<?php echo $thispage;?>" title="Add this page with the page manager in console" onclick="return ow(this.href,'l1_pagemanager','701,702');"><img src="/images/i/findicons.com-makenewpage.png" width="18" height="18" alt="new page" /> Add Page (<?php echo $thispage;?>)</a>
+		<a href="http://www.<?php $a=explode('.',$_SERVER['SERVER_NAME']);echo $a[count($a)-2].'.'.$a[count($a)-1];?>/console/rsc_pagemanager_focus.php?Name=<?php echo $thispage?>&Title=<?php echo $thispage;?>" title="Add this page with the page manager in console" onclick="return ow(this.href,'l1_pagemanager','701,702');"><img src="/images/i/findicons.com-makenewpage.png" width="18" height="18" alt="new page" /> Add Page (<?php echo $thispage;?>)</a>
 		<?php
 	}
 	?>

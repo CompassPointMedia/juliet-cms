@@ -2,7 +2,7 @@
 /*
 TODO/requests
 -------------
-would be nice to have a search and replace tab to replace say 310-701-3129 with 512-938-9018, esp. by regular expression; also with parameter of how many versions back or how far back to go, and what languages to include
+would be nice to have a search and replace tab to replace say 310-701-3129 with 512-210-5512, esp. by regular expression; also with parameter of how many versions back or how far back to go, and what languages to include
 
 CMS Bridge version 3.11 - forked off 1/11/12 - multi-language support
 
@@ -25,9 +25,10 @@ switch($mode){
 	break;
 	case 'CMSBEdit':
 	    ob_start();
-		prn($QUERY_STRING);
-		prn($_POST);
-		
+	    // 2017-07-18 SF - commented this out because of XSS complaints from the browser
+		//prn($QUERY_STRING);
+		//prn($_POST);
+
 		// new shutdown coding
 		$assumeErrorState=true;
 		register_shutdown_function('iframe_shutdown');

@@ -883,7 +883,7 @@ switch(true){
 			/*
 			if($_SESSION['Login']){
 				?><form action="Library/email_page.php" method="post" name="form3" target="email" id="form3" style="margin:0;">
-				<input type="hidden" name="page" value="<?php echo $siteDomain . $PHP_SELF . '?'  .  htmlentities(stripslashes( $QUERY_STRING . '&override=edirrevo'));?>" />
+				<input type="hidden" name="page" value="<?php echo $siteDomain . $_SERVER['PHP_SELF'] . '?'  .  htmlentities(stripslashes( $QUERY_STRING . '&override=edirrevo'));?>" />
 				<input type="submit" name="Submit2" value="Click here to Email this page" />
 				</form><?php
 			}
