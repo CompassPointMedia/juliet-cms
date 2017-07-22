@@ -955,9 +955,9 @@ echo $str1.$str2;
 				<?php } ?>
 				<p>Enter your username and password:</p>
 				<form name="form1" id="form1" method="post" action="juliet-site-editor">
-					<input name="julietsiteditor_UN" type="text" id="UN" />
+					<input name="julietsiteeditor_UN" type="text" id="UN" />
 					<br />
-					<input name="julietsiteditor_PW" type="password" id="PW" />
+					<input name="julietsiteeditor_PW" type="password" id="PW" />
 					<input type="hidden" name="src" value="<?php echo h(stripslashes($src));?>" id="src" />
 					<br />
 					<input type="submit" name="Submit" value="Sign In" />
