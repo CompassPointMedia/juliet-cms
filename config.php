@@ -122,7 +122,7 @@ $overrideGeneric5tDecoding=true;
 require($_SERVER['DOCUMENT_ROOT'].'/components/master_config_v103.php');
 
 // Add authentication for non-production, non-local environments (qa, develop, etc.)
-if($appEnv !== 'production' && !($appEnv == 'vagrant' || $appEnv == 'local')) {
+if($appEnv !== 'production' && !($appEnv == 'vagrant' || $appEnv == 'local' || $appEnv == 'qa')) {
     // Very simple login form - see deprecated approach below this
     if(empty($_SESSION['develop_mode'])){
         if(isset($_REQUEST['develop_username'])){
