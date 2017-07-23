@@ -18,7 +18,7 @@ function set_test_env(){
     $AppEnv = getenv('AppEnv');
     if($AppEnv == 'production'){
         ini_set('display_errors',false);
-    }else if($AppEnv == 'vagrant' || $AppEnv == 'develop') {
+    }else if($AppEnv == 'vagrant' || $AppEnv == 'develop' || $AppEnv == 'qa') {
         ini_set('display_errors',false);
     }else{
         // for now
