@@ -418,7 +418,7 @@ if($IsPackage){
 	?></td>
   </tr>
 	
-  <?php if($mysql_declare_field_attributes_rtcs[0][$MASTER_DATABASE]['finan_items']['theme']){ ?>
+  <?php if($mysql_declare_field_attributes_rtcs[0][$acct]['finan_items']['theme']){ ?>
   <tr>
 	<td>Theme:</td>
 	<td><?php
@@ -443,7 +443,7 @@ if($IsPackage){
 	?></td>
   </tr>
   <?php } ?>
-  <?php if($mysql_declare_field_attributes_rtcs[0][$MASTER_DATABASE]['finan_items']['function']){ ?>
+  <?php if($mysql_declare_field_attributes_rtcs[0][$acct]['finan_items']['function']){ ?>
   <tr>
 	<td>Function:</td>
 	<td><?php

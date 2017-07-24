@@ -14,9 +14,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/console/systeam/php/auth_i4_Usemod-Au
 $assumeErrorState=false;
 
 if($logout==1){
-	$_SESSION['special'][$MASTER_DATABASE]['adminMode']=0;
+	$_SESSION['special'][$acct]['adminMode']=0;
 }else if(strtolower($HTTP_SERVER_VARS['PHP_AUTH_USER'])==strtolower($MASTER_DATABASE) && strlen($HTTP_SERVER_VARS['PHP_AUTH_PW'])){
-	$_SESSION['special'][$MASTER_DATABASE]['adminMode']=1;
+	$_SESSION['special'][$acct]['adminMode']=1;
 }else{
 	exit('Improper login - out of synch with available logins');
 }

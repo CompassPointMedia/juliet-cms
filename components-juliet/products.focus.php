@@ -72,7 +72,7 @@ $rdp=q("SELECT * FROM finan_items
 WHERE 
 ID = '$ID' AND 
 Active=1  AND 
-( RWB='B' OR RWB='".($_SESSION['cnx'][$MASTER_DATABASE]['wholesaleAccess']?'W':'R')."')",O_ROW);
+( RWB='B' OR RWB='".($_SESSION['cnx'][$acct]['wholesaleAccess']?'W':'R')."')",O_ROW);
 $useProductDescriptions=3;
 $prodMainImgPath='/images/products/large/';
 $prodSlideClickMessage='Click thumbnails to the right for more views of the item';

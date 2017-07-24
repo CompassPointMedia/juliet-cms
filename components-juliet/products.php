@@ -820,7 +820,7 @@ switch(true){
 
 		**/
 
-		$baseWhere = "WHERE Active=1  AND ( RWB='B' OR RWB='".($_SESSION['cnx'][$MASTER_DATABASE]['wholesaleAccess']?'W':'R')."')";
+		$baseWhere = "WHERE Active=1  AND ( RWB='B' OR RWB='".($_SESSION['cnx'][$acct]['wholesaleAccess']?'W':'R')."')";
 		if($links_id && $SubCategory){
 			//this is requests from the thumbnails on summary.php, i.e. combination of a link id AND a specific SubCategory
 			$rd=q("SELECT Name AS LinkName, Clause, OrderBy, ImageLocation, TextContent FROM gen_links WHERE ID='$links_id'" ,O_ROW);
@@ -1030,7 +1030,7 @@ switch(true){
 						<td class="embed2_1"><a href="single.php?ID=<?php echo $rd['ID'];?>&amp;links_id=<?php echo $links_id?>&amp;SubCategory=<?php echo urlencode(stripslashes($SubCategory)); ?>&amp;Keywords=<?php echo urlencode($Keywords)?>&amp;Theme=<?php echo urlencode($Theme)?>&amp;Function=<?php echo urlencode($Function)?>" title="View this specific product"><img src="<?php echo $imgSrc?>" width="<?php echo $width?>" border="0" /></a></td>
 						<td class="embed2_2" valign="top"><div class="rName" style="font-size:119%"><?php echo htmlentities($rd['Name']);?></div>
 							<div class="rSKU"><?php echo htmlentities($rd['SKU']);?></div>
-						  <?php echo ($price=number_format($_SESSION['cnx'][$MASTER_DATABASE]['wholesaleAccess']? $rd['WholesalePrice'] : $rd['UnitPrice'], 2)=='0.00'?'':$price);?> <br />
+						  <?php echo ($price=number_format($_SESSION['cnx'][$acct]['wholesaleAccess']? $rd['WholesalePrice'] : $rd['UnitPrice'], 2)=='0.00'?'':$price);?> <br />
 							<?php
 								if($_SESSION['Login']=='guest' && $_SESSION['AcctStatus']==2 && $rd['PK']>1){
 									$multiplier=$rd['PK'];
@@ -1124,7 +1124,7 @@ switch(true){
 	case $thispage=='summary':
 		//Old summary.php page from Paci fic Ba sin/Rus ch
 		$images=get_file_assets($_SERVER['DOCUMENT_ROOT'].'/images/category');
-		$baseWhere=" WHERE Active = 1 /* AND (RWB='B' OR RWB='".($_SESSION['cnx'][$MASTER_DATABASE]['wholesaleAccess']?'W':'R')."') */";
+		$baseWhere=" WHERE Active = 1 /* AND (RWB='B' OR RWB='".($_SESSION['cnx'][$acct]['wholesaleAccess']?'W':'R')."') */";
 		if($links_id){
 			$rd=q("SELECT Name as LinkName, Clause, OrderBy, ImageLocation, TextContent, Description FROM gen_links WHERE ID='$links_id'",O_ROW);
 			@extract($rd);
@@ -1267,11 +1267,11 @@ switch(true){
 					  <tr>
 						<td valign="top" align="center"><?php
 							//get the link url
-							$ct=q("SELECT COUNT(*) AS ct FROM finan_items WHERE SubCategory = '".$v['SubCategory']."' AND Active=1 /* AND ( RWB='B' OR RWB='".($_SESSION['cnx'][$MASTER_DATABASE]['wholesaleAccess']?'W':'R')."') */",O_VALUE);
+							$ct=q("SELECT COUNT(*) AS ct FROM finan_items WHERE SubCategory = '".$v['SubCategory']."' AND Active=1 /* AND ( RWB='B' OR RWB='".($_SESSION['cnx'][$acct]['wholesaleAccess']?'W':'R')."') */",O_VALUE);
 							if($ct==0){
 								$url="#";
 							}else if($ct==1){
-								$ID=q("SELECT ID FROM finan_items WHERE SubCategory='".$v['SubCategory']."' AND Active=1 /* AND ( RWB='B' OR RWB='".($_SESSION['cnx'][$MASTER_DATABASE]['wholesaleAccess']?'W':'R')."') */", O_VALUE);
+								$ID=q("SELECT ID FROM finan_items WHERE SubCategory='".$v['SubCategory']."' AND Active=1 /* AND ( RWB='B' OR RWB='".($_SESSION['cnx'][$acct]['wholesaleAccess']?'W':'R')."') */", O_VALUE);
 								$url="single.php?ID=".$ID;
 							}else{
 								$url="/products/8010?links_id=$links_id&SubCategory=".urlencode($v['SubCategory']);

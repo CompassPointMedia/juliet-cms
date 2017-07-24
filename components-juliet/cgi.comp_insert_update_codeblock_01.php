@@ -84,7 +84,7 @@ if($usemod['wholesaleToken'] && isset($_POST['WholesaleAccess']) && $usemod['pre
 		'WholesaleNotes'=>'ALTER TABLE `'.$MASTER_DATABASE.'`.`addr_contacts` 
 			ADD `WholesaleNotes` TEXT AFTER `WholesaleState` '
 	);
-	if(!$mysql_declare_field_attributes_rtcs[$MASTER_DATABASE]['addr_contacts']){
+	if(!$mysql_declare_field_attributes_rtcs[$acct]['addr_contacts']){
 		//get fields for addr_contacts
 		$a=mysql_declare_field_attributes_rtcs($MASTER_DATABASE, 'addr_contacts');
 		foreach($wholesaleFields as $n=>$v){

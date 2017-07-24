@@ -106,7 +106,7 @@ if($qr['count']>1 && !$usemod['allowLoginForDuplicateUserTokens']){
 			//your opportunity to enroll has expired - you will need to enroll again
 			$loginCode=30;
 			//unset this in session - no longer eligible
-			unset($_SESSION['special'][$MASTER_DATABASE]['EEATUnverifiedID']);
+			unset($_SESSION['special'][$acct]['EEATUnverifiedID']);
 		}else{
 			//enroll them
 			q("UPDATE $table SET EnrollmentAuthToken=NULL, Editor='".$MASTER_USERNAME."' WHERE ".$usemod['dbLoginFieldPrimary']."='".$rd[$usemod['dbLoginFieldPrimary']]."'",$v280cnx);
@@ -117,7 +117,7 @@ if($qr['count']>1 && !$usemod['allowLoginForDuplicateUserTokens']){
 			if($usemod['signinAfterEnrollmentConfirmation'])$setLoginVars=true;
 
 			//unset this in session - no longer unverified
-			unset($_SESSION['special'][$MASTER_DATABASE]['EEATUnverifiedID']);
+			unset($_SESSION['special'][$acct]['EEATUnverifiedID']);
 		}
 	}else{
 		//you must confirm your enrollment first [2]
@@ -129,7 +129,7 @@ if($qr['count']>1 && !$usemod['allowLoginForDuplicateUserTokens']){
 	if($usemod['allowRepeatEnrollmentLinkToSignin']) $setLoginVars=true;
 
 	//do this just in case
-	unset($_SESSION['special'][$MASTER_DATABASE]['EEATUnverifiedID']);
+	unset($_SESSION['special'][$acct]['EEATUnverifiedID']);
 }else if(strlen($PW)){
 	//this is based on the assumption that nobody has a 32char password
 	$originalPW=stripslashes($PW);

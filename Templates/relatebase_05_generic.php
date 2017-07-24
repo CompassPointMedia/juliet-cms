@@ -547,7 +547,7 @@ if(!$thisfolder && ($thispage=='juliet-site-editor')){
 	        $src = '/'; // Home page
 
         }
-		unset($_SESSION['special'][$MASTER_DATABASE]['adminMode']);
+		unset($_SESSION['special'][$acct]['adminMode']);
 		header('Location: '.$src);
 		?>
 		redirecting..
@@ -556,7 +556,7 @@ if(!$thisfolder && ($thispage=='juliet-site-editor')){
 		</script><?php
 		exit;
 	}else if($julietsiteeditor_UN==$MASTER_USERNAME && $julietsiteeditor_PW==$MASTER_PASSWORD){
-		$_SESSION['special'][$MASTER_DATABASE]['adminMode']=($_COOKIE['setAdminMode'] ? $_COOKIE['setAdminMode'] : 2);
+		$_SESSION['special'][$acct]['adminMode']=($_COOKIE['setAdminMode'] ? $_COOKIE['setAdminMode'] : 2);
 		$location=(!empty($src) ? $src : '/');
 		header('Location: '.$location);
 		?><script>window.location='<?php echo $location?>'</script><?php

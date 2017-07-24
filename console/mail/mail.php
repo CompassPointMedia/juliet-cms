@@ -236,11 +236,11 @@ The following values are handled outside this page and are set in session the fi
 One additional complex part here is that when we use a Template from the internet, what is stored initially in the database is the TemplateURL, and either NOTHING for the editable regions in relatebase_mail_profiles_vars if no editing has been done, or the edited value if editing has been done.    The way this works for the users is that initially he will see the "native" editable region values of the template.  They will also be stored in session, AND they will be saved to database if they save the profile.  Same goes for editing.  However there's a button to revert to the web template.
 
 *****/
-if(!$_SESSION['mail'][$MASTER_DATABASE]['templates'][$Profiles_ID] || $revertDocument){
+if(!$_SESSION['mail'][$acct]['templates'][$Profiles_ID] || $revertDocument){
 	//Required Fields for AdvSQL and Import file
-	$_SESSION['mail'][$MASTER_DATABASE]['templates'][$Profiles_ID]['advanced']['RequiredFields']=$RequiredFields;
+	$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['advanced']['RequiredFields']=$RequiredFields;
 	//subject
-	$_SESSION['mail'][$MASTER_DATABASE]['templates'][$Profiles_ID]['subj']=$Subject;
+	$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['subj']=$Subject;
 	//body
 	if($TemplateMethod=='file'){
 		//can't do it yet
@@ -292,15 +292,15 @@ if(!$_SESSION['mail'][$MASTER_DATABASE]['templates'][$Profiles_ID] || $revertDoc
 			if($regions){
 				foreach($regions as $editableName=>$body){
 					//fill with the existing SESSION, Db, or HTML in that precedence
-					$_SESSION['mail'][$MASTER_DATABASE]['templates'][$Profiles_ID]['r'][$editableName]=$body;
-					$_SESSION['mail'][$MASTER_DATABASE]['templates'][$Profiles_ID]['rName'][]=$editableName;
+					$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['r'][$editableName]=$body;
+					$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['rName'][]=$editableName;
 				}
 			}
 			//-------------------------------------------------------------
 		}
 	}
 	//load column information
-	$_SESSION['mail'][$MASTER_DATABASE]['templates'][$Profiles_ID]['EmailColumns']=$EmailColumns;
+	$_SESSION['mail'][$acct]['templates'][$Profiles_ID]['EmailColumns']=$EmailColumns;
 }
 
 //--------- Added 2006-06-12: add lastMailProfile if coming from CMS group ------------
@@ -316,8 +316,8 @@ if($cb==1015 && $_GET['Groups_ID']){
 //--------------------------------------------------------------------------------------
 
 $groupAccess=false;
-if($_SESSION['cnx'][$MASTER_DATABASE]['modules'])
-foreach($_SESSION['cnx'][$MASTER_DATABASE]['modules'] as $v){
+if($_SESSION['cnx'][$acct]['modules'])
+foreach($_SESSION['cnx'][$acct]['modules'] as $v){
 	if($v['SKU']=='065' && $v['Status']==50){
 		//they have access to this module
 		$groupAccess=true;
