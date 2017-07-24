@@ -79,7 +79,18 @@ switch(true){
 		}
 	break;
 	case $mode=='contact':
-		if(!preg_match('/^[-_.a-z0-9]+@[-a-z0-9]+(\.[-a-z0-9]+){1,}$/i',$Email))error_alert('Enter a valid email');
+        //NOTE: pretty low security - someone could just post with the fields unset
+        if(isset($_q) && isset($_r)){
+            //jasperandwendy
+            $r=$_POST['_res'][$_POST['_r']];
+            $q=$_POST['_q'];
+            for($i=2; $i<=min($r-2,22); $i++){
+                if( round(sqrt($i) / pow($r - $i, .3333),4) == round($q,4))$pass=true;
+            }
+            if(!$pass)error_alert('You are either not a human being or you made a simple math error (which Shakespeare would find ironic, if you think about it).  We are divine and forgive you.  Check the sum of the two numbers and try again.');
+        }
+
+        if(!preg_match('/^[-_.a-z0-9]+@[-a-z0-9]+(\.[-a-z0-9]+){1,}$/i',$Email))error_alert('Enter a valid email');
 		if((!$FirstName || !$LastName))	error_alert('You must enter a first and last name');
 
 		$_POST['Submitted at']=date('m/d/Y g:iA');
@@ -101,6 +112,17 @@ switch(true){
 		$assumeErrorState=false;
 	break;
 	case $mode=='message':
+        //NOTE: pretty low security - someone could just post with the fields unset
+        if(isset($_q) && isset($_r)){
+            //jasperandwendy
+            $r=$_POST['_res'][$_POST['_r']];
+            $q=$_POST['_q'];
+            for($i=2; $i<=min($r-2,22); $i++){
+                if( round(sqrt($i) / pow($r - $i, .3333),4) == round($q,4))$pass=true;
+            }
+            if(!$pass)error_alert('You are either not a human being or you made a simple math error (which Shakespeare would find ironic, if you think about it).  We are divine and forgive you.  Check the sum of the two numbers and try again.');
+        }
+
 		if(!preg_match('/^[-_.a-z0-9]+@[-a-z0-9]+(\.[-a-z0-9]+){1,}$/i',$Email))error_alert('Enter a valid email');
 		if(!$Name) error_alert('Please enter your name');
 
@@ -432,7 +454,7 @@ echo '<?xml version="1.0" encoding="utf-8"'.'?'.'>
 		//this is used in for example _juliet_.settings.php; call it directly before calling the component
 		$pJModalInclusion=true;
 		require($pJulietTemplate);
-		
+
 		require($$location.'/'.$file);
 
 		if($mode=='componentEditor' && $refreshOpener){

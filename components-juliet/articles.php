@@ -30,18 +30,34 @@ if(!$articlesRegion)$articlesRegion='mainRegionCenterContent';
         <textarea name="Message" id="contact_form_message"></textarea>
     </div>
 
+    <br/>
+    <?php
+    //jasperandwendy
+    $res=rand(7,24);
+    $_a=rand(2,$res-2);
+    $_b=$res-$_a;
+    $_q=sqrt($_a)/pow($_b, .3333);
+    $_r=rand(1,1000000);
+    ?>
+    <span style="color:darkred;">Verify you are a human being to prevent spam!</span><br />
+    <span style="font-size:larger;font-family:Georgia, 'Times New Roman', Times, serif;">
+        <input type="hidden" name="_q" value="<?php echo $_q;?>" />
+        <input type="hidden" name="_r" value="<?php echo $_r;?>" />
+        <?php echo $_a . ' + '.$_b.' = ';?><input type="text" size="3" name="_res[<?php echo $_r;?>]" id="_res" value="" />
+    </span>
+    <br />
+    <br />
     <div style="margin-bottom:10px;">
         <input type="submit" content="Submit">
         <input name="mode" type="hidden" id="mode" value="message">
     </div>
+
+    <br />
 </form>
 
-<p><?php echo $adminEmail;?></p>
-<p><?php echo $adminPhone;?></p>
 
 <?php
 $articlesRegion=ob_get_contents();
 
 $$block=ob_get_contents();
 ob_end_clean();
-?>

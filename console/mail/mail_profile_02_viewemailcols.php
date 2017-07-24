@@ -49,7 +49,7 @@ if($x=$_SESSION['mail'][$acct]['templates'][$Profiles_ID][EmailColumns]){
 <body style="background-image:none;background-color:menu;padding:5 3 5 3;">
 <form action="mail_profile_01_exe.php?mode=selectEmailCols" target="w3test" method="POST">
   <?php
-$fp=fopen($VOS_ROOT.'/'.$_SESSION[currentConnection].'/tmp_mailprofile'.$Profiles_ID.'.txt','r') or die('Could not open tmp_mailprofile'.$Profiles_ID.'.txt for reading');
+$fp=fopen($VOS_ROOT.'/'.$_SESSION['currentConnection'].'/tmp_mailprofile'.$Profiles_ID.'.txt','r') or die('Could not open tmp_mailprofile'.$Profiles_ID.'.txt for reading');
 $numRows=10;
 $maxchars=20;
 $separator=',';

@@ -220,6 +220,12 @@ if($acctData=q($sql, O_ARRAY, C_SUPER)){
 		exit($err2);
 	}else{
 		$acctData=$acctData[1];
+
+		/* 2017-07-24 SF - The relatebase idea was pretty intensive, this logic deals with the fact that the db is now variable and these values are going to be declared in a site config file also
+		*/
+		if(!empty($config['MASTER_DATABASE'])) unset($acctData['MASTER_DATABASE']);
+
+
 		@extract($acctData);
 		if(preg_match('/<serialized[^>]*>([^<]+)<\/serialized>/i',$ExtractConfig,$a)){
 			$moduleConfig=@unserialize(base64_decode($a[1]));

@@ -53,7 +53,7 @@ if(!function_exists('config_get')){
      * config_get: return defined variables for multiple config(.php) files in order called.  File paths must be readable as-is.
      *
      * @created = 2017-07-13
-     * @author = Sam Fullman <sam-git@compasspointmedia.com>
+     * @author = Sam Fullman <sam-git@samuelfullman.com>
      * @param $__files
      * @param array $__config (Note: this position is reserved if needed)
      * @param array $__args
@@ -291,5 +291,35 @@ if(is_array($addedEmbeddedModules) && $addedEmbeddedModulesAuth==md5($MASTER_PAS
 /* Just got $cartAcct and $mid, might as well set the shopping cart url */
 $shoppingCartURL = 'https://www.relatebase.com/c/cart/en/v500/?sessionid='.($sessionid ? $sessionid : $GLOBALS['PHPSESSID']).'&acct='.$cartAcct.'&mid='.$mid;
 //----------------- end codeblock 088233 ---------------------
+
+if(!function_exists('sun')){
+function sun($n=''){
+    /*
+    v1.00 2013-11-11: this is the most advanced version; for cnx, we are agnostic about .identity...
+    */
+    global $acct;
+    if($_SESSION['admin']['userName']){
+        extract($_SESSION['admin']);
+        switch($n){
+            case 'e': return $email;
+            case 'fl': return $firstName . ' '. $lastName;
+            case 'lf': return $lastName . ', '.$firstName;
+            case 'lfi': return $lastName.', '.$firstName.($middleName?' '.substr($middleName,0,1).'.':'');
+            default: return $userName;
+        }
+    }else if(($a=$_SESSION['cnx'][$acct]) && $_SESSION['systemUserName']){
+        extract($a);
+        switch($n){
+            case 'e': return $email;
+            case 'fl': return $firstName . ' '. $lastName;
+            case 'lf': return $lastName . ', '.$firstName;
+            case 'lfi': return $lastName.', '.$firstName.($middleName?' '.substr($middleName,0,1).'.':'');
+            default: return $_SESSION['systemUserName'];
+        }
+    }else{
+        return $GLOBALS['PHP_AUTH_USER'];
+    }
+}}
+
 compend:
 

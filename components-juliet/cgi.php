@@ -423,6 +423,7 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin i break loop ------
 if($adminMode && $_POST['_sendEmail']=='2' && !valid_email($_POST['_sendEmailTo']))error_alert('You selected an alternate email to send notifications to; however it is not valid.  Please change your selection or enter a valid email address');
 
 if($comboMode=='insertUpdate'){
+    //NOTE: pretty low security - someone could just post with the fields unset
 	if(isset($_q) && isset($_r)){
 		//jasperandwendy
 		$r=$_POST['_res'][$_POST['_r']];
@@ -430,7 +431,7 @@ if($comboMode=='insertUpdate'){
 		for($i=2; $i<=min($r-2,22); $i++){
 			if( round(sqrt($i) / pow($r - $i, .3333),4) == round($q,4))$pass=true;
 		}
-		if(!$pass)error_alert('You are either not a human being or you made a simple math error.  Check the sum of the two numbers and try again.');
+		if(!$pass)error_alert('You are either not a human being or you made a simple math error (which Shakespeare would find ironic, if you think about it).  We are divine and forgive you.  Check the sum of the two numbers and try again.');
 	}
 	//for email logging - 2013-09-11 I am not sure how often this was used, only in cpm160 PENN
 	if(file_exists($_SERVER['DOCUMENT_ROOT'].'/components-juliet/'.$acct.'.cgiprecoding.php')){

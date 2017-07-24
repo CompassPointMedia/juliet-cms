@@ -150,7 +150,7 @@ switch (true){
 		//file is saved as /home/rbase/private_files/relatebase_accts/acctname/tmp_mailprofile001.txt
 		if(is_uploaded_file($_FILES['importfile']['tmp_name'])){
 			//upload the file and insert the record
-			echo $uploadOK = move_uploaded_file($_FILES['importfile']['tmp_name'],$VOS_ROOT."/".$_SESSION[currentConnection]."/tmp_mailprofile".$Profiles_ID.".txt");
+			echo $uploadOK = move_uploaded_file($_FILES['importfile']['tmp_name'],$VOS_ROOT."/".$_SESSION['currentConnection']."/tmp_mailprofile".$Profiles_ID.".txt");
 			
 			//we should check for file format as well, based on the specifications they gave
 		}

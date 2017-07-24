@@ -125,7 +125,7 @@ if(strlen($$object) /* || $Assns_ID=q("SELECT ID FROM sma_assns WHERE ResourceTo
 				$b[$n][1]=$i;
 			}
 		}
-		if(!function_exists('subkey_sort')) require($FUNCTION_ROOT.'/function_array_subkey_sort_v202.php');
+		if(!function_exists('subkey_sort')) require($FUNCTION_ROOT.'/function_array_subkey_sort_v300.php');
 		$b=subkey_sort($b,1);
 		//now print table
 		?>

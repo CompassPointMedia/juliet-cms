@@ -510,7 +510,7 @@ if($mode=='componentControls'){
 		//rules: 1. no concurrent booking 2. not more than 5 from today on 3. above capacity
 		$StartTime=($time=='afternoon'?'12:00':'07:00');
 		$EndTime=($time=='morning'?'12:00':'17:00');
-		if(q("SELECT COUNT(*) FROM cal_events WHERE Clients_ID=$Clients_ID AND StartDate='$date' AND StartTime<'$EndTime' AND EndTime>'$StartTime'", O_VALUE))error_alert('You cannot book this time; you already have an overlapping booking in this or another field!', $hasAdmin);
+        if(q("SELECT COUNT(*) FROM cal_events WHERE Clients_ID=$Clients_ID AND StartDate='$date' AND StartTime<'$EndTime' AND EndTime>'$StartTime'", O_VALUE))error_alert('You cannot book this time; you already have an overlapping booking in this or another field!', $hasAdmin);
 		if(q("SELECT COUNT(*) FROM cal_events WHERE Clients_ID=$Clients_ID AND StartDate>=CURDATE()", O_VALUE)>=$resourceschedulerMaxBookings)error_alert('You cannot book more than '.$resourceschedulerMaxBookings.' slots at any given time', $hasAdmin);
 		$morning=q("SELECT SUM(WRO_InParty) FROM cal_events WHERE Cal_ID=$Cal_ID AND StartDate='$date' AND EndTime='12:00:00'", O_VALUE);
 		$afternoon=q("SELECT SUM(WRO_InParty) FROM cal_events WHERE Cal_ID=$Cal_ID AND StartDate='$date' AND StartTime='12:00:00'", O_VALUE);
@@ -524,10 +524,13 @@ if($mode=='componentControls'){
 		}
 		if(max($morning,$afternoon,$all,$morning+$all,$afternoon+$all)>$record['WRO_Max'])error_alert('You cannot book this slot for the field; it would put the field over the max number of hunters.  If you need assistance please contact Winged Republic at 512-557-2945', $hasAdmin);
 		
-		
+
 		
 		$key=substr(md5(time().rand(1,1000000)),0,30);
-		$Events_ID=q("INSERT INTO cal_events SET 
+		$fl = __FILE__;
+		$fl = explode('/', $fl);
+		$fl = end($fl);
+		$sql = "INSERT INTO cal_events SET 
 		Name='Booked hunt for ".addslashes($record['Name'])."',
 		ContactName='".addslashes($ContactName)."',
 		ContactEmail='".addslashes($ContactEmail)."',
@@ -541,13 +544,15 @@ if($mode=='componentControls'){
 		ResourceToken='$key',
 		SessionKey='".$PHPSESSID."',
 		Cal_ID=$Cal_ID,
-		Description='Online Booking by ".end(explode('/',__FILE__))."',
+		Description='Online Booking by ".$fl."',
 		WRO_GuestName='$GuestName',
 		WRO_GuestPhone='$GuestPhone',
 		WRO_Confirmation='".
-		'IP:'.$REMOTE_ADDR
-		."',
-		WRO_InParty='".$WRO_InParty."'", O_INSERTID);
+            'IP:'.$REMOTE_ADDR
+            ."',
+		WRO_InParty='".$WRO_InParty."'";
+		prn($sql);
+        $Events_ID=q($sql, O_INSERTID);
 		prn($qr);
 		
 		ob_start();
@@ -573,7 +578,7 @@ if($mode=='componentControls'){
 		<?php if(false){ ?></div><?php }
 		$content=str_replace("\t",'',ob_get_contents());
 		ob_end_clean();
-		mail('txphi470@gmail.com,sam-git@compasspointmedia.com','Booking made on field: '.$record['Name'],$content,'From: booking@wingedrepublic.com');
+		mail('txphi470@gmail.com,emai.samuel.fullman@gmail.com','Booking made on field: '.$record['Name'],$content,'From: booking@wingedrepublic.com');
 		error_alert('Good job, you successfully booked this field!',1);
 		?><script language="javascript" type="text/javascript">
 		window.parent.location='/members/<?php echo strtolower($record['Identifier']);?>/confirmed?key=<?php echo $key;?>';

@@ -949,11 +949,12 @@ echo $str1.$str2;
 				if($test==17)exit('at 2');
 				eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
 			}else if($thisfolder=='' && $thispage=='juliet-site-editor'){
-				?><h1>Administrative Access</h1>
+				?>
+                <h1>Juliet Site Editor</h1>
 				<?php if($error){ ?>
 				<div style="color:darkred;font-weight:bold;">Your username or password is incorrect</div>
 				<?php } ?>
-				<p>Enter your username and password:</p>
+				<p>Enter this site's account username and password:</p>
 				<form name="form1" id="form1" method="post" action="juliet-site-editor">
 					<input name="julietsiteeditor_UN" type="text" id="UN" />
 					<br />
@@ -961,7 +962,8 @@ echo $str1.$str2;
 					<input type="hidden" name="src" value="<?php echo h(stripslashes($src));?>" id="src" />
 					<br />
 					<input type="submit" name="Submit" value="Sign In" />
-				</form><?php
+				</form>
+                <?php
 			}else{
 				CMSB($pJCurrentContentRegion.'_1');
 			} 
