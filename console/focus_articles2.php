@@ -396,7 +396,7 @@ oFCKeditor.Value = '<?php
 //output section text
 $a=@explode("\n",$Body);
 foreach($a as $n=>$v){
-	$a[$n]=trim(str_replace("'","\'",$v));
+	$a[$n]=trim(str_replace("'","\\'",$v));
 }
 echo implode('\n',$a);
 ?>';
@@ -425,19 +425,24 @@ function CMSUpdater(){
 	}
 	if(oEditor.IsDirty()){
 		detectChange=1;
-		/*
-		g('CMSBUpdate').disabled=false;
-		
-		try{ //------------------------
-		comparepage=(window.opener.thispage ? window.opener.thispage.toLowerCase() : '');
-		if(cmspage==comparepage && cmsfolder==window.opener.thisfolder && cmsquery==(cmsquerypassed ? window.opener.cmsquery : (window.opener.location+'').toLowerCase())){
-			cmsOriginalPagePresent=true;
-			window.opener.g(cmssection).innerHTML=(oEditor.GetHTML(true));
-		}else{
-			cmsOriginalPagePresent=false;
+
+
+		if(false) {
+			/* this was commented before, PHP Storm showing an error */
+			g('CMSBUpdate').disabled = false;
+			try {
+				comparepage = (window.opener.thispage ? window.opener.thispage.toLowerCase() : '');
+				if (cmspage == comparepage && cmsfolder == window.opener.thisfolder && cmsquery == (cmsquerypassed ? window.opener.cmsquery : (window.opener.location + '').toLowerCase())) {
+					cmsOriginalPagePresent = true;
+					window.opener.g(cmssection).innerHTML = (oEditor.GetHTML(true));
+				} else {
+					cmsOriginalPagePresent = false;
+				}
+			} catch (e) {
+			} //-----------------
 		}
-		}catch(e){ } //-----------------
-		*/
+
+
 	}
 	setTimeout('CMSUpdater()',350);
 }

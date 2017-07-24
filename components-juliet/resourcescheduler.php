@@ -522,10 +522,13 @@ if($mode=='componentControls'){
 		}else if($time=='all'){
 			$all+=$WRO_InParty;
 		}
-		if(max($morning,$afternoon,$all,$morning+$all,$afternoon+$all)>$record['WRO_Max'])error_alert('You cannot book this slot for the field; it would put the field over the max number of hunters.  If you need assistance please contact Winged Republic at 512-557-2945', $hasAdmin);
-		
+		if(max($morning,$afternoon,$all,$morning+$all,$afternoon+$all)>$record['WRO_Max']) error_alert(
+		    $hasAdmin ?
+            "This booking put the field over the max number of hunters, but since you are an admin it has been booked anyway" :
+            'You cannot book this slot for the field; it would put the field over the max number of hunters.  If you need assistance please contact Winged Republic at 512-557-2945'
+		, $hasAdmin
+        );
 
-		
 		$key=substr(md5(time().rand(1,1000000)),0,30);
 		$fl = __FILE__;
 		$fl = explode('/', $fl);
