@@ -1900,7 +1900,7 @@ switch(true){
 						$sendCount++;
 						$sentEmails[strtolower($v[$o])]=$sendCount;
 						$result=enhanced_mail($options=array(
-							'to'=> ($testing ? 'sam-git@compasspointmedia.com' : $v[$o]),
+							'to'=> ($testing ? 'sam-git@samuelfullman.com' : $v[$o]),
 							'subject'=> stripslashes($Title),
 							'body'=> $mailBody,
 							'from'=> 'do-not-reply@'.$_SERVER['SERVER_NAME'],

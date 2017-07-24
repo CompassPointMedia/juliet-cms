@@ -62,7 +62,7 @@ require('components/comp_50_focus_properties_v100.php');
 
 <!-- #BeginLibraryItem "/Library/rbrfm_footer.lbi" -->&copy;2008-<?php echo date('Y');?> RelateBase Services Inc. - 
 <a href="/" target="_blank" title="View index page of your website">view site</a> | 
-<a href="http://www.compasspointmedia.com/mediawiki/index.php?title=RelateBase_Ecommerce_Console:RBRFM:Public_Documentation" target="helpme">WIKI</a><!-- #EndLibraryItem --><div id="showTester" title="Javascript Tester" onClick="g('tester').style.display='block';">&nbsp;</div>
+<a href="http://www.compasspoint-sw.com/mediawiki/index.php?title=RelateBase_Ecommerce_Console:RBRFM:Public_Documentation" target="helpme">WIKI</a><!-- #EndLibraryItem --><div id="showTester" title="Javascript Tester" onClick="g('tester').style.display='block';">&nbsp;</div>
 <div id="tester" >
 	<a href="#" onClick="g('ctrlSection').style.display=op[g('ctrlSection').style.display]; return false;">iframes</a><br />
 	<textarea name="test" cols="65" rows="4" id="test">clear_form();</textarea><br />

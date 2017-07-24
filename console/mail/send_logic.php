@@ -25,7 +25,7 @@ if(/** test mode **/){
 		
 		
 		/**
-		the batch will have no record made in the logs, but will have the progress bar run, and will have text in the status log show (realemail@test.com) sam-git@compasspointmedia.com, etc..
+		the batch will have no record made in the logs, but will have the progress bar run, and will have text in the status log show (realemail@test.com) sam-git@samuelfullman.com, etc..
 		
 		
 		**/

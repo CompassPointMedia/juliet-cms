@@ -312,7 +312,7 @@ if($mergeAvailableContentCategories['scheme']){
 foreach($availableContentCategories['scheme'] as $n=>$v){
 	if(isset($v['active']) && !$v['active'])unset($availableContentCategories['scheme'][$n]);
 }
-if(!function_exists('subkey_sort'))require_once($FUNCTION_ROOT.'/function_array_subkey_sort_v202.php');
+if(!function_exists('subkey_sort'))require_once($FUNCTION_ROOT.'/function_array_subkey_sort_v300.php');
 $availableContentCategories['scheme']=subkey_sort($availableContentCategories['scheme'],'idx');
 ?>
 Type of Content: <select name="Category<?php if($availableContentCategories['settings']['allow_multiple'])echo '[]'?>" id="Category<?php if($availableContentCategories['settings']['allow_multiple'])echo '[]'?>" onchange="dChge(this)">

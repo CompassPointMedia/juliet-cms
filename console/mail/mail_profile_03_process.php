@@ -43,7 +43,7 @@ Array
     [TemplateLocationURL] => http://www.relatebase.com/Templates/mail/mail_sample.dwt
     [select] => dw40
     [FromName] => Samuel Fullman
-    [FromEmail] => sam-git@compasspointmedia.com
+    [FromEmail] => sam-git@samuelfullman.com
     [ReplyToName] => (optional)
     [ReplyToEmail] => (optional)
     [BounceEmail] => (optional)
@@ -528,7 +528,7 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 				if($sendCount>$TestEmailBatch)break;
 				$v=$TestEmail;
 			}
-			enhanced_mail(/*$v*/ 'sam-git@compasspointmedia.com', stripslashes($thisEmailSubject), $thisEmailBody, stripslashes($from), $sendType, (count($fileArray)?$fileArray:''), ($Importance==1?1:0), $preHeaders, '', '', ($bounce?$bounce:'') );
+			enhanced_mail(/*$v*/ 'sam-git@samuelfullman.com', stripslashes($thisEmailSubject), $thisEmailBody, stripslashes($from), $sendType, (count($fileArray)?$fileArray:''), ($Importance==1?1:0), $preHeaders, '', '', ($bounce?$bounce:'') );
 			
 			//log emails used to send batches twice
 			if(!in_array($v,$emailSentList)){

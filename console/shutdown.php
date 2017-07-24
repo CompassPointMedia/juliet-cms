@@ -1,6 +1,6 @@
 <?php
 session_start();
-$developerEmail='sam-git@compasspointmedia.com';
+$developerEmail='sam-git@samuelfullman.com';
 $fromHdrBugs='From:bugreports@relatebase.com';
 
 

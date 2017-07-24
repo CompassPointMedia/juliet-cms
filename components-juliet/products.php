@@ -1166,7 +1166,7 @@ switch(true){
 			$sql="SELECT DISTINCT Sub$fieldName FROM finan_items $baseWhere AND Sub$fieldName='" . $fieldValue . "' ORDER BY Sub$fieldName ASC";
 			$displayMsg = 'Search by '.strtolower($fieldName).': '. $fieldValue . '<br />';
 		}else{
-			mail('sam-git@compasspointmedia.com','On pbs, there was not a valid query method passed',$QUERY_STRING . ', FROM:' . $HTTP_REFERER, $fromHdrBugs);
+			mail('sam-git@samuelfullman.com','On pbs, there was not a valid query method passed',$QUERY_STRING . ', FROM:' . $HTTP_REFERER, $fromHdrBugs);
 			?><script language="javascript" type="text/javascript">window.location='/';</script>
 			<?php
 			exit;

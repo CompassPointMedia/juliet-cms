@@ -18,7 +18,7 @@ $qx['useRemediation']=false;
 require_once($_SERVER['DOCUMENT_ROOT'] . '/console/resources/bais_00_includes.php'); 
 
 enhanced_mail(array(
-	'to'=>'sam-git@compasspointmedia.com',
+	'to'=>'sam-git@samuelfullman.com',
 	'from'=>'mailprocessor@science-aviation.org',
 	'subject'=>'hello',
 	'body'=>'world',

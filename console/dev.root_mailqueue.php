@@ -71,7 +71,7 @@ require($_SERVER['DOCUMENT_ROOT'].'/console/rbrfm_adminmenu_basic_02.php');
 for($i=1;$i<=5;$i++){
 	echo enhanced_mail(array(
 
- 	'to'=> 'sam-git@compasspointmedia.com',
+ 	'to'=> 'sam-git@samuelfullman.com',
 	'subject'=> 'tally ho',
 	'body'=> 'test '.rand(1,1000000),
 	'from'=> 'test@'.str_replace('www.','',$HTTP_HOST),

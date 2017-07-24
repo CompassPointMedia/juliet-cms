@@ -362,7 +362,7 @@ var ab='<?php echo $nullAbs?>';
 			<script language="javascript" type="text/javascript">g('logoutLink').style.visibility='hidden';</script>
 			<?php } ?>
 		</div>
-		<a title="click for CMSB Help" href="http://www.compasspointmedia.com/mediawiki-1.13.2/index.php?title=CMS_Bridge_Public_Documentation" onClick="return ow(this.href,'l2_CMSBHelp','800,700');"><img src="/images/i/CMSB-logo.gif" width="195" height="69" align="CMSB Logo" /></a>
+		<a title="click for CMSB Help" href="http://www.compasspoint-sw.com/mediawiki-1.13.2/index.php?title=CMS_Bridge_Public_Documentation" onClick="return ow(this.href,'l2_CMSBHelp','800,700');"><img src="/images/i/CMSB-logo.gif" width="195" height="69" align="CMSB Logo" /></a>
 	</div>
 	<?php
 	if($adminMode && $disposition=='history'){
@@ -521,20 +521,20 @@ var ab='<?php echo $nullAbs?>';
 			
 			<input type="hidden" value="0" name="settings[RemoveMSWordMarkup]" />
 			<label><input name="settings[RemoveMSWordMarkup]" type="checkbox" id="settings[RemoveMSWordMarkup]" value="1" <?php echo $settings['RemoveMSWordMarkup'] || !isset($settings['RemoveMSWordMarkup']) ? 'checked': ''?> /> 
-			Strip extra coding from Microsoft Word (recommended) (<a href="http://www.compasspointmedia.com/mediawiki-1.13.2/index.php?title=Microsoft_Word_Markup" target="help">help</a>)</label><br />
+			Strip extra coding from Microsoft Word (recommended) (<a href="http://www.compasspoint-sw.com/mediawiki-1.13.2/index.php?title=Microsoft_Word_Markup" target="help">help</a>)</label><br />
 			<br />
 			<br />
 
 		</div>
 		<div id="tab_help" class="contentTab" style="display:none;">
 			<h3>Help and Credits</h3>
-			<p>CMS Bridge is brought to you by the folks at <a href="http://www.compasspointmedia.com/" target="credits">Compass Point Media</a>, we'd like to thank the following individuals for their tireless help and support making CMSB the most intuitive content management system available:<br />
+			<p>CMS Bridge is brought to you by the folks at <a href="http://www.compasspoint-sw.com/" target="credits">Compass Point Media</a>, we'd like to thank the following individuals for their tireless help and support making CMSB the most intuitive content management system available:<br />
 				<br />
 				<strong>Seema Nikam</strong> - coder and fearless testing Ninja<br />
 				<strong>Josh Higgins</strong> - 
-		graphic designer and &quot;skin&quot; guy [<a href="mailto:josh@compasspointmedia.com">email</a>] <br />
-			and <a href="mailto:sam-git@compasspointmedia.com">Samuel Fullman</a>, who has an occasional development and improvement idea </p>
-			<p>For help (itself a work in progress), go to the <a href="http://www.compasspointmedia.com/mediawiki-1.13.2/index.php?title=CMS_Bridge_Public_Documentation" target="help">CMSB Wiki Section</a><br />
+		graphic designer and &quot;skin&quot; guy [<a href="mailto:josh@compasspoint-sw.com">email</a>] <br />
+			and <a href="mailto:sam-git@samuelfullman.com">Samuel Fullman</a>, who has an occasional development and improvement idea </p>
+			<p>For help (itself a work in progress), go to the <a href="http://www.compasspoint-sw.com/mediawiki-1.13.2/index.php?title=CMS_Bridge_Public_Documentation" target="help">CMSB Wiki Section</a><br />
 				For assistance and suggestions contact us at the emails above
 </p>
 			<p>&nbsp;</p>

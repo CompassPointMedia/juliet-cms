@@ -1,6 +1,6 @@
 <?php
 /* Created 2010-04-13 by Samuel with Parker helping; generic footer control */
-if(!$footerCtrlURL)$footerCtrlURL='http://www.compasspointmedia.com/admin_help.php?ref='.$MASTER_DATABASE;
+if(!$footerCtrlURL)$footerCtrlURL='http://www.compasspoint-sw.com/admin_help.php?ref='.$MASTER_DATABASE;
 
 if(!$footerCtrlLabelEditor)$footerCtrlLabelEditor='Site Editor';
 if(!$footerCtrlLabelConsole)$footerCtrlLabelConsole='Admin Console';

@@ -94,7 +94,7 @@ session_start();
 $sessionid ? '' : $sessionid = session_id();
 
 //system-level emails
-$developerEmail='sam-git@compasspointmedia.com';
+$developerEmail='sam-git@samuelfullman.com';
 $fromHdrBugs='From: bugreports@'.$GLOBALS['HTTP_HOST'];
 
 //settings for members branch - see below for more after config.console.php called
@@ -124,7 +124,7 @@ if(!function_exists('config_get')){
      * config_get: return defined variables for multiple config(.php) files in order called.  File paths must be readable as-is.
      *
      * @created = 2017-07-13
-     * @author = Sam Fullman <sam-git@compasspointmedia.com>
+     * @author = Sam Fullman <sam-git@samuelfullman.com>
      * @param $__files
      * @param array $__config (Note: this position is reserved if needed)
      * @param array $__args

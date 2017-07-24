@@ -4,6 +4,7 @@ Created 2010-04-14 by Samuel
 This was pulled over from Giocosa Care's console for subcontractors, using the same dataset components
 
 */
+
 $dataset='Members'; #more of a concept
 $datasetComponent='memberList'; #THIS physical component
 $datasetGroup=$dataset; //as of 2010-04-04, this is not used
@@ -176,5 +177,3 @@ if(!$refreshComponentOnly){
 	</script><?php
 }
 require($MASTER_COMPONENT_ROOT.'/dataset_component_v121.php');
-
-?>
