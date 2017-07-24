@@ -859,4 +859,3 @@ tabs_enhanced(
 </body>
 <!-- InstanceEnd --></html><?php
 page_end();
-?>

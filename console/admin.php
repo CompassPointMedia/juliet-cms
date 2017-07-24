@@ -21,4 +21,3 @@ if($logout==1){
 	exit('Improper login - out of synch with available logins');
 }
 header('Location: '.($src ? $src : '/'));
-?>
