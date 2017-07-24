@@ -466,11 +466,13 @@ if(!$hasAdmin && !$_SESSION['cnx'][$acct]['accesses'][6]){
 
 if($formNode){
 	?><script language="javascript" type="text/javascript">
-	$(document).ready(function(){
-		$('#something').click(function(){
+        /*
+        $(document).ready(function(){
+            $('#something').click(function(){
 
-		});
-	});
+            });
+        });
+        */
 	</script><?php
 }
 
