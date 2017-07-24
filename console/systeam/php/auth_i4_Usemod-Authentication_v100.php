@@ -337,8 +337,10 @@ function usemod($options=array()){
 				//send them an email
 				
 				//log them in
-				$cnxKey=$acct;
-				require($authFile);
+                // 2017-07-24 SF Migrate everything to acct variable, avoid database username or password
+                if(empty($cnxKey)) $cnxKey=(isset($acct) ? $acct : $MASTER_USERNAME);
+
+                require($authFile);
 				
 				//change identities per console requirements
 				//find lowest key in acceptableAccesses - note this is clumsy for the root session identity

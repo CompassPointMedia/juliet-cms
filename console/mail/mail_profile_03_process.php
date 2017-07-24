@@ -522,7 +522,6 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 			}
 
 			$sendCount++;
-			#####($acct=='cpm018'?'sam-git@compasspointmedia.com':$v)
 			//Added 2004-12-14: Test Email mode
 			if($TestMode){
 				if($sendCount<$TestEmailStart)continue;

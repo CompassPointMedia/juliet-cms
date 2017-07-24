@@ -24,15 +24,6 @@ $qx['defCnxMethod']=C_DEFAULT;
 
 //connection changes, globals must be on
 require('../../systeam/php/auth_v200.php');
-/*
-$acct=$currentConnection=$_SESSION[currentConnection];
-$db_cnx=mysql_connect(
-	$_SESSION[cnx][$acct][hostName],
-	$_SESSION[cnx][$acct][userName],
-	$_SESSION[cnx][$acct][password]
-);
-mysql_select_db($acct,$db_cnx);
-*/
 
 if(trim($EmailColumns)){
 	$str=preg_replace('/Column(\s|-)/i','',trim($_POST[EmailColumns]));

@@ -155,7 +155,7 @@ if($LockoutTime>time()){
 		}
 		$_SESSION['cnx'][$acct]['id'] = $out['ID'];
 		$_SESSION['cnx'][$acct]['status'] = $out['Status'];
-		$_SESSION['cnx'][$acct]['acctName'] = $acct;
+		$_SESSION['cnx'][$acct]['acct'] = $acct;
 		$_SESSION['cnx'][$acct]['platform'] = $out['Platform'];
 		$_SESSION['cnx'][$acct]['hostName'] = $out['HostName'];
 		$_SESSION['cnx'][$acct]['userName'] = $out['UserName'];

@@ -79,8 +79,8 @@ isEscapable=2;
   &nbsp;&nbsp; 
   <select name="select" id="acctSelect" style="height:11px;" disabled>
     <?php foreach($_SESSION['cnx'] as $n=>$v){?>
-    <option <?php if($v['acctName']==$_SESSION['currentConnection']){echo 'selected';}?> value="<?php echo $v[acctName]?>"> 
-    <?php echo $v['company'] . ' (' . $v['acctName'] . ')';?>
+    <option <?php if($v['acct']==$_SESSION['currentConnection']){echo 'selected';}?> value="<?php echo $v['acct']?>">
+    <?php echo $v['company'] . ' (' . $v['acct'] . ')';?>
     <?php }?>
   </select>
   <span id="plusminus" align="center" style="cursor:hand" onClick="g('tester').style.display=op[g('tester').style.display];g('test').select();return false;"><img src="/images/assets/dn_button_tester.gif" alt="Settings and JavaScript Tester"/></span> 

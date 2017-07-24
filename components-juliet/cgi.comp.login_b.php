@@ -177,7 +177,10 @@ if($setLoginVars==true){
 	//#2. add the connection
 	if(!$overrideSetLoginVars) unset($_SESSION['cnx'][$cnxKey]);
 	unset($a_login);
-	$a_login['acctName'] = $MASTER_DATABASE;
+
+	//2017-07-24 SF - this was MASTER_DATABASE - we can no longer rely on the database being the account
+	$a_login['acct'] = (!empty($cnxKey) ? $cnxKey : $acct);
+	$a_login['acct_from'] = (!empty($cnxKey) ? 'cnxKey' : 'acct');
 	$a_login['identity'] = 'Guest';
 	$a_login['systemUserName'] = $UN;
 	$a_login['primaryKeyField'] = 'ID';
