@@ -224,6 +224,7 @@ if($acctData=q($sql, O_ARRAY, C_SUPER)){
 		/* 2017-07-24 SF - The relatebase idea was pretty intensive, this logic deals with the fact that the db is now variable and these values are going to be declared in a site config file also
 		*/
 		if(!empty($config['MASTER_DATABASE'])) unset($acctData['MASTER_DATABASE']);
+        if(!empty($config['MASTER_PASSWORD'])) unset($acctData['MASTER_PASSWORD']);
 
 
 		@extract($acctData);
@@ -439,18 +440,6 @@ if(substr($GLOBALS['REQUEST_URI'],0,strlen($GLOBALS['PHP_SELF']))==$GLOBALS['PHP
 		$QUERY_STRING=$GLOBALS['QUERY_STRING']=$GLOBALS['REDIRECT_QUERY_STRING'];
 		parse_str($GLOBALS['REDIRECT_QUERY_STRING']);
 	}
-}
-
-//browser detection
-if(preg_match('/^Mozilla\/4/i',$GLOBALS['HTTP_USER_AGENT'])){
-	//Internet Explorer current versions
-	$browser='IE';
-}else if(preg_match('/^Mozilla\/5/i',$GLOBALS['HTTP_USER_AGENT'])){
-	//Firefox, Mozilla
-	$browser='Moz';
-}else if(!preg_match('/gigabot|msnbot/i',$GLOBALS['HTTP_USER_AGENT'])){
-	//mail($developerEmail,'Unknown browser type',$HTTP_USER_AGENT.', called from file '. $thisfolder . '/'. $thispage,$fromHdrBugs);
-	$browser='Moz'; #assume
 }
 
 //global variables and arrays

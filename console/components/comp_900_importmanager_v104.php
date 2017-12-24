@@ -987,8 +987,6 @@ if($submode=='documentation'){
 				if($str)$sqls[]='ALTER TABLE '.$table."\n".$str;
 			}
 		}else{
-error_alert(' to '.__LINE__);
-
 			if(q("SHOW TABLES LIKE '$table'", O_ROW))error_alert('The table '.$table.' already exists');
 			$str='CREATE TABLE '.$table.'('."\n";
 			foreach($fields as $n=>$v){

@@ -118,7 +118,7 @@ function usemod($options=array()){
 	global $dateStamp,$postTime,$environment,$machineName,$requestMachineName,$squishyLoginAttempt;
 	global $browser,$tz,$parse_javascript_gmt_date,$RelateBaseServerTZDifference;
 	global $forgotPassword,$resetPassword;
-	
+
 	$acceptableAccesses=array('DB Admin','Superadmin','Admin');
 	$authFile = $_SERVER['DOCUMENT_ROOT'] . '/components-juliet/cgi.comp.login_b.php';
 	$machineFile=str_replace('auth_i4_Usemod-Authentication_v100','machine_identification',__FILE__);
@@ -164,18 +164,18 @@ function usemod($options=array()){
 			'Description'=>'Content Editor, lowest permissions in the Juliet system',
 		),
 	);
-	$f1=q_tools(array(
+	if(false) $f1=q_tools(array(
 			'mode'=>'table_exists',
 			'table'=>'addr_ContactsAccess',
 			'return'=>'change',
 		));
-	if(false)$f2=q_tools(array(
+	if(false) $f2=q_tools(array(
 			'mode'=>'field_exists',
 			'table'=>'addr_ContactsAccess',
 			'field'=>'EditDate',
 			'return'=>'change',
 		));
-	$f3=q_tools(array(
+	if(false) $f3=q_tools(array(
 			'mode'=>'table_exists',
 			'table'=>'addr_access',
 			'return'=>'change',
@@ -192,7 +192,7 @@ function usemod($options=array()){
 			/* or optionally:
 			'post_process'=>'do_function($value1, $value2)', */
 		));
-	$f5=q_tools(array(
+	if(false) $f5=q_tools(array(
 			'mode'=>'records',
 			'submode'=>'insert',
 			'table'=>'addr_access',
@@ -248,9 +248,9 @@ function usemod($options=array()){
 				$GLOBALS[$addr.'Zip']=$_POST['Zip'];
 				$GLOBALS[$addr.'Country']=$_POST['Country'];
 				extract($_POST);
-				if(strtolower($UN)!=strtolower($MASTER_USERNAME) || md5(stripslashes($PW))!=md5($MASTER_PASSWORD))
-				error_alert('Abnormal error, master username or password have changed');
-				//firstname, lastname, password
+				if(strtolower($UN)!=strtolower($MASTER_USERNAME) || md5(stripslashes($PW))!=md5($MASTER_PASSWORD)) {
+                    error_alert('Abnormal error, master username or password have changed');
+                }
 				if(!$Contacts_ID){
 					//name, email, address, phone, mypassword
 					if(!$newPW || $newPW!=$newPW2)error_alert('Enter and retype a password');
@@ -264,19 +264,19 @@ function usemod($options=array()){
 					$GLOBALS['HomeDefault']=($addr=='home'?1:0);
 
 
-					//2013-02-15: these are the three I have developed
-					$userNameTables=array('finan_clients'=>'UserName','addr_contacts'=>'UserName','bais_universal'=>'un_username');
+    				$userNameTables=array('finan_clients'=>'UserName','addr_contacts'=>'UserName', 'bais_universal'=>'un_username');
+					$tables = [];
 					foreach($userNameTables as $n=>$v){
 						ob_start();
 						q("SELECT COUNT($v) FROM $n", O_VALUE, ERR_ECHO, O_DO_NOT_REMEDIATE);
-						$err=ob_get_contents();
+                        if(!ob_get_contents()){
+                            $tables[]=array('table'=>$n,'field'=>$v);
+                        }
 						ob_end_clean();
-						if(!$err){
-							$tables[]=array('table'=>$n,'field'=>$v);
-						}				
 					}
-					unset($err);
-					$UN=$GLOBALS['UserName']=sql_autoinc_text($tables, NULL, array($FirstName,$LastName), array('where'=>$where));
+					if(empty($tables)) error_alert('no username tables in the database!');
+
+					$UN=$GLOBALS['UserName']=sql_autoinc_text($tables, NULL, array($FirstName,$LastName));
 					$PW=$GLOBALS['PasswordMD5']=md5(stripslashes($newPW));
 				}
 
@@ -303,9 +303,9 @@ function usemod($options=array()){
 					}
 				}else{
 					//create them
-					$sql=sql_insert_update_generic($acct,'addr_contacts','INSERT');
-					$Contacts_ID=q($sql,O_INSERTID);
-					
+					$sql=sql_insert_update_generic($MASTER_DATABASE,'addr_contacts','INSERT');
+					$Contacts_ID=q($sql, O_INSERTID, O_TEST);
+					error_alert('contact');
 					$GLOBALS['PrimaryFirstName']=$FirstName;
 					$GLOBALS['PrimaryMiddleName']=$MiddleName;
 					$GLOBALS['PrimaryLastName']=$LastName;
@@ -319,10 +319,12 @@ function usemod($options=array()){
 					$GLOBALS['Mobile']=$HomeMobile;
 					$GLOBALS['Phone']=$BusPhone;
 					$GLOBALS['Phone2']=$HomePhone;
-					$sql=sql_insert_update_generic($acct,'finan_clients','INSERT');
+					$sql=sql_insert_update_generic($MASTER_DATABASE,'finan_clients','INSERT');
+					prn($sql);
 					$Clients_ID=q($sql,O_INSERTID);
-					
+
 					q("INSERT INTO finan_ClientsContacts SET Contacts_ID='$Contacts_ID', Clients_ID='$Clients_ID', Type='Primary', Notes='Added by ".end(explode('/',__FILE__))." line ".__LINE__."'");
+                    error_alert('client main done');
 				}
 				
 				//give them permissions - all
@@ -353,6 +355,7 @@ function usemod($options=array()){
 						}
 					}
 				}
+				error_alert('maybe?');
 				
 				//we are in iframe, redirect parent to src
 				?><script language="javascript" type="text/javascript">
@@ -778,8 +781,8 @@ function usemod($options=array()){
         <?php
 	}
 	?>
-	<div style="display:none;">
-	<iframe id="w2" name="w2"></iframe>
+	<div style="">
+	<iframe style="width:85%; height: 400px;" id="w2" name="w2"></iframe>
 	</div>
 	<?php
 	if(true){

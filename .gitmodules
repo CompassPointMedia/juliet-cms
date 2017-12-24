@@ -16,3 +16,6 @@
 [submodule "admin/file_explorer"]
 	path = admin/file_explorer
 	url = https://github.com/CompassPointMedia/assets-file_explorer
+[submodule "images/i"]
+	path = images/i
+	url = https://github.com/CompassPointMedia/assets-i.git
