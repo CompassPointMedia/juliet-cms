@@ -800,6 +800,9 @@ get_contents_tabsection('mpAttachments');
 		<br />
 		Reply-to (Email):
 		<input type="text" name="ReplyToEmail" value="<?php echo $mode==$insertMode ? '(optional)' : $ReplyToEmail;?>" size="22" maxlength="85" onfocus="if(this.value=='(optional)'){this.value='';this.className='';}" class="<?php echo $mode==$insertMode ? 'gray':''?>" onchange="dChge(this);" />
+            <br />
+        Send bounced Emails to:
+            <input type="text" name="BounceEmail" value="<?php echo $mode==$insertMode ? '(optional)' : $BounceEmail;?>" size="22" maxlength="85" onfocus="if(this.value=='(optional)'){this.value='';this.className='';}" class="<?php echo $mode==$insertMode ? 'gray':''?>" onchange="dChge(this);" />
 		<br />
 		<br />
 		<input type="hidden" name="Importance" value="0" />
