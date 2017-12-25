@@ -167,4 +167,3 @@ if(!function_exists('from_email')){
 		return $from;
 	}		
 }
-?>

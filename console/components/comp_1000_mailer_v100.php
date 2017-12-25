@@ -363,11 +363,12 @@ if($submode=='testquery'){
 	</script><?php
 	error_alert('done');
 }else if($submode=='sendbatch' || $submode=='previewbatch'){
+    // 2017-12-25 - reviewed and walked through
 	//we want to check for errors via an include page, then post the parent again to a new file where the process takes place
 	//there are actually two levels of ec return: 1) OK to save, 2) OK to send
 	require($MASTER_COMPONENT_ROOT.'/mailer_profile_error_checking_v100.php');
 	//Added 2004-12-14, for test email feature
-	if($TestEmail){
+	if(!empty($testMode)){
 		if(!preg_match('/^[_a-zA-Z0-9-]+(\.([_a-zA-Z0-9-])*)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/i',$TestEmail)){
 			?><script language="javascript" type="text/javascript">
 			alert('Your test email address does not appear to be valid.\nEnter a valid email address, or remove the email, which will send the batch regularly');
@@ -391,7 +392,7 @@ if($submode=='testquery'){
 			exit;
 		}
 	}
-	if($formOK){
+    if($formOK){
 		require($MASTER_COMPONENT_ROOT.'/mailer_profile_process_v100.php');
 		eOK();
 	}else{
@@ -419,4 +420,3 @@ if($submode=='testquery'){
 	$assumeErrorState=false;
 	exit;
 }
-?>
