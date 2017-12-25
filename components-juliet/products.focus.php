@@ -40,13 +40,13 @@ var currentProducts = new Array(0<?php if(count($currentProducts))echo ','. impl
 } //--------------------------------
 
 if($links_id && $SubCategory){
-	?><h2><a href="/products/8011?get=1&links_id=<?php echo $links_id?>"><?php echo h(q("SELECT Name FROM gen_links WHERE ID='$links_id'", O_VALUE))?></a> � <a href="/products/8010?links_id=<?php echo $links_id?>&SubCategory=<?php echo urlencode(stripslashes($SubCategory))?>"><?php echo h(stripslashes($SubCategory))?></a></h2><?php
+	?><h2><a href="/products/8011?get=1&links_id=<?php echo $links_id?>"><?php echo h(q("SELECT Name FROM gen_links WHERE ID='$links_id'", O_VALUE))?></a> &raquo; <a href="/products/8010?links_id=<?php echo $links_id?>&SubCategory=<?php echo urlencode(stripslashes($SubCategory))?>"><?php echo h(stripslashes($SubCategory))?></a></h2><?php
 }else if($Keywords){
-	?><h2>Search � <a href="/products/8010?Keywords=<?php echo  urlencode($Keywords)?>"><?php echo h(stripslashes($Keywords))?></a></h2><?php
+	?><h2>Search &raquo; <a href="/products/8010?Keywords=<?php echo  urlencode($Keywords)?>"><?php echo h(stripslashes($Keywords))?></a></h2><?php
 }else if($_GET[$quickJumpField1] || $_GET[$quickJumpField2]){
 	$fieldValue=$_GET[$quickJumpField1] . $_GET[$quickJumpField2];
 	$fieldName=($_GET[$quickJumpField1] ? $quickJumpField1 : $quickJumpField2);
-	?><h2>By <?php echo h($fieldName)?> � <?php echo h(stripslashes($fieldValue))?></h2><?php
+	?><h2>By <?php echo h($fieldName)?> &raquo; <?php echo h(stripslashes($fieldValue))?></h2><?php
 }else{
 	if($Category || $SubCategory){
 		//OK, clean up

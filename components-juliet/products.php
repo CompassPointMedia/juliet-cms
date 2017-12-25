@@ -813,10 +813,10 @@ switch(true){
 		OK, here we go with another item, currently as of 2006-08-25 this page is receiving the following queries:
 		
 		1. Search:
-			Search � (friendly) Textiles
+			Search (friendly) Textiles
 		[2. Candle Sculpture is for summary.php]
-		3. Candle Sculpture � Aquatic Luminary
-		4. recognized jumpField : Quick Link � Animals Bird
+		3. Candle Sculpture - Aquatic Luminary
+		4. recognized jumpField : Quick Link -  Animals Bird
 
 		**/
 
@@ -827,13 +827,13 @@ switch(true){
 			@extract($rd);
 			$sql="SELECT * FROM finan_items $baseWhere AND ".preg_replace('/^\s*WHERE\s+/i','',$Clause)." AND SubCategory='$SubCategory' ORDER BY ".(trim($OrderBy)? preg_replace('/^\s*ORDER BY\s+/i','',$OrderBy) : 'Priority, SKU ASC');
 			?>
-			<h2 class="lib_r02_s01"><a href="/products/8011?get=1&links_id=<?php echo $links_id?>"><?php echo htmlentities($rd['LinkName'])?></a> � <?php echo htmlentities(stripslashes($SubCategory))?></h2>
+			<h2 class="lib_r02_s01"><a href="/products/8011?get=1&links_id=<?php echo $links_id?>"><?php echo htmlentities($rd['LinkName'])?></a> &raquo; <?php echo htmlentities(stripslashes($SubCategory))?></h2>
 			<?php echo htmlentities($rd['TextContent']) . (trim($rd['TextContent']) ? '<br />' : '')?>
 			<?php
 		}elseif($Keywords){
 			$sql="SELECT * FROM finan_items $baseWhere AND CONCAT(SKU, Keywords, Theme, Function, Category, SubCategory, Description, LongDescription) like '%" . addslashes($Keywords) . "%' ORDER BY Priority, SKU ASC";
 			?>
-			<h2 class="lib_r02_s01">Search � <?php echo htmlentities(stripslashes($Keywords))?></h2>
+			<h2 class="lib_r02_s01">Search &raquo; <?php echo htmlentities(stripslashes($Keywords))?></h2>
 			<?php echo htmlentities($rd['TextContent']) . (trim($rd['TextContent']) ? '<br />' : '')?>
 			<?php
 		}else if($_GET[$quickJumpField1] || $_GET[$quickJumpField2]){
@@ -842,7 +842,7 @@ switch(true){
 			$fieldName=($_GET[$quickJumpField1] ? $quickJumpField1 : $quickJumpField2);
 			$sql="SELECT * FROM finan_items $baseWhere AND $fieldName='" . $fieldValue . "' ORDER BY Priority, SKU ASC";
 			?>
-			<h2 class="lib_r02_s01">By <?php echo htmlentities($fieldName)?> � <?php echo htmlentities(stripslashes($fieldValue))?></h2>
+			<h2 class="lib_r02_s01">By <?php echo htmlentities($fieldName)?> &raquo; <?php echo htmlentities(stripslashes($fieldValue))?></h2>
 			<?php echo htmlentities($rd['TextContent']) . (trim($rd['TextContent']) ? '<br />' : '')?>
 			<?php
 		}else{
