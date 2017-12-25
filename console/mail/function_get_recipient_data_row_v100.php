@@ -4,7 +4,7 @@ function get_recipient_data_row(){
 	if(!$maxLine)$maxLine=1500;
 	if(!$separator)$separator=',';
 
-	switch($_POST[RecipientMethod]){
+	switch($_POST[RecipientSource]){
 		case 'group':
 			if(list(,$a)=each($groupQueryArray)){
 				$i=0;

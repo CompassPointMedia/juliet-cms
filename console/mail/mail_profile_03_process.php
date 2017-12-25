@@ -25,12 +25,12 @@ require('../../systeam/php/auth_v200.php');
 sample form post
 Array
 (
-    [RecipientMethod] => import
+    [RecipientSource] => import
     [Views_ID] => 
     [ViewEmialColumns] => 
     [OverrideViewFilters] => 
     ['ComplexQuery'] =>
-    [recipientMethods_status] => import
+    [recipientSources_status] => import
     [ManualList] => 
     [ImportType] => csv
     [EmailColumns] => Column 1
@@ -60,7 +60,7 @@ Array
 //presumes no flaws in data
 
 //first we do the work of determining recipient data source, max line, record count, etc.
-switch($RecipientMethod){
+switch($RecipientSource){
 	case 'group':
 		unset($ids, $groups);
 		$ids=array();
@@ -236,7 +236,7 @@ if($BatchRecord || $BatchRecordEmail){
 	//depending on method, we set null values
 	$iComplexQuery='NULL';
 	$iViews_ID='NULL';
-	switch($RecipientMethod){
+	switch($RecipientSource){
 		case 'view':
 		$iViews_ID=$Views_ID;
 		break;
@@ -261,7 +261,7 @@ if($BatchRecord || $BatchRecordEmail){
 	Profiles_ID = ".($Profiles_ID==0?"NULL":$Profiles_ID).",
 	Name = '$BatchName',
 	BatchNumber = '$receipt',
-	RecipientSource = '$RecipientMethod',
+	RecipientSource = '$RecipientSource',
 	Views_ID = $iViews_ID,
 	ComplexQuery = $iComplexQuery,
 	HTMOrText = '$HTMLOrText',
@@ -345,8 +345,8 @@ $subjectCompilationNeeded=true;
 
 //row index set to 1, only used though if mode=previewbatch
 if(!$rowIdx)$rowIdx=1;
-error_alert($RecipientMethod);
-while($rd=get_recipient_data_row($RecipientMethod)){
+error_alert($RecipientSource);
+while($rd=get_recipient_data_row($RecipientSource)){
 	$i++;
 	//we allow max 20 seconds per iteration or something is wrong
 	set_time_limit(20);
@@ -361,10 +361,10 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 		foreach($rd as $n=>$v){
 			$fieldList[]=$n;
 		}
-		if($RecipientMethod=='complex'){
+		if($RecipientSource=='complex'){
 			//not sure what action is required
 		
-		}else if($RecipientMethod=='import' && $ImportHeaders){
+		}else if($RecipientSource=='import' && $ImportHeaders){
 			//need to translate the array emailCols to text header names
 			foreach($_emailColumns as $v){
 				$ec2[]=$headers[$v];
@@ -372,8 +372,8 @@ while($rd=get_recipient_data_row($RecipientMethod)){
 			unset($_emailColumns);
 			$_emailColumns=$ec2;
 			//we skip the header row
-			//if($RecipientMethod!=='complex')continue;
-		}else if($RecipientMethod=='manual'){
+			//if($RecipientSource!=='complex')continue;
+		}else if($RecipientSource=='manual'){
 			$_emailColumns[]=0;
 		}
 	}

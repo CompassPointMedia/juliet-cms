@@ -391,10 +391,9 @@ var talks=1; //whether this page broadcasts overall state changes which other pa
 var listens=0;
 
 var recipientSources= new Array();
-recipientSources[3] = "manual";
-
 recipientSources[1] = "complex";
 recipientSources[2] = "none";
+recipientSources[3] = "manual";
 recipientSources[4] = "import";
 recipientSources[5] = "group";
 recipientSources[6] = "definedquery";

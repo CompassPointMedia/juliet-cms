@@ -33,7 +33,7 @@ if($query){
 	$rowsPresent=mysqli_num_rows($result);
 }
 
-if($RecipientMethod=='import'){
+if($RecipientSource=='import'){
 	//get the file resource and some basic information
 	switch(true){
 		case ($ImportType=='csv'):
@@ -67,7 +67,7 @@ $maxchars=20;
 	<table class="data1" style="background-color:beige;" border="0" cellspacing="0" cellpadding="0">
 		<?php
 //there are two methods of getting data, one from query, one from imported file
-if($RecipientMethod=='import'){
+if($RecipientSource=='import'){
 	for($i=1;$i<=$rowsPresent;$i++){
 		if($i>$numRows){break;}
 		$data=fgetcsv($fp,4000,$sep);

@@ -24,7 +24,7 @@ function valid_3001_temp($x){
 }
 
 //error checking on recipients
-switch($RecipientMethod){
+switch($RecipientSource){
 	case 'group':
 		unset($gs);
 		if($Groups_ID){
@@ -219,7 +219,7 @@ switch($RecipientMethod){
 	break;
 	default:
 		errLevel(2);
-		$err[2]['RecipientMethod']='You have not selected any recipients.  Click the Select Recipients tab, and select a method.  If you need further assistance click the Help tab.';
+		$err[2]['RecipientSource']='You have not selected any recipients.  Click the Select Recipients tab, and select a method.  If you need further assistance click the Help tab.';
 	break;
 }
 //------------ SECTION TWO: Composition and correctness of the email
