@@ -9,7 +9,7 @@ Juliet CMS
 require(str_replace('/index.php','/config.php',__FILE__));
 
 //2011-03-26 process the requested page - first folder is a component, 2nd folders are parameters, then the file
-if($__page__){
+if(!empty($__page__)){
 	$a=explode('/',$__page__);
 	$component=(count($a)>1 ? $a[0] : '');
 	$node=preg_replace('/\.(php|htm|html|asp|jsp)$/i','',$a[count($a)-1]);

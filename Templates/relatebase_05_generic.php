@@ -65,7 +65,16 @@ function array_key_deep($a,$key,$options=array()){
 	foreach($a as $n=>$v){
 		//strlen($n)==strlen($key)
 		if(strtolower($n)===strtolower($key)){
-			return (isset($subKey) ? ($subSubKey ? $v[$subKey][$subSubKey] : $v[$subKey]) : 1);
+		    if(!isset($subKey)){
+		        return 1;
+            }else if(isset($subSubKey) && isset($v[$subKey][$subSubKey])){
+		        return $v[$subKey][$subSubKey];
+            }else if(isset($v[$subKey])){
+                return $subKey;
+            }else{
+                return 1;
+            }
+            // return (isset($subKey) ? (isset($subSubKey) ? $v[$subKey][$subSubKey] : $v[$subKey]) : 1);
 		}else if($out=array_key_deep($v,$key,$options)){
 			//this is really returning the results of the codeblock prior to this
 			return $out;
@@ -345,7 +354,8 @@ $primaryBlockName='mainRegionCenterContent';
 $mainRegionCenterPreContent=true;
 
 /*Declared before the component*/
-$templateName=str_replace('.php','',end(explode('/',$pJulietTemplate)));
+$a = explode('/',$pJulietTemplate);
+$templateName=str_replace('.php','',end($a));
 
 if(file_exists($f=$_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.php')){
 	$str=implode('',file($f));
@@ -354,8 +364,8 @@ if(file_exists($f=$_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateNa
 }
 if($pJBlocks=q("SELECT b.Name, b.*, a.Name AS TemplateName FROM gen_templates a, gen_templates_blocks b WHERE a.ID=b.Templates_ID AND a.Name='$templateName'",O_ARRAY_ASSOC)){
 	foreach($pJBlocks as $n=>$v){
-		if(!$Templates_ID)$Templates_ID=$v['Templates_ID'];
-		if($a=array_key_deep($templateDefinedBlocks,$n,array('subKey'=>0)))$pJBlocks[$n]['settings']=$a;
+		if(empty($Templates_ID))$Templates_ID=$v['Templates_ID'];
+		if(!empty($templateDefinedBlocks) && $a=array_key_deep($templateDefinedBlocks,$n,array('subKey'=>0)))$pJBlocks[$n]['settings']=$a;
 		$pJBlocks[$n]['parentnodes']=pJ_parentnodes($v['ID']);
 		eval( '$templateDefinedBlocks[\''.implode('\'][\'',$pJBlocks[$n]['parentnodes']).'\'][0]=array('.
 			(trim($v['Content'])?'\'content\'=>$v[\'Content\'],':'').
@@ -373,10 +383,11 @@ if($pJBlocks=q("SELECT b.Name, b.*, a.Name AS TemplateName FROM gen_templates a,
 }
 
 foreach($consoleEmbeddedModules as $n=>$v){
+    if(empty($v['SKU'])) continue;
 	$gettable_parameters[$v['SKU']]=array();
 	if(!empty($v['moduleAdminSettings']['gettable_parameters'])){
 		foreach($v['moduleAdminSettings']['gettable_parameters'] as $o=>$w){
-			$gettable_parameters[$v['SKU']][$o]=(is_array($w) ? $w[0] : $w);
+			$gettable_parameters[$v['SKU']][$o]=(is_array($w) ? current($w) : $w);
 		}
 	}
 	$settable_parameters[$v['SKU']]=array();
@@ -403,7 +414,7 @@ if(!isset($_SESSION['pJ']['componentsRegisteredSession']) || $pJComponentsRegist
 	#prn($pJ,1);
 }
 //--------------------------------------------
-if($passnode){
+if(isset($passnode)){
 	$gen_nodes=q("SELECT n.*, s.Settings FROM gen_nodes n LEFT JOIN gen_nodes_settings s ON n.ID=s.Nodes_ID WHERE n.ID=$passnode", O_ROW);
 }else
 //codeblock 2213411 - moved out so we can get the page node even if in a page group like products.php does
@@ -466,12 +477,12 @@ if($a=trim($Settings['BlockSuppressionOverride'])){
 	$Settings['BlockSuppressionOverride']=$a;
 }
 
-if($pJInBlogMode){
+if(isset($pJInBlogMode)){
 	require($_SERVER['DOCUMENT_ROOT'].'/components-juliet/articles.php');
 	if(rand(1,10)==5)mail($developerEmail, 'articles still has no control; Error file '.__FILE__.', line '.__LINE__,get_globals('articles still has no control; need ability to configure as with cgi, and there could be many articles and we need to be able to "hook into" this with gen_nodes - work this out'),$fromHdrBugs);
 }else{
 	//note use of goto to switch processing order
-	if(!$pJNodeProcessingOrder)$pJNodeProcessingOrder='ComponentLocation';
+	if(empty($pJNodeProcessingOrder))$pJNodeProcessingOrder='ComponentLocation';
 
 	if($pJNodeProcessingOrder=='PageType')goto pagetype;
 
@@ -490,8 +501,9 @@ if($pJInBlogMode){
 			eval(' ?>'.$gen_nodes['ComponentLocation'].'<?php ');
 			$err=ob_get_contents();
 			ob_end_clean();
-			if($err){			
-				mail($developerEmail, 'Error in '.$MASTER_USERNAME.':'.end(explode('/',__FILE__)).', line '.__LINE__,get_globals($err),$fromHdrBugs);
+			if($err){
+			    $a = explode('/',__FILE__);
+				mail($developerEmail, 'Error in '.$MASTER_USERNAME.':'.end($a).', line '.__LINE__,get_globals($err),$fromHdrBugs);
 			}
 		}
 	}
@@ -538,9 +550,9 @@ foreach($pJLocalCSSLinks as $n=>$v){
 $pJCSSLink=ob_get_contents();
 ob_end_clean();
 
-if(!$pJModalInclusion){ //----------------------- begin walrus -------------------------
+if(empty($pJModalInclusion)){ //----------------------- begin walrus -------------------------
 
-if(!$thisfolder && ($thispage=='juliet-site-editor')){
+if(empty($thisfolder) && ($thispage=='juliet-site-editor')){
 	if($logout=='1'){
 
 	    if(empty($src) || strstr($src, 'juliet-site-editor')){
@@ -679,7 +691,7 @@ ob_start('pJ_modify_document_callback'); //'pJ_modify_document_callback'
 <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
 <?php } ?>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php echo $headRegionTitle ? h($headRegionTitle) : metatags_i1('title');?></title>
+<title><?php echo !empty($headRegionTitle) ? h($headRegionTitle) : metatags_i1('title');?></title>
 <?php echo metatags_i1('meta');?>
 <link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
 <?php
@@ -707,7 +719,7 @@ if($Settings['CustomCSS']){
 <script src="/Library/js/common_04_i1.js" language="javascript" type="text/javascript"></script>
 <script src="/Library/js/forms_04_i1.js" language="JavaScript" type="text/javascript"></script>
 <script src="/Library/js/loader_04_i1.js" language="JavaScript" type="text/javascript"></script>
-<?php if($pJulietBalanceColumns){ ?>
+<?php if(!empty($pJulietBalanceColumns)){ ?>
 <script src="/Library/js/matching_columns_m_v100.js" language="JavaScript" type="text/javascript"></script>
 <?php } ?>
 <script language="JavaScript" type="text/javascript">
@@ -716,14 +728,14 @@ var thispage='<?php echo $thispage?>';
 var thisfolder='<?php echo $thisfolder?>';
 <?php 
 //2011-09-01 note the addition of thissubfolder which breaks apart thisfolder from now on
-if($thissubfolder){ ?>var thissubfolder='<?php echo $thissubfolder;?>';<?php echo "\n"; } 
-if($thisnode){ ?>var thisnode='<?php echo $thisnode;?>';<?php echo "\n"; } 
+if(!empty($thissubfolder)){ ?>var thissubfolder='<?php echo $thissubfolder;?>';<?php echo "\n"; }
+if(!empty($thisnode)){ ?>var thisnode='<?php echo $thisnode;?>';<?php echo "\n"; }
 ?>var browser='<?php echo $browser?>';
 var ctime='<?php echo $ctime?>';
-var PHPSESSID='<?php echo $PHPSESSID?>';
+var PHPSESSID='<?php echo $_COOKIE['PHPSESSID']?>';
 //for nav feature
-var count='<?php echo $nullCount?>';
-var ab='<?php echo $nullAbs?>';
+var count='<?php echo isset($nullCount) ? $nullCount : '';?>';
+var ab='<?php echo isset($nullAbs) ? $nullAbs : '';?>';
 CMSBEditorURL='cms3.11.php';
 </script>
 <?php
@@ -734,7 +746,7 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.
 }
 
 //added 2011-09-21 for adding the cart region
-if($invokeCartLayout){ ?><relatebaseheadarea /><?php }
+if(!empty($invokeCartLayout)){ ?><relatebaseheadarea /><?php }
 
 ?>
 </head>
@@ -745,7 +757,7 @@ if($invokeCartLayout){ ?><relatebaseheadarea /><?php }
 $out=ob_get_contents();
 ob_end_clean();
 $out=str_replace('<body>','<body id="'.$thispage.'">',$out);
-if($gen_nodes['Class'] || $pJBodyClass){
+if(!empty($gen_nodes['Class']) || !empty($pJBodyClass)){
 	$str=' class="';
 	$str.=$gen_nodes['Class'];
 	if($gen_nodes['Class'] && $pJBodyClass)$str.=' ';
@@ -781,7 +793,7 @@ if($pJTopBlocks){ /* OR we can go with "I am in ADMIN_MODE_DESIGNER and let's ju
 	foreach($pJTopBlocks as $pJCurrentContentRegion=>$_bsr_v){
 
 		//setting for level of editability
-		$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+		$pJEditability= (empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? '' : $pJBlocks[$pJCurrentContentRegion]['settings']['editability']);
 
 		//pass on blank regions
 		ob_start();

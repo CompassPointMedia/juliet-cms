@@ -496,7 +496,23 @@ if($mode=='componentControls'){
 		if(!$_SESSION['identity'])error_alert('You are timed out. Unable to book this hunt.  Click "sign out" at top, and then sign in again!');
 		if($GuestName && !$GuestPhone)error_alert('Enter a phone number for your guest');
 		if(!$IAgree)error_alert('You must check the "I Agree" to confirm you and your guest will bag all trash and hunt responsibly');
-		if($GuestName && strlen(preg_replace('/[^0-9]+/','',$GuestPhone))<10)error_alert('Please enter a valid phone number (with area code) for your guest');
+
+
+		if(is_array($GuestName)){
+		    $guest = []; $phone = [];
+		    foreach($GuestName as $n => $v){
+		        if(!trim($v)) continue;
+		        if(strlen(preg_replace('/[^0-9]+/','',$GuestPhone[$n]))<10)
+		            error_alert('Please enter a valid phone number (with area code) for guest #' . ($n + 1));
+		        $guest[] = $v;
+		        $phone[] = $GuestPhone[$n];
+            }
+            $GuestName = implode(', ', $guest);
+            $GuestPhone = implode(', ', $phone);
+        }else{
+            if(trim($GuestName) && strlen(preg_replace('/[^0-9]+/','',$GuestPhone))<10)error_alert('Please enter a valid phone number (with area code) for your guest');
+        }
+
 		/*inparty only available by administrators*/
 		$WRO_InParty=($hasAdmin ? $WRO_InParty : ($GuestName?2:1));
 
@@ -1236,44 +1252,71 @@ if($thispage=='members'){
 		<input name="Cal_ID" type="hidden" id="Cal_ID" value="<?php echo $record['ID'];?>" />
 		<?php 
 		if($hasAdmin){ 
-		if(!$Clients_ID)$Clients_ID=$_SESSION['cnx'][$acct]['defaultClients_ID'];
-		?>Person booking for: <select name="Clients_ID" id="Clients_ID" onchange="dChge(this);">
-		<option value="">&lt;Select..&gt;</option>
-		<?php
-		if($a=q("SELECT c.ID, ct.FirstName, ct.LastName, ct.MiddleName, ct.Email FROM finan_clients c JOIN finan_ClientsContacts cc ON c.ID=cc.Clients_ID AND cc.Type='Primary' JOIN addr_contacts ct ON cc.Contacts_ID=ct.ID JOIN addr_ContactsAccess ca ON ct.ID=ca.Contacts_ID WHERE ca.Access_ID=6 ORDER BY ct.LastName, ct.FirstName",O_ARRAY)){
-			foreach($a as $v){
-				?><option value="<?php echo $v['ID'];?>" <?php echo $Clients_ID==$v['ID']?'selected':''?>><?php echo $v['LastName'].', '.$v['FirstName'].($v['MiddleName']?' '.substr($v['MiddleName'],0,1):'').($v['Email']?' ('.$v['Email'].')':'');?></option><?php
-			}
+            if(!$Clients_ID)$Clients_ID=$_SESSION['cnx'][$acct]['defaultClients_ID'];
+            ?>Person booking for:
+            <select name="Clients_ID" id="Clients_ID" onchange="dChge(this);">
+            <option value="">&lt;Select..&gt;</option>
+            <?php
+            if($a=q("SELECT c.ID, ct.FirstName, ct.LastName, ct.MiddleName, ct.Email FROM finan_clients c JOIN finan_ClientsContacts cc ON c.ID=cc.Clients_ID AND cc.Type='Primary' JOIN addr_contacts ct ON cc.Contacts_ID=ct.ID JOIN addr_ContactsAccess ca ON ct.ID=ca.Contacts_ID WHERE ca.Access_ID=6 ORDER BY ct.LastName, ct.FirstName",O_ARRAY)){
+                foreach($a as $v){
+                    ?><option value="<?php echo $v['ID'];?>" <?php echo $Clients_ID==$v['ID']?'selected':''?>><?php echo $v['LastName'].', '.$v['FirstName'].($v['MiddleName']?' '.substr($v['MiddleName'],0,1):'').($v['Email']?' ('.$v['Email'].')':'');?></option><?php
+                }
+            }
+            ?>
+            </select><br />
+            Number in party (including season pass holder):
+            <select name="WRO_InParty" id="WRO_InParty" onchange="dChge(this);">
+            <option value="">&lt;Select..&gt;</option>
+            <?php
+            for($i=1; $i<=50; $i++){
+                ?><option value="<?php echo $i;?>" <?php echo $WRO_InParty==$i?'selected':'';?>><?php echo $i;?></option><?php
+            }
+            ?>
+            </select>
+            <?php
+		}else{
+		    ?>
+            <p>Your name: <strong><?php echo $_SESSION['firstName'] . ' '.$_SESSION['lastName'];?></strong></p>
+            <?php
 		}
 		?>
-		</select><br />
-		Number in party (including season pass holder): <select name="WRO_InParty" id="WRO_InParty" onchange="dChge(this);">
-		<option value="">&lt;Select..&gt;</option>
-		<?php
-		for($i=1; $i<=50; $i++){
-			?><option value="<?php echo $i;?>" <?php echo $WRO_InParty==$i?'selected':'';?>><?php echo $i;?></option><?php
-		}
-		?>
-		</select>
-		<?php }else{ ?>
-		<p>Your name: <strong><?php echo $_SESSION['firstName'] . ' '.$_SESSION['lastName'];?></strong></p>
-		<?php } ?>
 		<p>Booking a hunt for <strong><?php echo date('n/j/Y',strtotime($date));?></strong><br />
 		Field: <strong><?php echo $record['Name'];?></strong><br />
 		Booking time: <strong><?php
 		if($time=='morning'){
-			echo 'Morning (Sunset to Noon)';
+			echo 'Morning (Sunrise to Noon)';
 		}else if($time=='afternoon'){
 			echo 'Afternoon (Noon to Sunset)';
 		}else{
 			echo 'All Day (Sunrise to Sunset latest)';
 		}
-		?></strong><br />
-		Do you have a guest? <?php echo !$hasAdmin?'(limit 1)':''?> Enter their name here:
-		<input name="GuestName" type="text" id="GuestName" value="<?php echo h($GuestName);?>" size="35" />
-		<br />
-		Enter your guest's contact phone:
-		<input name="GuestPhone" type="text" id="GuestPhone" value="<?php echo h($GuestPhone);?>" />
+        ?></strong></p>
+            <p>
+
+            <?php
+            if(($corporate = q("SELECT WRO_Corporate FROM fian_clients WHERE ID =" . $_SESSION['cnx'][$acct]['defaultClients_ID'], O_VALUE, ERR_SILENT)) > 0){
+                ?>
+                You may bring <?php echo $corporate == 1 ? 'one guest' : $corporate . ' guests';?>.  Please enter their name<?php echo $corporate > 1 ? 's' : '';?> and phone number<?php echo $corporate > 1 ? 's' : '';?>:<br />
+                <table>
+                <?php for($i = 1; $i<= $corporate; $i++){
+                    ?><tr>
+                        <td>Name: <input type="text" name="GuestName[]" size="35" /> </td>
+                        <td>Phone: <input type="text" name="GuestPhone[]" /> </td>
+                    </tr><?php
+                }
+                ?>
+                </table>
+                <?php
+            }else{
+               ?>
+                Do you have a guest? <?php echo !$hasAdmin?'(limit 1)':''?> Enter their name here:
+                <input name="GuestName" type="text" id="GuestName" value="<?php echo h($GuestName);?>" size="35" />
+                <br />
+                Enter your guest's contact phone:
+                <input name="GuestPhone" type="text" id="GuestPhone" value="<?php echo h($GuestPhone);?>" />
+                <?php
+            }
+            ?>
 		</p>
 		<p>
 		<input name="IAgree" type="hidden" id="IAgree" value="0" />
