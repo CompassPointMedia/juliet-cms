@@ -6,5 +6,19 @@ tmp/*
 /functions/*
 /pages/*
 
+#If using the CodeIgniter supplement, include the recommended ignores
+
+/juliet-ci-supplement/application/cache/*
+!/juliet-ci-supplement/application/cache/index.html
+
+/juliet-ci-supplement/application/logs/*
+!/juliet-ci-supplement/application/logs/index.html
+
+!/juliet-ci-supplement/application/*/.htaccess
+
+/juliet-ci-supplement/composer.lock
+
+/juliet-ci-supplement/vendor/
+
 #This can be deleted later
 /emails/cpm*
