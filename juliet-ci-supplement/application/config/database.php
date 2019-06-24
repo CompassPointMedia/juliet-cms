@@ -73,7 +73,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
-$db['default'] = array(
+$db['out_of_the_box_default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	'username' => '',
@@ -94,3 +94,41 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+
+$active_group = 'default';
+$query_builder = TRUE;
+
+// config > application > juliet-ci-supplement > src > [parent]
+$f = __FILE__;
+$path = dirname(dirname(dirname(dirname(dirname($f)))));
+if(!file_exists($path . '/private/config.php')){
+    exit('file ' . $path . '/private/config.php is required and not present');
+}
+require($path.'/private/config.php');
+
+
+
+$dbdriver = 'mysqli';
+$db['default'] = array(
+    'dsn'	=> '',
+    'hostname' => $MASTER_HOSTNAME,
+    'username' => $MASTER_USERNAME,
+    'password' => $MASTER_PASSWORD,
+    'database' => $MASTER_DATABASE,
+    'dbdriver' => $dbdriver,
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+);
+

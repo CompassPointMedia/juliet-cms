@@ -226,11 +226,7 @@ function pJ_suppress_block($n){
 	if(@in_array(strtolower($n), $Settings['BlockSuppressionOverride']))return false;
 	return array_key_deep($templateDefinedBlocks,$n,array('subKey'=>0,'subSubKey'=>'position'))=='none';
 }
-/*
-development up through "canteloupe" started 2011-07-18; getting to where I can design this on the fly
-*/
 
-/* ------------------------------- canteloupe ------------------------------- */
 $qx['useRemediation']=true;
 ob_start();
 if(false){
@@ -445,10 +441,15 @@ if($gen_nodes){
 	}
 }
 if($thisfolder){
+    //Added 2019-06-23
+    $recognizedModules = 0;
 	if(count($consoleEmbeddedModules))
 	foreach($consoleEmbeddedModules as $n=>$v){
 		$m=$v['moduleAdminSettings'];
 		if($thisfolder==$m['handle'] || @in_array(strtolower($thisfolder),$m['handleAliases'])){
+		    //Assume one of the following will be called, increment recognizedModules
+            $recognizedModules++;
+
 			//call the component which will declare the $$ regions for the template
 			if(file_exists($JULIET_COMPONENT_ROOT.'/'.$acct.'.'.($m['componentPage'] ? $m['componentPage'] : $m['handle'].'.php'))){
 				require($JULIET_COMPONENT_ROOT.'/'.$acct.'.'.($m['componentPage'] ? $m['componentPage'] : $m['handle'].'.php'));
@@ -461,6 +462,18 @@ if($thisfolder){
 }else{
 	//codeblock 2213411 was here
 }
+
+
+
+//New implementation of CodeIgniter
+if(empty($gen_nodes) && !$recognizedModules){
+    //hand over to CodeIgniter
+    chdir('juliet-ci-supplement');
+    require('index.php');
+    exit;
+}
+
+
 
 if($Settings['ViewLoggedIn'] && !$_SESSION['cnx'][$MASTER_USERNAME]['identity']){
 	header('Location: /cgi/usemod?src='.urlencode('/'.($thisfolder?$thisfolder.'/':'').($thissubfolder?$thissubfolder.'/':'').$thispage.($QUERY_STRING?'?'.$QUERY_STRING:'')));
