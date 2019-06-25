@@ -37,6 +37,7 @@ if(!function_exists('addslashes_deep')){
         return $value;
     }
 }
+//2019-06-24 - Note:  CodeIgniter call reverses this, look for "addslashes_deep reversal" in comments in the template file
 $extract = ['_POST'=>1, '_GET'=>1];
 foreach($extract as $_GROUP => $clean){
     if(empty($GLOBALS[$_GROUP])) continue;
