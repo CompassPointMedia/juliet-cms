@@ -78,41 +78,8 @@ switch(true){
 			</script><?php
 		}
 	break;
-	case $mode=='contact':
-        //NOTE: pretty low security - someone could just post with the fields unset
-        if(isset($_q) && isset($_r)){
-            //jasperandwendy
-            $r=$_POST['_res'][$_POST['_r']];
-            $q=$_POST['_q'];
-            for($i=2; $i<=min($r-2,22); $i++){
-                if( round(sqrt($i) / pow($r - $i, .3333),4) == round($q,4))$pass=true;
-            }
-            if(!$pass)error_alert('You are either not a human being or you made a simple math error (which Shakespeare would find ironic, if you think about it).  We are divine and forgive you.  Check the sum of the two numbers and try again.');
-        }
-
-        if(!preg_match('/^[-_.a-z0-9]+@[-a-z0-9]+(\.[-a-z0-9]+){1,}$/i',$Email))error_alert('Enter a valid email');
-		if((!$FirstName || !$LastName))	error_alert('You must enter a first and last name');
-
-		$_POST['Submitted at']=date('m/d/Y g:iA');
-		foreach($_POST as $n=>$v){
-			if(preg_match('/recaptcha|mode/',$n))continue;
-			$str.=$n . ': '. stripslashes($v)."\n";
-		}
-		$to=($adminEmail ? $adminEmail : $developerEmail);
-		if($to!==$developerEmail)$to.=','.$developerEmail;
-		$result1 = mail($to,'Contact form submission',str_replace("\t",'', "The following information was submitted:\n\n
-		$str"),'From: '.$Email);
-		//customer copy
-		$result2 = mail($Email,'Contact form submission',str_replace("\t",'', "The following is your copy of the request you submitted:\n\n
-		$str"),'From: '.$to);
-		?><script language="javascript" type="text/javascript">
-		alert('Thank you for your request.  We will be replying as soon as possible.');
-		window.parent.location='/';
-		</script><?php
-		$assumeErrorState=false;
-	break;
-	case $mode=='message':
-        //NOTE: pretty low security - someone could just post with the fields unset
+    case $mode === 'contact':
+    case $mode === 'message':
         $useFormScreening = true;
         if($useFormScreening){
             //jasperandwendy
@@ -124,38 +91,51 @@ switch(true){
             if(!$pass)error_alert('Check the sum of the two numbers and try again.');
         }
 
-		if(!preg_match('/^[-_.a-z0-9]+@[-a-z0-9]+(\.[-a-z0-9]+){1,}$/i',$Email))error_alert('Enter a valid email');
-		if(!$Name) error_alert('Please enter your name');
+        if(!preg_match('/^[-_.a-z0-9]+@[-a-z0-9]+(\.[-a-z0-9]+){1,}$/i',$Email))error_alert('Enter a valid email');
+        if(empty($Name) && empty($FirstName)) error_alert('Please enter your name');
 
-		$_POST['Submitted at']=date('m/d/Y g:iA');
-		foreach($_POST as $n=>$v){
-			if(preg_match('/recaptcha|mode/',$n))continue;
-			$str.=$n . ': '. stripslashes($v)."\n";
-		}
+        $_POST['Submitted at'] = date('m/d/Y g:iA');
+        foreach($_POST as $n => $v){
+            if(preg_match('/recaptcha|mode|_r|_q|_res/',$n))continue;
+            $str .= $n . ': '. stripslashes($v) . "\n";
+        }
 
-		$to=($adminEmail ? $adminEmail : $developerEmail);
-		if($to!==$developerEmail)$to.=','.$developerEmail;
-		mail($to,'Message submission',str_replace("\t",'', "The following information was submitted:\n\n
-		$str"),'From: '.$Email);
+        $to=($adminEmail ? $adminEmail : $developerEmail);
+        if($to!==$developerEmail)$to.=','.$developerEmail;
+        mail($to,'Message submission',str_replace(
+            "\t",
+            '',
+            "The following information was submitted: \n\n$str"
+        ),'From: '.$Email);
 
-		q("INSERT INTO contact_requests SET 
-        FirstName = '". $_POST['Name'] . "',
-        Email = '" . $_POST['Email'] . "',
-        Phone = '" . $_POST['Phone'] . "',
-        Subject = 'Contact Us Form',
-        Request = '" . $_POST['Message'] . "'");
+        if($mode === 'contact'){
+            q("INSERT INTO contact_requests SET 
+                FirstName = '". $_POST['FirstName'] . "',
+                LastName = '". $_POST['LastName'] . "',
+                Email = '" . $_POST['Email'] . "',
+                Phone = '" . $_POST['HomeMobile'] . "',
+                Subject = '/sign-up-now form',
+                Memberships = '" . $_POST['NumberHunting'] . "'");
+        }else if($mode === 'message'){
+            q("INSERT INTO contact_requests SET 
+                FirstName = '". $_POST['Name'] . "',
+                Email = '" . $_POST['Email'] . "',
+                Phone = '" . $_POST['Phone'] . "',
+                Subject = '/contact-us Form',
+                Request = '" . $_POST['Message'] . "'");
+        }
 
-		//customer copy
-		mail($Email,'Message submission',str_replace("\t",'', "The following is your copy of the message you submitted:\n\n
+        //customer copy
+        mail($Email,'Message submission',str_replace("\t",'', "The following is your copy of the message you submitted:\n\n
 		$str"),'From: '.$adminEmail);
-		?>
+        ?>
         <script language="javascript" type="text/javascript">
-		alert('Thank you for your request. We will be replying as soon as possible.');
-		window.parent.location='/';
-		</script>
+			alert('Thank you for your request. We will be replying as soon as possible.');
+			window.parent.location='/';
+        </script>
         <?php
-		$assumeErrorState=false;
-	break;
+        $assumeErrorState=false;
+    break;
 	case $mode=='updateMetaTags':
 		if(!$adminMode)error_alert('You can only perform this task in Administrative Access Mode');
 		$thispage=$_POST['thispage'];
