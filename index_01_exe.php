@@ -27,11 +27,11 @@ ob_start();
 $excludePageFromStats=true;
 
 ob_start();
-if($repostID){
-	q("UPDATE system_poststorage SET Reposted=Reposted+1 WHERE ID=$repostID", ERR_ECHO);
+if(!empty($repostID)){
+	q("UPDATE system_poststorage SET Reposted=Reposted+1 WHERE ID=$repostID", ERR_ECHO, O_DO_NOT_REMEDIATE);
 }else if(count($_POST)){
-	$sql="INSERT INTO system_poststorage SET UserName='".($_SESSION['admin']['userName'] ? $_SESSION['admin']['userName'] : $_SESSION['systemUserName'])."', Mode='$mode', Content='".base64_encode(serialize($_POST))."', Session='". base64_encode(serialize($_SESSION)) . "'";
-	$Poststorage_ID=q($sql, ERR_ECHO);
+	$sql="INSERT INTO system_poststorage SET Reposted = 0, UserName='".($_SESSION['admin']['userName'] ? $_SESSION['admin']['userName'] : $_SESSION['systemUserName'])."', Mode='$mode', Content='".base64_encode(serialize($_POST))."', Session='". base64_encode(serialize($_SESSION)) . "'";
+	$Poststorage_ID=q($sql, ERR_ECHO, O_DO_NOT_REMEDIATE);
 }
 $err=ob_get_contents();
 ob_end_clean();
@@ -113,14 +113,15 @@ switch(true){
 	break;
 	case $mode=='message':
         //NOTE: pretty low security - someone could just post with the fields unset
-        if(isset($_q) && isset($_r)){
+        $useFormScreening = true;
+        if($useFormScreening){
             //jasperandwendy
             $r=$_POST['_res'][$_POST['_r']];
             $q=$_POST['_q'];
             for($i=2; $i<=min($r-2,22); $i++){
                 if( round(sqrt($i) / pow($r - $i, .3333),4) == round($q,4))$pass=true;
             }
-            if(!$pass)error_alert('You are either not a human being or you made a simple math error (which Shakespeare would find ironic, if you think about it).  We are divine and forgive you.  Check the sum of the two numbers and try again.');
+            if(!$pass)error_alert('Check the sum of the two numbers and try again.');
         }
 
 		if(!preg_match('/^[-_.a-z0-9]+@[-a-z0-9]+(\.[-a-z0-9]+){1,}$/i',$Email))error_alert('Enter a valid email');
@@ -131,17 +132,28 @@ switch(true){
 			if(preg_match('/recaptcha|mode/',$n))continue;
 			$str.=$n . ': '. stripslashes($v)."\n";
 		}
+
 		$to=($adminEmail ? $adminEmail : $developerEmail);
 		if($to!==$developerEmail)$to.=','.$developerEmail;
 		mail($to,'Message submission',str_replace("\t",'', "The following information was submitted:\n\n
 		$str"),'From: '.$Email);
+
+		q("INSERT INTO contact_requests SET 
+        FirstName = '". $_POST['Name'] . "',
+        Email = '" . $_POST['Email'] . "',
+        Phone = '" . $_POST['Phone'] . "',
+        Subject = 'Contact Us Form',
+        Request = '" . $_POST['Message'] . "'");
+
 		//customer copy
 		mail($Email,'Message submission',str_replace("\t",'', "The following is your copy of the message you submitted:\n\n
 		$str"),'From: '.$adminEmail);
-		?><script language="javascript" type="text/javascript">
+		?>
+        <script language="javascript" type="text/javascript">
 		alert('Thank you for your request. We will be replying as soon as possible.');
 		window.parent.location='/';
-		</script><?php
+		</script>
+        <?php
 		$assumeErrorState=false;
 	break;
 	case $mode=='updateMetaTags':
