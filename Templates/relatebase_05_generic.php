@@ -466,7 +466,7 @@ if($thisfolder){
 
 
 //New implementation of CodeIgniter
-if(empty($gen_nodes) && !$recognizedModules){
+if(!empty($_SERVER['REDIRECT_URL']) && empty($gen_nodes) && !$recognizedModules){
     //addslashes_deep reveral - CodeIgniter is not expecting sanitizing slashes
     foreach(['_POST'=>1, '_GET'=>1] as $_GROUP => $reverse){
         if(empty($GLOBALS[$_GROUP])) continue;
@@ -476,7 +476,6 @@ if(empty($gen_nodes) && !$recognizedModules){
             }
         }
     }
-
     //hand over to CodeIgniter
     chdir('juliet-ci-supplement');
     require('index.php');
