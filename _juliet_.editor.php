@@ -7,7 +7,6 @@
  */
 require_once($_SERVER['DOCUMENT_ROOT'].'/config.php');
 require_once($FUNCTION_ROOT.'/function_CSS_parser_v100.php');
-
 $hasAdmin=false;
 if($a=$_SESSION['cnx'][$acct]['accesses'])foreach($a as $v)if(preg_match('/^(admin|db admin)$/i',$v)){
 	$hasAdmin=true;
