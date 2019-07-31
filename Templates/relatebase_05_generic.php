@@ -377,7 +377,6 @@ if($pJBlocks=q("SELECT b.Name, b.*, a.Name AS TemplateName FROM gen_templates a,
 }else{
 	exit('abnormal error on line '.__LINE__.' of '.end(explode('/',__FILE__)).', unable to locate array $pJBlocks');
 }
-
 foreach($consoleEmbeddedModules as $n=>$v){
     if(empty($v['SKU'])) continue;
 	$gettable_parameters[$v['SKU']]=array();
@@ -466,7 +465,7 @@ if($thisfolder){
 
 
 //New implementation of CodeIgniter
-if(!empty($_SERVER['REDIRECT_URL']) && empty($gen_nodes) && !$recognizedModules){
+if(!empty($_SERVER['REDIRECT_URL']) && empty($gen_nodes) && !$recognizedModules && $thispage !== 'juliet-site-editor'){
     //addslashes_deep reveral - CodeIgniter is not expecting sanitizing slashes
     foreach(['_POST'=>1, '_GET'=>1] as $_GROUP => $reverse){
         if(empty($GLOBALS[$_GROUP])) continue;
