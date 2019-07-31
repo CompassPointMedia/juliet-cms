@@ -967,7 +967,7 @@ Google Map Embed (iframe):<br />
 	<select size="8" multiple="multiple" name="seasons[]" id="seasons" onchange="dChge(this);">
 	<option value="" class="gray">(none)</option>
 	<?php
-	$seasons=q("SELECT c.ID, c.Name, cc.ChildCal_ID FROM cal_cal c LEFT JOIN cal_CalCal cc ON c.ID=cc.ParentCal_ID AND cc.ChildCal_ID='$ID' WHERE WRO_Category='{range}'", O_ARRAY);
+	$seasons=q("SELECT c.ID, c.Name, cc.ChildCal_ID FROM cal_cal c LEFT JOIN cal_CalCal cc ON c.ID=cc.ParentCal_ID AND cc.ChildCal_ID='$ID' WHERE WRO_Category='{range}' ORDER BY Name DESC", O_ARRAY);
 	foreach($seasons as $w){
 		?><option value="<?php echo $w['ID']?>" <?php echo $w['ChildCal_ID']?'selected':''?>><?php echo h($w['Name']);?></option><?php
 	}
