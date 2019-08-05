@@ -101,6 +101,7 @@ function booking($thisDay,$nothing){
             _AfternoonBooked
             _AllBooked
             */
+            $morningDisabled = $afternoonDisabled = $allDisabled = false;
             if($e['_MorningBooked'] + $e['_AfternoonBooked'] + $e['_AllBooked']){
                 $morning=q("SELECT SUM(WRO_InParty) FROM cal_events WHERE Cal_ID=$Cal_ID AND StartDate='".$date."' AND StartTime='07:00' AND EndTime='12:00' GROUP BY Cal_ID", O_VALUE);
                 $afternoon=q("SELECT SUM(WRO_InParty) FROM cal_events WHERE Cal_ID=$Cal_ID AND StartDate='".$date."' AND StartTime='12:00' AND EndTime='17:00' GROUP BY Cal_ID", O_VALUE);
