@@ -8,18 +8,6 @@ if($adminMode<ADMIN_MODE_DESIGNER)exit('You do not have access to this page, or 
 $pJModalInclusion=true;
 require($pJulietTemplate);
 
-/*
-$qx['useRemediation']=false;
-($a=q("SHOW DATABASES", O_ARRAY, C_SUPER));
-FOREAch($a as $v){
-	IF($b=q("SHOW TABLES IN ".$v['Database']." LIKE 'gen_templates_blocks'", O_ROW, C_SUPER)){
-		prn($b);
-		prn(q("SELECT DISTINCT Content FROM ".$v['Database'].".gen_templates_blocks WHERE Content!='' AND Content IS NOT NULL", O_COL, C_SUPER, ERR_SILENT));
-	}
-}
-prn(C_SUPER,1);
-*/
-
 //OK we need this array declared in the template settings or parameters
 $baseParameters=array(
 	'body'=>array(

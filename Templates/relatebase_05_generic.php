@@ -377,7 +377,6 @@ if($pJBlocks=q("SELECT b.Name, b.*, a.Name AS TemplateName FROM gen_templates a,
 }else{
 	exit('abnormal error on line '.__LINE__.' of '.end(explode('/',__FILE__)).', unable to locate array $pJBlocks');
 }
-
 foreach($consoleEmbeddedModules as $n=>$v){
     if(empty($v['SKU'])) continue;
 	$gettable_parameters[$v['SKU']]=array();
@@ -466,7 +465,7 @@ if($thisfolder){
 
 
 //New implementation of CodeIgniter
-if(!empty($_SERVER['REDIRECT_URL']) && empty($gen_nodes) && !$recognizedModules){
+if(!empty($_SERVER['REDIRECT_URL']) && empty($gen_nodes) && !$recognizedModules && $thispage !== 'juliet-site-editor'){
     //addslashes_deep reveral - CodeIgniter is not expecting sanitizing slashes
     foreach(['_POST'=>1, '_GET'=>1] as $_GROUP => $reverse){
         if(empty($GLOBALS[$_GROUP])) continue;
@@ -706,71 +705,73 @@ if(empty($thisfolder) && ($thispage=='juliet-site-editor')){
 //2012-05-06: buffer the document, but don't bother flushing unless an on-the-fly component needs to access the document <head>
 ob_start('pJ_modify_document_callback'); //'pJ_modify_document_callback'
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<?php if(file_exists($_SERVER['DOCUMENT_ROOT'].'/favicon.ico')){ ?>
-<link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
-<?php } ?>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php echo !empty($headRegionTitle) ? h($headRegionTitle) : metatags_i1('title');?></title>
-<?php echo metatags_i1('meta');?>
-<link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
-<?php
-echo $pJCSSLink;
-echo "\n";
-?><style type="text/css">
-<?php
-if($pJLocalCSS)
-foreach($pJLocalCSS as $n=>$v){
-	?>/* ----------- Module CSS <?php echo $n;?> ------------ */<?php echo "\n";
-	echo trim($v)."\n\n";
-	unset($pJLocalCSS[$n]);
-}
-echo $pJLocalCSSPlaceholder='/* -- on-the-fly pJLocalCSS placeholder -- */'."\n";
-if($Settings['CustomCSS']){
-	?>/* ----------- Custom CSS per page ---------------- */<?php echo "\n";
-	echo $Settings['CustomCSS'];
-}
-?>
-</style>
+    <?php if(file_exists($_SERVER['DOCUMENT_ROOT'].'/favicon.ico')){ ?>
+        <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <?php } ?>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><?php echo !empty($headRegionTitle) ? h($headRegionTitle) : metatags_i1('title');?></title>
+    <?php echo metatags_i1('meta');?>
+    <link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
+    <?php
+    echo $pJCSSLink;
+    echo "\n";
+    ?><style type="text/css">
+        <?php
+        if($pJLocalCSS)
+        foreach($pJLocalCSS as $n=>$v){
+            ?>/* ----------- Module CSS <?php echo $n;?> ------------ */<?php echo "\n";
+            echo trim($v)."\n\n";
+            unset($pJLocalCSS[$n]);
+        }
+        echo $pJLocalCSSPlaceholder='/* -- on-the-fly pJLocalCSS placeholder -- */'."\n";
+        if($Settings['CustomCSS']){
+            ?>/* ----------- Custom CSS per page ---------------- */<?php echo "\n";
+            echo $Settings['CustomCSS'];
+        }
+        ?>
+    </style>
 
 
-<script language="javascript" type="text/javascript" src="/Library/js/jquery.js"></script>
-<script src="/Library/js/global_04_i1.js" language="javascript" type="text/javascript"></script>
-<script src="/Library/js/common_04_i1.js" language="javascript" type="text/javascript"></script>
-<script src="/Library/js/forms_04_i1.js" language="JavaScript" type="text/javascript"></script>
-<script src="/Library/js/loader_04_i1.js" language="JavaScript" type="text/javascript"></script>
-<?php if(!empty($pJulietBalanceColumns)){ ?>
-<script src="/Library/js/matching_columns_m_v100.js" language="JavaScript" type="text/javascript"></script>
-<?php } ?>
-<script language="JavaScript" type="text/javascript">
-/* periwinkle coding */
-var thispage='<?php echo $thispage?>';
-var thisfolder='<?php echo $thisfolder?>';
-<?php 
-//2011-09-01 note the addition of thissubfolder which breaks apart thisfolder from now on
-if(!empty($thissubfolder)){ ?>var thissubfolder='<?php echo $thissubfolder;?>';<?php echo "\n"; }
-if(!empty($thisnode)){ ?>var thisnode='<?php echo $thisnode;?>';<?php echo "\n"; }
-?>var browser='<?php echo $browser?>';
-var ctime='<?php echo $ctime?>';
-var PHPSESSID='<?php echo $_COOKIE['PHPSESSID']?>';
-//for nav feature
-var count='<?php echo isset($nullCount) ? $nullCount : '';?>';
-var ab='<?php echo isset($nullAbs) ? $nullAbs : '';?>';
-CMSBEditorURL='cms3.11.php';
-</script>
-<?php
+    <script language="javascript" type="text/javascript" src="/Library/js/jquery.js"></script>
+    <script src="/Library/js/global_04_i1.js" language="javascript" type="text/javascript"></script>
+    <script src="/Library/js/common_04_i1.js" language="javascript" type="text/javascript"></script>
+    <script src="/Library/js/forms_04_i1.js" language="JavaScript" type="text/javascript"></script>
+    <script src="/Library/js/loader_04_i1.js" language="JavaScript" type="text/javascript"></script>
+    <?php if(!empty($pJulietBalanceColumns)){ ?>
+        <script src="/Library/js/matching_columns_m_v100.js" language="JavaScript" type="text/javascript"></script>
+    <?php } ?>
+    <script language="JavaScript" type="text/javascript">
+        /* periwinkle coding */
+		var thispage='<?php echo $thispage?>';
+		var thisfolder='<?php echo $thisfolder?>';
+            <?php
+            //2011-09-01 note the addition of thissubfolder which breaks apart thisfolder from now on
+            if(!empty($thissubfolder)){ ?>var thissubfolder='<?php echo $thissubfolder;?>';<?php echo "\n"; }
+            if(!empty($thisnode)){ ?>var thisnode='<?php echo $thisnode;?>';<?php echo "\n"; }
+            ?>var browser='<?php echo $browser?>';
+		var ctime='<?php echo $ctime?>';
+		var PHPSESSID='<?php echo $_COOKIE['PHPSESSID']?>';
+		//for nav feature
+		var count='<?php echo isset($nullCount) ? $nullCount : '';?>';
+		var ab='<?php echo isset($nullAbs) ? $nullAbs : '';?>';
+		CMSBEditorURL='cms3.11.php';
+    </script>
+    <?php
 
-if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.js')){
-	echo "\n";
-	?><script language="javascript" type="text/javascript" src="/site-local/<?php echo $acct.'.'.$templateName.'.global.js';?>"></script><?php
-}
+    if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.js')){
+        echo "\n";
+        ?><script language="javascript" type="text/javascript" src="/site-local/<?php echo $acct.'.'.$templateName.'.global.js';?>"></script><?php
+    }
 
-//added 2011-09-21 for adding the cart region
-if(!empty($invokeCartLayout)){ ?><relatebaseheadarea /><?php }
+    //added 2011-09-21 for adding the cart region
+    if(!empty($invokeCartLayout)){ ?><relatebaseheadarea /><?php }
 
-?>
+    ?>
 </head>
 <?php ob_start();?>
 <body>
@@ -879,42 +880,10 @@ echo $str1.$str2;
 	?>
 	</div><?php mainRegionIntro_end: //end block ?>
 	<?php /*del 2013-07-16: pJWrap('mainRegionWide')*/?>
-	<?php
-	$pJCurrentContentRegion='mainRegionLeft';
-	if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionLeft_end;
-	?>
-	<div id="mainRegionLeft" <?php pJCSS($pJCurrentContentRegion);?>>
-		<?php
-		$pJCurrentContentRegion='mainRegionLeftIntro';
-		$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-		?>
-		<div id="mainRegionLeftIntro" <?php pJCSS($pJCurrentContentRegion);?>>
-		<?php
-		if(isset($$pJCurrentContentRegion)){
-			echo $$pJCurrentContentRegion;      
-		}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-			eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-		}else{
-			CMSB($pJCurrentContentRegion.'_1');
-		} 
-		?>      
-		</div>
-		<div id="mainRegionLeftContent" <?php pJCSS('mainRegionLeftContent');?>>
-		<?php
-		$pJCurrentContentRegion='mainRegionLeftContent';
-		$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
 
-		if(isset($$pJCurrentContentRegion)){
-			echo $$pJCurrentContentRegion;      
-		}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-			eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-		}else{			
-			CMSB($pJCurrentContentRegion.'_1');
-		} 
-		?>      
-		</div>
-	</div>
-	<?php mainRegionLeft_end: //end block?>
+
+
+
 	<div id="mainRegionCenter" <?php pJCSS('mainRegionCenter');?>>
 		<?php
 		$pJCurrentContentRegion='mainRegionCenterIntro';
@@ -922,24 +891,24 @@ echo $str1.$str2;
 		$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
 		?>
 		<div id="mainRegionCenterIntro" <?php pJCSS($pJCurrentContentRegion);?>>
-		<?php
-		if($invokeCartLayout){
-			//nothing
-		}else if(isset($$pJCurrentContentRegion)){
-			echo $$pJCurrentContentRegion;      
-		}else if($a=$pJBlocks[$pJCurrentContentRegion]['Content']){
-			eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-		}else{
-			CMSB($pJCurrentContentRegion.'_1');
-		} 
-		?>      
+            <?php
+            if($invokeCartLayout){
+                //nothing
+            }else if(isset($$pJCurrentContentRegion)){
+                echo $$pJCurrentContentRegion;
+            }else if($a=$pJBlocks[$pJCurrentContentRegion]['Content']){
+                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+            }else{
+                CMSB($pJCurrentContentRegion.'_1');
+            }
+            ?>
 		</div><?php mainRegionCenterIntro_end: //end block?>
 		<div id="mainRegionCenterContent" <?php pJCSS('mainRegionCenterContent');?>>
 			<?php
 
 			//2013-07-23 relocate inset
 			if($pJCenterContentInsetWide)ob_start();
-			
+
 			$pJCurrentContentRegion='mainRegionCenterContentInset';
 			if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionCenterContentInset_end;
 			$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
@@ -950,15 +919,15 @@ echo $str1.$str2;
 			if($invokeCartLayout){
 				//nothing
 			}else if(isset($$pJCurrentContentRegion)){
-				echo $$pJCurrentContentRegion;      
+				echo $$pJCurrentContentRegion;
 			}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
 				eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
 			}else{
 				if($test==17)echo '<!-- begin CMS -->';
 				CMSB($pJCurrentContentRegion.'_1');
 				if($test==17)echo '<!-- end CMS -->';
-			} 
-			?>      
+			}
+			?>
 			</div><?php mainRegionCenterContentInset_end: //end block?>
 			<?php
 
@@ -969,7 +938,7 @@ echo $str1.$str2;
 				$mainRegionCenterContentInset=ob_get_contents();
 				ob_end_clean();
 			}
-			
+
 			/* you always have to do this if you have an interspersed div that calls pJCSS.. */
 			$pJCurrentContentRegion='mainRegionCenterContent';
 			$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
@@ -978,7 +947,7 @@ echo $str1.$str2;
 				?><relatebasecartarea><?php
 			}else if(isset($$pJCurrentContentRegion)){
 #				if($test==17)exit('at 1');
-				echo $$pJCurrentContentRegion;      
+				echo $$pJCurrentContentRegion;
 			}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
 				if($test==17)exit('at 2');
 				eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
@@ -1000,7 +969,7 @@ echo $str1.$str2;
                 <?php
 			}else{
 				CMSB($pJCurrentContentRegion.'_1');
-			} 
+			}
 			?>
 		</div>
 		<?php
@@ -1010,7 +979,47 @@ echo $str1.$str2;
 	<?php
 	if($pJCenterContentInsetWide==2)echo $mainRegionCenterContentInset;
 	?>
-	<div class="cb0"> </div>
+
+
+    <?php
+    $pJCurrentContentRegion='mainRegionLeft';
+    if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionLeft_end;
+    ?>
+    <div id="mainRegionLeft" <?php pJCSS($pJCurrentContentRegion);?>>
+        <?php
+        $pJCurrentContentRegion='mainRegionLeftIntro';
+        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+        ?>
+        <div id="mainRegionLeftIntro" <?php pJCSS($pJCurrentContentRegion);?>>
+            <?php
+            if(isset($$pJCurrentContentRegion)){
+                echo $$pJCurrentContentRegion;
+            }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+            }else{
+                CMSB($pJCurrentContentRegion.'_1');
+            }
+            ?>
+        </div>
+        <div id="mainRegionLeftContent" <?php pJCSS('mainRegionLeftContent');?>>
+            <?php
+            $pJCurrentContentRegion='mainRegionLeftContent';
+            $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+
+            if(isset($$pJCurrentContentRegion)){
+                echo $$pJCurrentContentRegion;
+            }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+            }else{
+                CMSB($pJCurrentContentRegion.'_1');
+            }
+            ?>
+        </div>
+    </div>
+    <?php mainRegionLeft_end: //end block?>
+
+
+    <div class="cb0"> </div>
 </div>
 <?php /*del 2013-07-16: pJWrap('mainRegionWide')*/?>
 <?php if($pJBottomRegionWide)ob_start(); ?>
