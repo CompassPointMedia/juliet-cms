@@ -109,8 +109,13 @@ function booking($thisDay,$nothing){
                 $afternoonDisabled=($afternoon + $all >= $e['WRO_Max']);
                 $allDisabled=(max($morningDisabled,$afternoonDisabled) >= $e['WRO_Max']);
             }
+            /** no longer used - probably same logic as found next for excluding mornings!
             if($e['Identifier']=='2014masterson' &&
                 ($e['StartDate']=='2014-09-06' || $e['StartDate']=='2014-09-07' || $e['StartDate']=='2014-09-13' || $e['StartDate']=='2014-09-14'))$morningDisabled=$allDisabled=true;
+            */
+            if($e['WRO_Region'] == 'South' && (
+                $e['StartDate'] == '2019-09-01' || $e['StartDate'] == '2019-09-02' || $e['StartDate'] == '2019-09-07' || $e['StartDate'] == '2019-09-08'
+            ))$morningDisabled = $allDisabled = true;
             ?>
             <a <?php if($morningDisabled){ ?>class="disabled" onclick="alert('This time slot is booked full or not available, sorry!');return false;"<?php } ?> href="/members/<?php echo $thispage;?>/book?time=morning&month=<?php echo $month;?>&day=<?php echo $thisDay;?>&year=<?php echo $year;?>" title="click here to book this field for the morning">Morning<?php
                 if($morning)echo ' <span title="Number of people hunting this field in the morning">('.$morning.')</span>';
@@ -406,7 +411,7 @@ if(!$_SESSION['cnx'][$acct]['primaryKeyValue'])break; //only members here
     JOIN finan_ClientsContacts cc ON c.ID=cc.Contacts_ID AND cc.Type='Primary'
     JOIN cal_events e ON cc.Clients_ID=e.Clients_ID
     JOIN cal_cal cal ON e.Cal_ID=cal.ID
-    WHERE cc.Contacts_ID='".$_SESSION['cnx'][$acct]['primaryKeyValue']."'", O_ARRAY);
+    WHERE cc.Contacts_ID='".$_SESSION['cnx'][$acct]['primaryKeyValue']."' ORDER BY StartDate", O_ARRAY);
     ?>
     <div>
         <br><br>
@@ -1294,7 +1299,7 @@ if($thispage=='members'){
             <p>
 
             <?php
-            if(($corporate = q("SELECT WRO_Corporate FROM fian_clients WHERE ID =" . $_SESSION['cnx'][$acct]['defaultClients_ID'], O_VALUE, ERR_SILENT)) > 0){
+            if(($corporate = q("SELECT WRO_Corporate FROM finan_clients WHERE ID =" . $_SESSION['cnx'][$acct]['defaultClients_ID'], O_VALUE, ERR_SILENT)) > 0){
                 ?>
                 You may bring <?php echo $corporate == 1 ? 'one guest' : $corporate . ' guests';?>.  Please enter their name<?php echo $corporate > 1 ? 's' : '';?> and phone number<?php echo $corporate > 1 ? 's' : '';?>:<br />
                 <table>
