@@ -509,14 +509,14 @@ if($mode=='componentControls'){
 		    foreach($GuestName as $n => $v){
 		        if(!trim($v)) continue;
 		        if(strlen(preg_replace('/[^0-9]+/','',$GuestPhone[$n]))<10)
-		            error_alert('Please enter a valid phone number (with area code) for guest #' . ($n + 1));
+		            error_alert('Please enter a valid phone number (with area code) for guest #' . ($n + 1) . '. You may also use your own cell phone number instead.');
 		        $guest[] = $v;
 		        $phone[] = $GuestPhone[$n];
             }
             $GuestName = implode(', ', $guest);
             $GuestPhone = implode(', ', $phone);
         }else{
-            if(trim($GuestName) && strlen(preg_replace('/[^0-9]+/','',$GuestPhone))<10)error_alert('Please enter a valid phone number (with area code) for your guest');
+            if(trim($GuestName) && strlen(preg_replace('/[^0-9]+/','',$GuestPhone))<10)error_alert('Please enter a valid phone number (with area code) for your guest. You may also use your own cell phone number instead.');
         }
 
 		/*inparty only available by administrators*/
@@ -1300,11 +1300,11 @@ if($thispage=='members'){
             <p>
 
             <?php
-            if(($corporate = q("SELECT WRO_Corporate FROM finan_clients WHERE ID =" . $_SESSION['cnx'][$acct]['defaultClients_ID'], O_VALUE, ERR_SILENT)) > 0){
+            if(($corporate = q("SELECT WRO_Corporate FROM finan_clients WHERE ID =" . $_SESSION['cnx'][$acct]['defaultClients_ID'], O_VALUE, ERR_SILENT)) > 1){
                 ?>
-                You may bring <?php echo $corporate == 1 ? 'one guest' : $corporate . ' guests';?>.  Please enter their name<?php echo $corporate > 1 ? 's' : '';?> and phone number<?php echo $corporate > 1 ? 's' : '';?>:<br />
+                You have a corporate membership and may bring up to <?php echo $corporate == 1 ? 'one guest' : ($corporate * 2 - 1) . ' guests';?>.  Please enter their name<?php echo $corporate > 1 ? 's' : '';?> and phone numbers:<br />
                 <table>
-                <?php for($i = 1; $i<= $corporate; $i++){
+                <?php for($i = 1; $i<= ($corporate * 2) -1; $i++){
                     ?><tr>
                         <td>Name: <input type="text" name="GuestName[]" size="35" /> </td>
                         <td>Phone: <input type="text" name="GuestPhone[]" /> </td>
@@ -1326,7 +1326,7 @@ if($thispage=='members'){
 		</p>
 		<p>
 		<input name="IAgree" type="hidden" id="IAgree" value="0" />
-		<label><input name="IAgree" type="checkbox" id="IAgree" value="1" /> I (and my guest if applicable) agree to bag and take out all trash and to hunt responsibly</label>
+		<label><input name="IAgree" type="checkbox" id="IAgree" value="1" /> I (and my guest(s) if applicable) agree to bag and take out all trash and to hunt responsibly</label>
 		</p>
 		<p>
 		<input type="submit" name="Submit" value="Confirm" /> 
