@@ -375,7 +375,9 @@ if($pJBlocks=q("SELECT b.Name, b.*, a.Name AS TemplateName FROM gen_templates a,
 		}
 	}
 }else{
-	exit('abnormal error on line '.__LINE__.' of '.end(explode('/',__FILE__)).', unable to locate array $pJBlocks');
+    $fl = __FILE__;
+    $a = explode('/', $fl);
+	exit('abnormal error on line ' . __LINE__ . ' of ' . $a[count($a) - 1] . ', unable to locate array $pJBlocks');
 }
 foreach($consoleEmbeddedModules as $n=>$v){
     if(empty($v['SKU'])) continue;

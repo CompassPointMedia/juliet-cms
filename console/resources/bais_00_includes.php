@@ -18,8 +18,6 @@ require_once($FUNCTION_ROOT.'/function_quasi_resource_generic_v201.php');
 require_once($FUNCTION_ROOT.'/function_replace_form_elements_v100.php');
 if(!function_exists('enhanced_mail'))
 require_once($FUNCTION_ROOT.'/function_enhanced_mail_v211.php');
-if(!function_exists('generic5t'))
-require_once($FUNCTION_ROOT.'/function_generic5t_v100.php');
 require_once($FUNCTION_ROOT.'/function_navigate_v141a.php');
 require_once($FUNCTION_ROOT.'/function_callback_v101.php');
 require_once($FUNCTION_ROOT.'/function_t_v111.php');

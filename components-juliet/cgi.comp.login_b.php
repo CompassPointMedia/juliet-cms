@@ -234,7 +234,7 @@ if($setLoginVars==true){
 	}
 	$a_login['hostName'] = ($MASTER_HOSTNAME ? $MASTER_HOSTNAME : 'localhost');
 	$a_login['userName'] = ($MASTER_USERNAME ? $MASTER_USERNAME : $UN);
-	$a_login['password'] = (function_exists('generic5t') ? generic5t($MASTER_PASSWORD ? $MASTER_PASSWORD : $PW, 'encode') : ($MASTER_PASSWORD ? $MASTER_PASSWORD : $PW));
+	$a_login['password'] = ($MASTER_PASSWORD ? $MASTER_PASSWORD : $PW);
 	$a_login['status'] = 50; /** Standard RelateBase status field, this is not developed **/
 	$a_login['localStatusField'] = 'RBStatus'; /** Normally RBStatus **/
 	$a_login['localStatus'] = (isset($rd['RBStatus']) ? $rd['RBStatus'] : 50);/** Analogous AMAP to Status; 50=best value **/

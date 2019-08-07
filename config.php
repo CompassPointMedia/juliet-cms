@@ -19,7 +19,7 @@ function set_test_env(){
     if($AppEnv == 'production'){
         ini_set('display_errors',false);
     }else if($AppEnv == 'vagrant' || $AppEnv == 'develop' || $AppEnv == 'qa') {
-        ini_set('display_errors',false);
+        ini_set('display_errors',true);
     }else{
         // for now
         ini_set('display_errors',true);
@@ -37,6 +37,7 @@ if(!function_exists('addslashes_deep')){
         return $value;
     }
 }
+
 //2019-06-24 - Note:  CodeIgniter call reverses this, look for "addslashes_deep reversal" in comments in the template file
 $extract = ['_POST'=>1, '_GET'=>1];
 foreach($extract as $_GROUP => $clean){
@@ -109,15 +110,15 @@ $PAGE_ROOT=$_SERVER['DOCUMENT_ROOT'].'/pages';
 
 if(!empty($fromCRON)) goto compend;
 
-if(!function_exists('q'))require_once($_SERVER['DOCUMENT_ROOT'].'/functions/function_q_v130.php');
+if(!function_exists('q')) require_once($_SERVER['DOCUMENT_ROOT'] . '/functions/function_q_v140.php');
 if(!function_exists('prn'))require_once($_SERVER['DOCUMENT_ROOT'].'/functions/function_prn.php');
-$qx['useRemediation']=true;
-$qx['defCnxMethod']=C_MASTER;
+
+$qx['useRemediation'] = true;
+$qx['defCnxMethod'] = C_MASTER;
 
 if(empty($pJulietTemplate)){
     $pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
 }
-$overrideGeneric5tDecoding=true;
 
 // Responsible for session_start();
 require($_SERVER['DOCUMENT_ROOT'].'/components/master_config_v103.php');
@@ -165,13 +166,12 @@ if($appEnv !== 'production' && !($appEnv == 'vagrant' || $appEnv == 'local')) {
     }
     */
 }
+$sql = "SELECT a.ID FROM gen_nodes a, gen_nodes_hierarchy b, _v_gen_nodes_hierarchy_nav c WHERE a.Type='Object' AND a.Category='Website Page' AND ".
+    ($thisfolder /* this means a component */ ? "a.PageType='$thisfolder:$thispage'" :
+        ($thisfolder=='' && ($thispage=='index' || $thispage=='') ? "a.SystemName='{root_website_page}'" :
+            "REPLACE(REPLACE(a.Name,' ',''),'-','')='".str_replace(' ','',str_replace('-','',$thispage))."'"));
 
-
-
-$thisnode=q("SELECT ID FROM gen_nodes WHERE Type='Object' AND Category='Website Page' AND ".
-($thisfolder /* this means a component */ ? "PageType='$thisfolder:$thispage'" : 
-($thisfolder=='' && ($thispage=='index' || $thispage=='') ? "SystemName='{root_website_page}'" : 
-"REPLACE(REPLACE(Name,' ',''),'-','')='".str_replace(' ','',str_replace('-','',$thispage))."'")), O_VALUE);
+$thisnode=q($sql, O_VALUE);
 
 if(!$thisnode && $a=q("SELECT ID, Category, SubCategory FROM cms1_articles WHERE REPLACE(KeywordsTitle,'-',' ')='".addslashes(str_replace('-',' ',$thispage))."'", O_ROW)){
 	//try for article
@@ -285,8 +285,8 @@ if($consoleEmbeddedModules=q("SELECT
 	$consoleEmbeddedModules=array();
 }
 $consoleEmbeddedModules=array_merge($systemEmbeddedModules,$consoleEmbeddedModules);
-if(is_array($addedEmbeddedModules) && $addedEmbeddedModulesAuth==md5($MASTER_PASSWORD)){
-	$consoleEmbeddedModules=array_merge($addedEmbeddedModules,$consoleEmbeddedModules);
+if(!empty($addedEmbeddedModules) && is_array($addedEmbeddedModules) && $addedEmbeddedModulesAuth == md5($MASTER_PASSWORD)){
+	$consoleEmbeddedModules = array_merge($addedEmbeddedModules,$consoleEmbeddedModules);
 }
 
 /* Just got $cartAcct and $mid, might as well set the shopping cart url */
