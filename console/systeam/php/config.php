@@ -169,7 +169,7 @@ if($appEnv){
 $config = config_get($config);
 extract($config);
 
-require_once($FUNCTION_ROOT.'/function_q_v130.php');
+require_once($FUNCTION_ROOT.'/function_q_v140.php');
 require_once($FUNCTION_ROOT.'/function_prn.php');
 
 $qx['useRemediation']=true;
