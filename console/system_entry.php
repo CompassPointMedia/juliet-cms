@@ -314,7 +314,7 @@ function form_field_presenter($options=array()){
 		if(!$sorter)$sorter=$recordPKField;
 	}
 	global $mode;
-	$mid=(strstr($mode,'update')?'um':'im');
+	$cartModuleId=(strstr($mode,'update')?'um':'im');
 
 	if(!$usedAttributes)$usedAttributes=array('id','class','style','onclick','onchange','value','rows','cols','cbtable');
 	$relations=sql_table_relationships();
@@ -391,7 +391,7 @@ function form_field_presenter($options=array()){
 		if(count($attributes))
 		foreach($attributes as $o=>$w)$possibleAttributes[]=strtolower(current(explode(':',$o)));
 		if(count($possibleAttributes))
-		foreach($possibleAttributes as $w)$_attrib_[$w]=(isset($attributes[$w.':'.$mid]) ? $attributes[$w.':'.$mid] : $attributes[$w]);
+		foreach($possibleAttributes as $w)$_attrib_[$w]=(isset($attributes[$w.':'.$cartModuleId]) ? $attributes[$w.':'.$cartModuleId] : $attributes[$w]);
 		$output=array();
 		
 		/* special cases:
@@ -497,7 +497,7 @@ function form_field_presenter($options=array()){
 					$opt='';
 				}
 				?><select name="<?php echo $name;?>" <?php foreach($output as $o=>$w)echo $o.'="'.$w.'" ';?>><?php 
-				if($mid=='im'){ /* good default behaviour but not a hard rule */
+				if($cartModuleId=='im'){ /* good default behaviour but not a hard rule */
 					?><option value="">&lt;Select..&gt;</option><?php 
 				} 
 				if(!empty($_opt_))
@@ -568,7 +568,6 @@ $suppressForm=false;
 /* periwinkle coding */
 var thispage='<?php echo $thispage?>';
 var thisfolder='<?php echo $thisfolder?>';
-var browser='<?php echo $browser?>';
 var ctime='<?php echo $ctime?>';
 var PHPSESSID='<?php echo $PHPSESSID?>';
 //for nav feature

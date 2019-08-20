@@ -160,7 +160,6 @@ $AutoCreatePassword=true;
 /* periwinkle coding */
 var thispage='<?php echo $thispage?>';
 var thisfolder='<?php echo $thisfolder?>';
-var browser='<?php echo $browser?>';
 var ctime='<?php echo $ctime?>';
 var PHPSESSID='<?php echo $PHPSESSID?>';
 //for nav feature
@@ -792,79 +791,6 @@ Newsletter receipt status (general):
 <br />
 <h3>Access:</h3>
 <?php
-/*
-?>
-<?php
-$records=array(
-	array(
-		'Category'=>$__tigris__accessSystemCategory,
-		'Name'=>'DB Admin',
-		'Description'=>'Database administrator',
-	),
-	array(
-		'Category'=>$__tigris__accessSystemCategory,
-		'Name'=>'Superadmin',
-		'Description'=>'Superadministrator, can do more than a regular administator',
-	),
-	array(
-		'Category'=>$__tigris__accessSystemCategory,
-		'Name'=>'Admin',
-		'Description'=>'Administrator, ability to install themes, manage components, and grant permissions to others',
-	),
-	array(
-		'Category'=>$__tigris__accessSystemCategory,
-		'Name'=>'Designer',
-		'Description'=>'Designers are able to install themes and edit contents, but are not normally able to create editors',
-	),
-	array(
-		'Category'=>$__tigris__accessSystemCategory,
-		'Name'=>'Editor',
-		'Description'=>'Content Editor, lowest permissions in the Juliet system',
-	),
-);
-$f1=q_tools(array(
-		'mode'=>'table_exists',
-		'table'=>'addr_ContactsAccess',
-		'return'=>'change',
-));
-$f2=q_tools(array(
-		'mode'=>'field_exists',
-		'table'=>'addr_ContactsAccess',
-		'field'=>'EditDate',
-		'return'=>'change',
-));
-$f3=q_tools(array(
-		'mode'=>'table_exists',
-		'table'=>'addr_access',
-		'return'=>'change',
-));
-$f4=q_tools(array(
-		'mode'=>'field_exists',
-		'table'=>'addr_access',
-		'field'=>'Category',
-		'return'=>'change',
-		/*figure out from template db, or optionally: * /
-		'command'=>'ALTER TABLE `addr_access` ADD `Category` CHAR( 30 ) NOT NULL COMMENT \''.date('Y-m-d').'\' AFTER `ID`, ADD UNIQUE `CategoryName`(`Category`,`Name`)',
-		/* need special command to index the field * /
-		'post_command'=>'ALTER TABLE addr_ContactsAccess ADD UNIQUE name(etc, etc)',
-		/* or optionally:
-		'post_process'=>'do_function($value1, $value2)', * /
-));
-$f5=q_tools(array(
-		'mode'=>'records',
-		'submode'=>'insert',
-		'table'=>'addr_access',
-		'records'=>$records,
-		'check'=>array('Category','Name'),
-		'return'=>'change',
-));
-
-?>
-
-<?php
-*/
-
-
 //2013-07-08: added system accesses
 $a=q("SELECT a.*, ca.Contacts_ID FROM addr_access a LEFT JOIN addr_ContactsAccess ca ON a.ID=ca.Access_ID AND ca.Contacts_ID='$Contacts_ID' WHERE Category='{system}' AND Name!='Superadmin'", O_ARRAY);
 ?><table>

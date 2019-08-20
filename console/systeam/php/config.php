@@ -169,11 +169,16 @@ if($appEnv){
 $config = config_get($config);
 extract($config);
 
-require_once($FUNCTION_ROOT.'/function_q_v130.php');
+require_once($FUNCTION_ROOT.'/function_q_v140.php');
 require_once($FUNCTION_ROOT.'/function_prn.php');
 
 $qx['useRemediation']=true;
-$qx['tableList']=array('bais_settings');
+$qx['tableList'] = [
+    'bais_settings',
+    'addr_contacts',
+    'addr_access',
+    'addr_ContactsAccess',
+];
 
 $sql="SELECT
     IF(a.DbseName, a.DbseName, a.AcctName) AS MASTER_DATABASE,
@@ -235,7 +240,7 @@ if($acctData=q($sql, O_ARRAY, C_SUPER)){
 			if(is_null($ExtractConfig)){
 				mail($developerEmail,'Error file '.__FILE__.', line '.__LINE__,get_globals(),$fromHdrBugs);
 				q("INSERT INTO relatebase_rfm.rbase_modules_items SET
-				Modules_ID=$mid,
+				Modules_ID=$cartModuleId,
 				Mst_Items_ID=1,
 				Types_ID=5,
 				CreateDate=NOW(),
@@ -344,14 +349,18 @@ if($consoleEmbeddedModules=q("SELECT
 	acct -> declared already in this file
 	
 	*/
+    $cartModuleId = '';
+    $cartAcct = '';
+    $shoppingCartURL = '';
 	foreach($consoleEmbeddedModules as $n=>$v){
 		if($v['AdminSettings']){
 			$consoleEmbeddedModules[$n]['moduleAdminSettings']=unserialize(base64_decode($v['AdminSettings']));
 		}
 		if($v['SKU']=='040'){
 			//ecommerce module - the old "SHOPCART - 01"
-			$mid=$n; //mid = "module id" = CART module id (this was before I got into multiple modules)
-			$cartAcct=$acct; //hack..			
+            $cartModuleId=$n;
+            $cartAcct=$acct; //hack..
+            $shoppingCartURL = 'https://www.relatebase.com/c/cart/en/v500/?sessionid='.($sessionid ? $sessionid : $GLOBALS['PHPSESSID']).'&acct='.$cartAcct.'&mid='.$cartModuleId;
 		}else if($v['SKU']=='RSC-01'){
 			//site creator
 			
@@ -374,9 +383,6 @@ if($consoleEmbeddedModules=q("SELECT
 }
 if(!function_exists('array_merge_accurate'))require($FUNCTION_ROOT.'/function_array_merge_accurate_v100.php');
 //$consoleEmbeddedModules=array_merge_accurate($systemEmbeddedModules,$consoleEmbeddedModules);
-
-/* Just got $cartAcct and $mid, might as well set the shopping cart url */
-$shoppingCartURL = 'https://www.relatebase.com/c/cart/en/v410/?sessionid='.($sessionid ? $sessionid : $GLOBALS['PHPSESSID']).'&acct='.$cartAcct.'&mid='.$mid;
 
 $tabList['items'][0]=array(
 	'parts'=>'Package Makeup',

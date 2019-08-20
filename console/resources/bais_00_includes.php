@@ -3,7 +3,7 @@
 2013-06-26: see bottom for default settings on function flags
 */
 if(!function_exists('q'))
-require_once($FUNCTION_ROOT.'/function_q_v120.php');
+require_once($FUNCTION_ROOT.'/function_q_v140.php');
 require_once($FUNCTION_ROOT.'/function_q_tools_v100.php');
 require_once($FUNCTION_ROOT.'/function_prn.php');
 require_once($FUNCTION_ROOT.'/function_misc_functions_v001.php');

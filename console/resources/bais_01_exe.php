@@ -574,7 +574,7 @@ switch(true){
 			$ExtractConfig=preg_replace('/<serialized[^>]*>[^<]*<\/serialized>\s*/i',$rand,trim($ExtractConfig));
 			if(!stristr($ExtractConfig,$rand))$ExtractConfig=$rand.$ExtractConfig;
 			$ExtractConfig=str_replace($rand, '<serialized>'.$str.'</serialized>'."\n",$ExtractConfig);
-			q("UPDATE rbase_modules a, rbase_modules_items b SET b.Source='".addslashes($ExtractConfig)."' WHERE a.ID=b.Modules_ID AND b.Types_ID=5 AND a.ID=$mid", C_SUPER);
+			q("UPDATE rbase_modules a, rbase_modules_items b SET b.Source='".addslashes($ExtractConfig)."' WHERE a.ID=b.Modules_ID AND b.Types_ID=5 AND a.ID=$cartModuleId", C_SUPER);
 			$navigate=true;
 			$navigateCount=1;
 		}else{
@@ -596,7 +596,7 @@ switch(true){
 		$ExtractConfig=preg_replace('/<serialized[^>]*>[^<]*<\/serialized>\s*/i',$rand,trim($ExtractConfig));
 		if(!stristr($ExtractConfig,$rand))$ExtractConfig=$rand.(trim($ExtractConfig) ? "\n" : '').trim($ExtractConfig);
 		$ExtractConfig=str_replace($rand, '<serialized>'.$str.'</serialized>'."\n",$ExtractConfig);
-		q("UPDATE rbase_modules a, rbase_modules_items b SET b.Source='".addslashes($ExtractConfig)."' WHERE a.ID=b.Modules_ID AND b.Types_ID=5 AND a.ID=$mid", C_SUPER);
+		q("UPDATE rbase_modules a, rbase_modules_items b SET b.Source='".addslashes($ExtractConfig)."' WHERE a.ID=b.Modules_ID AND b.Types_ID=5 AND a.ID=$cartModuleId", C_SUPER);
 		prn($qr);
 	break;
 	/*
@@ -1023,7 +1023,7 @@ switch(true){
 			$userNameTables=array('finan_clients'=>'UserName','addr_contacts'=>'UserName','bais_universal'=>'un_username');
 			foreach($userNameTables as $n=>$v){
 				ob_start();
-				q("SELECT COUNT($v) FROM $n", O_VALUE, ERR_ECHO, O_DO_NOT_REMEDIATE);
+				q("SELECT COUNT($v) FROM $n", O_VALUE, ERR_ECHO);
 				$err=ob_get_contents();
 				ob_end_clean();
 				if(!$err)$tables[]=array('table'=>$n,'field'=>$v);		
@@ -1778,7 +1778,7 @@ switch(true){
 		$ExtractConfig=preg_replace('/<serialized[^>]*>[^<]*<\/serialized>\s*/i',$rand,trim($ExtractConfig));
 		if(!stristr($ExtractConfig,$rand))$ExtractConfig=$rand.(trim($ExtractConfig) ? "\n" : '').trim($ExtractConfig);
 		$ExtractConfig=str_replace($rand, '<serialized>'.$str.'</serialized>'."\n",$ExtractConfig);
-		q("UPDATE rbase_modules a, rbase_modules_items b SET b.Source='".addslashes($ExtractConfig)."' WHERE a.ID=b.Modules_ID AND b.Types_ID=5 AND a.ID=$mid", C_SUPER);
+		q("UPDATE rbase_modules a, rbase_modules_items b SET b.Source='".addslashes($ExtractConfig)."' WHERE a.ID=b.Modules_ID AND b.Types_ID=5 AND a.ID=$cartModuleId", C_SUPER);
 		prn($qr);
 
 		if($cbPresent)callback(array("useTryCatch"=>false));
@@ -2884,12 +2884,12 @@ require valid-user';
 	case $mode=='insertCartSettings':
 	case $mode=='updateCartSettings':
 		//make sure you get ALL AdminSettings nodes that are being re-written
-		$AdminSettings=unserialize(base64_decode(q("SELECT AdminSettings FROM rbase_modules WHERE ID=$mid", O_VALUE, C_SUPER)));
+		$AdminSettings=unserialize(base64_decode(q("SELECT AdminSettings FROM rbase_modules WHERE ID=$cartModuleId", O_VALUE, C_SUPER)));
 		$AdminSettings['_settings']=stripslashes_deep($_settings);
 		$AdminSettings['customTemplateString']=stripslashes($customTemplateString);
 		#prn($AdminSettings);
 		#error_alert('look');
-		q("UPDATE rbase_modules SET AdminSettings='".base64_encode(serialize($AdminSettings))."' WHERE ID=$mid", C_SUPER);
+		q("UPDATE rbase_modules SET AdminSettings='".base64_encode(serialize($AdminSettings))."' WHERE ID=$cartModuleId", C_SUPER);
 		if(strlen($_settings['defaultPackageFieldValue'])){
 			ob_start();
 			q("SELECT DISTINCT Package FROM finan_items", O_COL, ERR_ECHO);

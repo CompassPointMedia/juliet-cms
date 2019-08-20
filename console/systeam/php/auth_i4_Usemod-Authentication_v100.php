@@ -112,7 +112,7 @@ function usemod($options=array()){
 	global $public_cnx;
 	/* created 2013-06-19 */
 	extract($options);
-	if(!$acct)					global $acct;
+	if(empty($acct))					global $acct;
 	global $HTTP_USER_AGENT,$REMOTE_ADDR;
 	global $MASTER_USERNAME,$MASTER_PASSWORD,$MASTER_HOSTNAME,$MASTER_DATABASE,$fl,$ln,$qr,$qx,$developerEmail,$fromHdrBugs;
 	global $dateStamp,$postTime,$environment,$machineName,$requestMachineName,$squishyLoginAttempt;
@@ -135,7 +135,6 @@ function usemod($options=array()){
 
 	ob_start();
 	$currentRemediation = $GLOBALS['qx']['useRemediation'];
-	$GLOBALS['qx']['useRemediation'] = false;
 
 	$records=array(
 		array(
@@ -164,23 +163,23 @@ function usemod($options=array()){
 			'Description'=>'Content Editor, lowest permissions in the Juliet system',
 		),
 	);
-	if(false) $f1=q_tools(array(
+	$f1=q_tools(array(
 			'mode'=>'table_exists',
 			'table'=>'addr_ContactsAccess',
 			'return'=>'change',
 		));
-	if(false) $f2=q_tools(array(
+	$f2=q_tools(array(
 			'mode'=>'field_exists',
 			'table'=>'addr_ContactsAccess',
 			'field'=>'EditDate',
 			'return'=>'change',
 		));
-	if(false) $f3=q_tools(array(
+	$f3=q_tools(array(
 			'mode'=>'table_exists',
 			'table'=>'addr_access',
 			'return'=>'change',
 		));
-	if(false) $f4=q_tools(array(
+	$f4=q_tools(array(
 			'mode'=>'field_exists',
 			'table'=>'addr_access',
 			'field'=>'Category',
@@ -192,7 +191,7 @@ function usemod($options=array()){
 			/* or optionally:
 			'post_process'=>'do_function($value1, $value2)', */
 		));
-	if(false) $f5=q_tools(array(
+	$f5=q_tools(array(
 			'mode'=>'records',
 			'submode'=>'insert',
 			'table'=>'addr_access',
@@ -264,17 +263,22 @@ function usemod($options=array()){
 					$GLOBALS['HomeDefault']=($addr=='home'?1:0);
 
 
-    				$userNameTables=array('finan_clients'=>'UserName','addr_contacts'=>'UserName', 'bais_universal'=>'un_username');
+    				$userNameTables=array(
+    				    'finan_clients'=>'UserName',
+                        'addr_contacts'=>'UserName',
+                        'bais_universal'=>'un_username'
+                    );
 					$tables = [];
 					foreach($userNameTables as $n=>$v){
 						ob_start();
-						q("SELECT COUNT($v) FROM $n", O_VALUE, ERR_ECHO, O_DO_NOT_REMEDIATE);
+						q("SELECT COUNT($v) FROM $n", O_VALUE, ERR_ECHO);
                         if(!ob_get_contents()){
                             $tables[]=array('table'=>$n,'field'=>$v);
                         }
 						ob_end_clean();
 					}
-					if(empty($tables)) error_alert('no username tables in the database!');
+					// This next line is not necessary if we remediate
+                    // if(empty($tables)) error_alert('no username tables in the database!');
 
 					$UN=$GLOBALS['UserName']=sql_autoinc_text($tables, NULL, array($FirstName,$LastName));
 					$PW=$GLOBALS['PasswordMD5']=md5(stripslashes($newPW));
@@ -304,8 +308,7 @@ function usemod($options=array()){
 				}else{
 					//create them
 					$sql=sql_insert_update_generic($MASTER_DATABASE,'addr_contacts','INSERT');
-					$Contacts_ID=q($sql, O_INSERTID, O_TEST);
-					error_alert('contact');
+					$Contacts_ID=q($sql, O_INSERTID);
 					$GLOBALS['PrimaryFirstName']=$FirstName;
 					$GLOBALS['PrimaryMiddleName']=$MiddleName;
 					$GLOBALS['PrimaryLastName']=$LastName;
@@ -324,7 +327,6 @@ function usemod($options=array()){
 					$Clients_ID=q($sql,O_INSERTID);
 
 					q("INSERT INTO finan_ClientsContacts SET Contacts_ID='$Contacts_ID', Clients_ID='$Clients_ID', Type='Primary', Notes='Added by ".end(explode('/',__FILE__))." line ".__LINE__."'");
-                    error_alert('client main done');
 				}
 				
 				//give them permissions - all
@@ -355,8 +357,7 @@ function usemod($options=array()){
 						}
 					}
 				}
-				error_alert('maybe?');
-				
+
 				//we are in iframe, redirect parent to src
 				?><script language="javascript" type="text/javascript">
 				window.parent.location='<?php
@@ -387,7 +388,6 @@ function usemod($options=array()){
 				}
 			}
 			if($identity){
-				#error_alert('test line'.__LINE__);
 				//set session
 				unset($_SESSION['cnx'][$acct]);
 				foreach($b_login as $n=>$v){
@@ -425,7 +425,7 @@ function usemod($options=array()){
 				error_alert('Your login is not correct'.($loginCode?', login code '.$loginCode:''));
 			}
 		}
-	}else if($logout){
+	}else if(!empty($logout)){
 		/*
 		taken from cgi.2.8.7; modified for _CONSOLE_ identities called acceptableAccesses.  Gracefully kills session.
 		logout:

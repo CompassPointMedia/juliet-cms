@@ -36,7 +36,6 @@ if($HierarchyNodes_ID)$Nodes_ID=q("SELECT Nodes_ID FROM gen_nodes_hierarchy WHER
 /* periwinkle coding */
 var thispage='<?php echo $thispage?>';
 var thisfolder='<?php echo $thisfolder?>';
-var browser='<?php echo $browser?>';
 var ctime='<?php echo $ctime?>';
 var PHPSESSID='<?php echo $PHPSESSID?>';
 //for nav feature

@@ -37,7 +37,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/console/systeam/php/auth_i4_Usemod-Au
 /* periwinkle coding */
 var thispage='<?php echo $thispage?>';
 var thisfolder='<?php echo $thisfolder?>';
-var browser='<?php echo $browser?>';
 var ctime='<?php echo $ctime?>';
 var PHPSESSID='<?php echo $PHPSESSID?>';
 //for nav feature

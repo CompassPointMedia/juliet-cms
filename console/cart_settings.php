@@ -22,14 +22,14 @@ if($a=q("SELECT
 	a.AcctName='$acct' AND 
 	a.ID=am.Account_ID AND 
 	am.Modules_ID=m.ID AND 
-	m.ID='$mid'", O_ARRAY, C_SUPER)){
+	m.ID='$cartModuleId'", O_ARRAY, C_SUPER)){
 	//kind of extra work
 	if(count($a)==1){
 		$a=$a[1];
 	}else if(count($a)>1){
 		exit('multiple modules');
 	}else{
-		exit('module ID#'.$mid.' not present');
+		exit('module ID#'.$cartModuleId.' not present');
 	}
 	$AdminSettings=unserialize(base64_decode($a['AdminSettings']));
 	if(count($AdminSettings['_settings'])){
@@ -146,7 +146,6 @@ $shippingProportionMethod=array(
 /* periwinkle coding */
 var thispage='<?php echo $thispage?>';
 var thisfolder='<?php echo $thisfolder?>';
-var browser='<?php echo $browser?>';
 var ctime='<?php echo $ctime?>';
 var PHPSESSID='<?php echo $PHPSESSID?>';
 //for nav feature
@@ -408,7 +407,7 @@ Pre-cart evaluator module:
 <select name="_settings[preCartEvaluator]" id="_settings[preCartEvaluator]" onchange="dChge(this);">
   <option value="">&lt;Select..&gt;</option>
   <?php
-$dir='/home/rbase/public_html/c/cart/en/v500/modules/users/'.$acct.'-'.$mid;
+$dir='/home/rbase/public_html/c/cart/en/v500/modules/users/'.$acct.'-'.$cartModuleId;
 if(is_dir($dir) && $fp=opendir($dir))
 while(false!==($file=readdir($fp))){
 	if(!stristr($file,'.php'))continue;
@@ -558,7 +557,7 @@ Origin zip: [input:origin_zip size=10 ]
   <select name="_settings[customShippingModule]" id="_settings[customShippingModule]" onchange="dChge(this);">
       <option value="">&lt;Select..&gt;</option>
       <?php
-	$dir='/home/rbase/public_html/c/cart/en/v500/modules/users/'.$acct.'-'.$mid;
+	$dir='/home/rbase/public_html/c/cart/en/v500/modules/users/'.$acct.'-'.$cartModuleId;
 	if(is_dir($dir) && $fp=opendir($dir))
 	while(false!==($file=readdir($fp))){
 		if(!stristr($file,'.php'))continue;
@@ -624,9 +623,9 @@ Default value of <code class="code green">Package</code> field in items table: [
 
 <h4>Tools</h4>
 <br />
-<a onclick="return ow(this.href,'l2_cart','800,700');" href="https://www.relatebase.com/c/cart/en/v500/?acct=<?php echo $acct?>&amp;mid=<?php echo $mid?>">Click to view layout appearance</a><br />
-<a onclick="return ow(this.href,'l2_cart','800,700');" href="https://www.relatebase.com/c/cart/en/v500/?acct=<?php echo $acct?>&amp;mid=<?php echo $mid?>&amp;refreshCustomTemplate=1">Click to recompile layout</a><br />
-<a onclick="return ow(this.href,'l2_cart','800,700');" href="https://www.relatebase.com/c/cart/en/v500/?acct=<?php echo $acct?>&amp;mid=<?php echo $mid?>&amp;refreshCustomTemplate=1&amp;getAssetsOverride=1">Click to recompile layout AND re-acquire CSS and image assets<br />
+<a onclick="return ow(this.href,'l2_cart','800,700');" href="https://www.relatebase.com/c/cart/en/v500/?acct=<?php echo $acct?>&amp;mid=<?php echo $cartModuleId?>">Click to view layout appearance</a><br />
+<a onclick="return ow(this.href,'l2_cart','800,700');" href="https://www.relatebase.com/c/cart/en/v500/?acct=<?php echo $acct?>&amp;mid=<?php echo $cartModuleId?>&amp;refreshCustomTemplate=1">Click to recompile layout</a><br />
+<a onclick="return ow(this.href,'l2_cart','800,700');" href="https://www.relatebase.com/c/cart/en/v500/?acct=<?php echo $acct?>&amp;mid=<?php echo $cartModuleId?>&amp;refreshCustomTemplate=1&amp;getAssetsOverride=1">Click to recompile layout AND re-acquire CSS and image assets<br />
 </a>Blank regions for template: [input:blankBlocksInTemplate size=45]<br />
 (separate by a comma, case sensitive) </p>
 <textarea name="customTemplateString" id="customTemplateString" onchange="dChge(this);" cols="80" rows="25"><?php

@@ -113,7 +113,6 @@ if(strlen($$object) /* || $Assns_ID=q("SELECT ID FROM sma_assns WHERE ResourceTo
 /* periwinkle coding */
 var thispage='<?php echo $thispage?>';
 var thisfolder='<?php echo $thisfolder?>';
-var browser='<?php echo $browser?>';
 var ctime='<?php echo $ctime?>';
 var PHPSESSID='<?php echo $PHPSESSID?>';
 //for nav feature
