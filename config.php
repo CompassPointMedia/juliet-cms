@@ -27,29 +27,6 @@ function set_test_env(){
 }
 set_test_env();
 
-//2017-07-04 - this is the simplest possible globalizer; _GET vars have precedence
-//extractor
-if(!function_exists('addslashes_deep')){
-    function addslashes_deep($value){
-        $value = is_array($value) ?
-            array_map('addslashes_deep', $value) :
-            addslashes($value);
-        return $value;
-    }
-}
-
-//2019-06-24 - Note:  CodeIgniter call reverses this, look for "addslashes_deep reversal" in comments in the template file
-$extract = ['_POST'=>1, '_GET'=>1];
-foreach($extract as $_GROUP => $clean){
-    if(empty($GLOBALS[$_GROUP])) continue;
-    if($clean){
-        foreach($GLOBALS[$_GROUP] as $n => $v){
-            $GLOBALS[$_GROUP][$n] = addslashes_deep($v);
-        }
-    }
-    extract($GLOBALS[$_GROUP]);
-}
-
 if(!function_exists('config_get')){
     /**
      * config_get: return defined variables for multiple config(.php) files in order called.  File paths must be readable as-is.
@@ -100,21 +77,7 @@ if($appEnv){
 $config = config_get($config);
 extract($config);
 
-//if they have juliet, they are going to have the console and site creator
-
-$removeThispageExtension=true;
-$lowercaseThispage=true;
-
-$JULIET_COMPONENT_ROOT=$_SERVER['DOCUMENT_ROOT'].'/components-juliet';
-$PAGE_ROOT=$_SERVER['DOCUMENT_ROOT'].'/pages';
-
 if(!empty($fromCRON)) goto compend;
-
-if(!function_exists('q')) require_once($_SERVER['DOCUMENT_ROOT'] . '/functions/function_q_v140.php');
-if(!function_exists('prn'))require_once($_SERVER['DOCUMENT_ROOT'].'/functions/function_prn.php');
-
-$qx['useRemediation'] = true;
-$qx['defCnxMethod'] = C_MASTER;
 
 if(empty($pJulietTemplate)){
     $pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
@@ -172,7 +135,6 @@ $sql = "SELECT a.ID FROM gen_nodes a, gen_nodes_hierarchy b, _v_gen_nodes_hierar
             "REPLACE(REPLACE(a.Name,' ',''),'-','')='".str_replace(' ','',str_replace('-','',$thispage))."'"));
 
 $thisnode=q($sql, O_VALUE);
-
 if(!$thisnode && $a=q("SELECT ID, Category, SubCategory FROM cms1_articles WHERE REPLACE(KeywordsTitle,'-',' ')='".addslashes(str_replace('-',' ',$thispage))."'", O_ROW)){
 	//try for article
 	/*
@@ -183,7 +145,6 @@ if(!$thisnode && $a=q("SELECT ID, Category, SubCategory FROM cms1_articles WHERE
 	$Articles_ID=$a['ID'];
 	$blogCategory=$a['Category'];
 	$blogType=$a['SubCategory'];
-	//$thispage='kylenetworking-news.php'; - now "thispage" is the name of the article - no more identify of the news page
 	$pJInBlogMode=true;
 }
 
@@ -269,13 +230,17 @@ if($consoleEmbeddedModules=q("SELECT
 	acct -> declared already in this file
 	
 	*/
+	$cartModuleId = '';
+	$cartAcct = '';
+	$shoppingCartURL = '';
 	foreach($consoleEmbeddedModules as $n=>$v){
 		if($v['AdminSettings'])$consoleEmbeddedModules[$n]['moduleAdminSettings']=unserialize(base64_decode($v['AdminSettings']));
 		unset($consoleEmbeddedModules[$n]['AdminSettings']);
 		if($v['SKU']=='040'){
 			//ecommerce module - the old "SHOPCART - 01"
-			$mid=$n; //mid = "module id" = CART module id (this was before I got into multiple modules)
-			$cartAcct=$acct; //hack..			
+			$cartModuleId=$n;
+			$cartAcct=$acct; //hack..
+            $shoppingCartURL = 'https://www.relatebase.com/c/cart/en/v500/?sessionid='.($sessionid ? $sessionid : $GLOBALS['PHPSESSID']).'&acct='.$cartAcct.'&mid='.$cartModuleId;
 		}else if($v['SKU']=='RSC-01'){
 			//site creator
 			
@@ -289,38 +254,7 @@ if(!empty($addedEmbeddedModules) && is_array($addedEmbeddedModules) && $addedEmb
 	$consoleEmbeddedModules = array_merge($addedEmbeddedModules,$consoleEmbeddedModules);
 }
 
-/* Just got $cartAcct and $mid, might as well set the shopping cart url */
-$shoppingCartURL = 'https://www.relatebase.com/c/cart/en/v500/?sessionid='.($sessionid ? $sessionid : $GLOBALS['PHPSESSID']).'&acct='.$cartAcct.'&mid='.$mid;
 //----------------- end codeblock 088233 ---------------------
-
-if(!function_exists('sun')){
-function sun($n=''){
-    /*
-    v1.00 2013-11-11: this is the most advanced version; for cnx, we are agnostic about .identity...
-    */
-    global $acct;
-    if($_SESSION['admin']['userName']){
-        extract($_SESSION['admin']);
-        switch($n){
-            case 'e': return $email;
-            case 'fl': return $firstName . ' '. $lastName;
-            case 'lf': return $lastName . ', '.$firstName;
-            case 'lfi': return $lastName.', '.$firstName.($middleName?' '.substr($middleName,0,1).'.':'');
-            default: return $userName;
-        }
-    }else if(($a=$_SESSION['cnx'][$acct]) && $_SESSION['systemUserName']){
-        extract($a);
-        switch($n){
-            case 'e': return $email;
-            case 'fl': return $firstName . ' '. $lastName;
-            case 'lf': return $lastName . ', '.$firstName;
-            case 'lfi': return $lastName.', '.$firstName.($middleName?' '.substr($middleName,0,1).'.':'');
-            default: return $_SESSION['systemUserName'];
-        }
-    }else{
-        return $GLOBALS['PHP_AUTH_USER'];
-    }
-}}
 
 compend:
 

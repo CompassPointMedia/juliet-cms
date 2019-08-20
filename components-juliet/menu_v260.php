@@ -1,6 +1,4 @@
 <?php
-$Templates_ID=1;
-$pJCurrentContentRegion='topRegionNav';
 if(!function_exists('pJ'))require($FUNCTION_ROOT.'/group_pJ_v100.php');
 
 
@@ -61,7 +59,7 @@ $tabVersion=3;
 
 //pull parameters for this component file
 if($Parameters=q("SELECT Parameters FROM gen_templates_blocks WHERE Templates_ID=$Templates_ID AND Name='$pJCurrentContentRegion'", O_VALUE)){
-	$pJ['componentFiles'][$handle]=unserialize(base64_decode($Parameters));
+    $pJ['componentFiles'][$handle] = @unserialize(base64_decode($Parameters));
 	/* nodes include: forms; data; format.  forms is unused right now, and data[default] means "across all pages" and is the only part developed */
 }
 for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop ---------------
@@ -70,7 +68,7 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
 2012-03-09: this is an example of precedence confusion; there are many different things happening - we need to extract key field data for site display but also we are passing this to a exe page which is loading different data- THINK!!! and improve on this
 */
 //allow passage of a different Menus_ID by query - this could cause trouble
-if(!$Menus_ID)$Menus_ID=pJ_getdata('Menus_ID',q("SELECT ID FROM gen_nodes WHERE Type='Group' LIMIT 1",O_VALUE));
+if(empty($Menus_ID))$Menus_ID = pJ_getdata('Menus_ID',q("SELECT ID FROM gen_nodes WHERE Type='Group' LIMIT 1",O_VALUE));
 $menuHideInactiveUsingChildObjects=pJ_getdata('menuHideInactiveUsingChildObjects','1');
 
 $menuBgColor=			pJ_getdata('menuBgColor','#ccc');
@@ -209,8 +207,7 @@ if($n=$menuTextColor){
 }
 
 $pJLocalCSS[$handle]=trim($str)."\n".trim($menuCSS);
-
-if($mode=='componentEditor'){
+if(isset($mode) && $mode == 'componentEditor'){
 	if($Parameters=q("SELECT Parameters FROM gen_templates_blocks WHERE Templates_ID=$Templates_ID AND Name='$pJCurrentContentRegion'", O_VALUE)){
 		$a=unserialize(base64_decode($Parameters));
 	}else{
@@ -269,7 +266,7 @@ if($mode=='componentEditor'){
 	q("UPDATE gen_templates_blocks SET Parameters='".base64_encode(serialize($pJ['componentFiles'][$handle]))."' WHERE Templates_ID='$Templates_ID' AND Name='$pJCurrentContentRegion'");
 	prn($qr);
 	break; //------------ __i__ break loop ---------------
-}else if($formNode=='menu' /* ok this is something many component files will contain */){
+}else if(isset($formNode) && $formNode == 'menu' /* ok this is something many component files will contain */){
 	?>
 	<script language="javascript" type="text/javascript">
 	var Menus_ID=<?php echo $Menus_ID?$Menus_ID:"''";?>;
@@ -445,7 +442,7 @@ if($mode=='componentEditor'){
 	}
 
 	break; //------------ __i__ break loop ---------------
-}else if($formNode=='layout'){
+}else if(isset($formNode) && $formNode == 'layout'){
 	ob_start();
 	?><p>
 	Background color: <input name="layout[menuBgColor]" type="text" id="menuBgColor" onchange="dChge(this);" value="<?php echo $menuBgColor;?>" size="9" />
@@ -755,5 +752,4 @@ if($menuBlock){
 }
 
 }//---------------- end __i__ break loop ---------------
-
-?>
+lovingkindness:

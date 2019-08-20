@@ -8,12 +8,6 @@ Juliet CMS
 
 require(str_replace('/index.php','/config.php', __FILE__));
 
-function get_systemname($n, $return=''){
-    global $systemPageNames;
-    $a=$systemPageNames[strtolower($n)];
-    return ($return ? $a[$return] : $a);
-}
-
 //2011-03-26 process the requested page - first folder is a component, 2nd folders are parameters, then the file
 if(!empty($__page__)){
 	$a = explode('/',$__page__);

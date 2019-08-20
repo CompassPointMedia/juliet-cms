@@ -6,7 +6,6 @@
 	* when adminMode=A_M_Editor, common editable regions are not seen, but when = 2 they are
 	* even if I develop this to where I get Don's site in place, what I WON'T have done is get it to where "what this region probably means" has a language to it - and this is necessary to talk themes between people.
 */
-
 function pJCSS($r){
 	/* created 2011-04-28 */
 	global $pJCSS, $pJCurrentContentRegion;
@@ -358,7 +357,11 @@ if(file_exists($f=$_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateNa
 	$str=trim($str);
 	eval(' ?>'.$str.'<?php ');
 }
-if($pJBlocks=q("SELECT b.Name, b.*, a.Name AS TemplateName FROM gen_templates a, gen_templates_blocks b WHERE a.ID=b.Templates_ID AND a.Name='$templateName'",O_ARRAY_ASSOC)){
+if($pJBlocks=q(
+    "SELECT b.Name, b.*, a.Name AS TemplateName 
+    FROM gen_templates a, gen_templates_blocks b 
+    WHERE a.ID=b.Templates_ID AND a.Name='$templateName'", O_ARRAY_ASSOC)
+){
 	foreach($pJBlocks as $n=>$v){
 		if(empty($Templates_ID))$Templates_ID=$v['Templates_ID'];
 		if(!empty($templateDefinedBlocks) && $a=array_key_deep($templateDefinedBlocks,$n,array('subKey'=>0)))$pJBlocks[$n]['settings']=$a;
@@ -396,7 +399,7 @@ foreach($consoleEmbeddedModules as $n=>$v){
 }
 
 $hasAdmin=false;
-if($a=$_SESSION['cnx'][$acct]['accesses'])foreach($a as $v)if(preg_match('/^(admin|db admin)$/i',$v)){
+if((isset($_SESSION['cnx'])) && $a = $_SESSION['cnx'][$acct]['accesses'])foreach($a as $v)if(preg_match('/^(admin|db admin)$/i',$v)){
 	$hasAdmin=true;
 	break;
 }
@@ -408,7 +411,6 @@ if(!isset($_SESSION['pJ']['componentsRegisteredSession']) || $pJComponentsRegist
 	$pJComponentsRegisteredRefresh=false;
 	$_SESSION['pJ']['componentsRegisteredSession']=time();
 	$pJ['componentsRegistered']=q("SELECT LCASE(c.Handle) AS handle, 0 AS compiled, tc.Settings, c.Location, c.ComponentFile, c.Description FROM gen_templates t, gen_TemplatesComponents tc, gen_components c WHERE t.ID=tc.Templates_ID AND tc.Components_ID=c.ID AND t.ID=$Templates_ID", O_ARRAY_ASSOC);
-	#prn($pJ,1);
 }
 //--------------------------------------------
 if(isset($passnode)){
@@ -423,11 +425,14 @@ if($thispage=='index'){
 		SystemName='{root_website_page}',
 		Name='Home',
 		Type='Object',
+		ComponentLocation = '',
+		Class = '',
+		URL = '',
 		Category='Website Page',
-		CreateDate=NOW()/*,
-		Creator='".($_SESSION['admin']['userName'] ? $_SESSION['admin']['userName'] : ($_SESSION['systemUserName'] ? $_SESSION['systemUserName'] : ($PHP_AUTH_USER ? $PHP_AUTH_USER : $acct)))."'*/", O_INSERTID);
+		CreateDate=NOW(),
+		Creator='".(isset($_SESSION['admin']) && $_SESSION['admin']['userName'] ? $_SESSION['admin']['userName'] : (!empty($_SESSION['systemUserName']) ? $_SESSION['systemUserName'] : (!empty($PHP_AUTH_USER) ? $PHP_AUTH_USER : $acct)))."'", O_INSERTID);
 		$gen_nodes['Name']='Home';
-		q("INSERT INTO gen_nodes_settings SET Nodes_ID=".$gen_nodes['ID']);
+		q("INSERT INTO gen_nodes_settings SET Settings='', Nodes_ID=".$gen_nodes['ID']);
 	}
 }else{
 	$gen_nodes=q("SELECT n.*, s.Settings FROM gen_nodes n LEFT JOIN gen_nodes_settings s ON n.ID=s.Nodes_ID WHERE n.Type='Object' AND 
@@ -437,10 +442,11 @@ if($thispage=='index'){
 if($gen_nodes){
 	//get node id
 	$thisnode=$gen_nodes['ID'];
-	if($gen_nodes['Settings']){
+	if(!empty($gen_nodes['Settings'])){
 		$Settings=unserialize(base64_decode($gen_nodes['Settings']));
 	}
 }
+
 if($thisfolder){
     //Added 2019-06-23
     $recognizedModules = 0;
@@ -485,10 +491,10 @@ if(!empty($_SERVER['REDIRECT_URL']) && empty($gen_nodes) && !$recognizedModules 
 
 
 
-if($Settings['ViewLoggedIn'] && !$_SESSION['cnx'][$MASTER_USERNAME]['identity']){
+if(isset($Settings) && $Settings['ViewLoggedIn'] && empty($_SESSION['cnx'][$MASTER_USERNAME]['identity'])){
 	header('Location: /cgi/usemod?src='.urlencode('/'.($thisfolder?$thisfolder.'/':'').($thissubfolder?$thissubfolder.'/':'').$thispage.($QUERY_STRING?'?'.$QUERY_STRING:'')));
 }
-if($a=trim($Settings['BlockSuppressionOverride'])){
+if(isset($Settings) && ($a = trim($Settings['BlockSuppressionOverride']))){
 	$a=explode(',',$a);
 	foreach($a as $n=>$v){
 		if(!trim($v)){
@@ -511,7 +517,7 @@ if(isset($pJInBlogMode)){
 
 	componentlocation:
 	
-	if($gen_nodes['ComponentLocation']>''){
+	if(isset($gen_nodes['ComponentLocation']) && $gen_nodes['ComponentLocation'] > ''){
 		if(in_array($acct, array('cpm161'))){ /* legacy for xxxpennington's cakesxxx and ACF */
 			mail($developerEmail, 'Error in '.$MASTER_USERNAME.':'.end(explode('/',__FILE__)).', line '.__LINE__,get_globals('we have the new version of juliet template legacy-ing a method for cpm161 - fix them and remove this'),$fromHdrBugs);
 			if(file_exists($JULIET_COMPONENT_ROOT.'/'.$acct.'.'.$gen_nodes['ComponentLocation'].'.php')){
@@ -533,7 +539,7 @@ if(isset($pJInBlogMode)){
 
 	if($pJNodeProcessingOrder=='PageType')goto endprocessingorder;
 	pagetype:
-	if($a=$gen_nodes['PageType']){
+	if(isset($gen_nodes['PageType']) && $a=$gen_nodes['PageType']){
 		$a=explode(':',$a);
 		//2011-08-14: here we do something different - require the equivalent component AND usurp the thispage value
 		if(!$passnode)$pJDerivedThispage=$a[1];
@@ -555,6 +561,7 @@ if(!($pJulietCSSCustomFile=file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.
 	//create from daughter css sheet
 	$pJulietNewCSSCreated=copy($_SERVER['DOCUMENT_ROOT'].'/Library/css/'.$templateName.'.css', $_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.css');
 }
+echo "\n";
 if(!$pJulietCSSCustomFile && !$pJulietNewCSSCreated){
 	?><link href="/Library/css/<?php echo $pJCSSIncludedFile=($templateName.'.css')?>" type="text/css" rel="stylesheet" /><?php
 }else{ 
@@ -755,8 +762,7 @@ ob_start('pJ_modify_document_callback'); //'pJ_modify_document_callback'
             //2011-09-01 note the addition of thissubfolder which breaks apart thisfolder from now on
             if(!empty($thissubfolder)){ ?>var thissubfolder='<?php echo $thissubfolder;?>';<?php echo "\n"; }
             if(!empty($thisnode)){ ?>var thisnode='<?php echo $thisnode;?>';<?php echo "\n"; }
-            ?>var browser='<?php echo $browser?>';
-		var ctime='<?php echo $ctime?>';
+            ?>		var ctime='<?php echo $ctime?>';
 		var PHPSESSID='<?php echo $_COOKIE['PHPSESSID']?>';
 		//for nav feature
 		var count='<?php echo isset($nullCount) ? $nullCount : '';?>';
@@ -814,7 +820,7 @@ Modify existing logic to be appropriate for database information.
 
 
 
-if($pJTopBlocks){ /* OR we can go with "I am in ADMIN_MODE_DESIGNER and let's just outlay the templateDefinedBlocks inside of mainWrap (still hard-coded)" */
+if(!empty($pJTopBlocks)){ /* OR we can go with "I am in ADMIN_MODE_DESIGNER and let's just outlay the templateDefinedBlocks inside of mainWrap (still hard-coded)" */
 	foreach($pJTopBlocks as $pJCurrentContentRegion=>$_bsr_v){
 
 		//setting for level of editability
@@ -826,9 +832,9 @@ if($pJTopBlocks){ /* OR we can go with "I am in ADMIN_MODE_DESIGNER and let's ju
 			echo $$pJCurrentContentRegion;
 		}else{
 			if($_bsr_v['Name']!='topRegion'){
-				?><div id="<?php echo $_bsr_v['Name']?>" <?php pJCSS($_bsr_v['Name']);?>><?php
+				?><div id="<?php echo isset($_bsr_v['Name']) ? $_bsr_v['Name'] : ''?>" <?php pJCSS(isset($_bsr_v['Name']) ? $_bsr_v['Name'] : '');?>><?php
 			}
-			$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+			$pJEditability = isset($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
             eval(' ?>'.$pJTopBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
 			if($_bsr_v['Name']!='topRegion'){
 				?></div><?php
@@ -838,7 +844,6 @@ if($pJTopBlocks){ /* OR we can go with "I am in ADMIN_MODE_DESIGNER and let's ju
 		ob_end_clean();
 	}
 }
-
 ?><div id="topRegion"><?php
 $pJEditability=$pJBlocks['topRegion']['settings']['editability'];
 echo $pJTopBlocks['topRegion']['Content'];
