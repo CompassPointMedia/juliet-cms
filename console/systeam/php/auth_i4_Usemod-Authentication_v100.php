@@ -82,7 +82,6 @@ if(logging out){
 }
 */
 
-
 if(!defined('LOGIN_SINGLE_INITIAL'))
 define('LOGIN_SINGLE_INITIAL',5);		// single record - look for any type
 if(!defined('LOGIN_SINGLE_PRIMARY'))
@@ -118,6 +117,7 @@ function usemod($options=array()){
 	global $dateStamp,$postTime,$environment,$machineName,$requestMachineName,$squishyLoginAttempt;
 	global $browser,$tz,$parse_javascript_gmt_date,$RelateBaseServerTZDifference;
 	global $forgotPassword,$resetPassword;
+	global $qr, $qx;
 
 	$acceptableAccesses=array('DB Admin','Superadmin','Admin');
 	$authFile = $_SERVER['DOCUMENT_ROOT'] . '/components-juliet/cgi.comp.login_b.php';
@@ -133,8 +133,8 @@ function usemod($options=array()){
 	//these __tigris__ variables need to be moved out and stored in some system - they are the last clutter of variables to be created
 	$__tigris__accessSystemCategory='{system}';
 
-	ob_start();
-	$currentRemediation = $GLOBALS['qx']['useRemediation'];
+	$currentRemediation = $qx['useRemediation'];
+	$qx['useRemediation'] = true;
 
 	$records=array(
 		array(
@@ -168,18 +168,13 @@ function usemod($options=array()){
 			'table'=>'addr_ContactsAccess',
 			'return'=>'change',
 		));
-	$f2=q_tools(array(
+    $f2=q_tools(array(
 			'mode'=>'field_exists',
 			'table'=>'addr_ContactsAccess',
 			'field'=>'EditDate',
 			'return'=>'change',
 		));
-	$f3=q_tools(array(
-			'mode'=>'table_exists',
-			'table'=>'addr_access',
-			'return'=>'change',
-		));
-	$f4=q_tools(array(
+    $f4=q_tools(array(
 			'mode'=>'field_exists',
 			'table'=>'addr_access',
 			'field'=>'Category',
@@ -187,7 +182,7 @@ function usemod($options=array()){
 			/*figure out from template db, or optionally: */
 			'command'=>'ALTER TABLE `addr_access` ADD `Category` CHAR( 30 ) NOT NULL COMMENT \''.date('Y-m-d').'\' AFTER `ID`, ADD UNIQUE `CategoryName`(`Category`,`Name`)',
 			/* need special command to index the field */
-			'post_command'=>'ALTER TABLE addr_ContactsAccess ADD UNIQUE name(etc, etc)',
+			'post_command'=>'',
 			/* or optionally:
 			'post_process'=>'do_function($value1, $value2)', */
 		));
@@ -199,11 +194,10 @@ function usemod($options=array()){
 			'check'=>array('Category','Name'),
 			'return'=>'change',
 		));
-	if($f1 || $f2 || $f3 || $f4 || $f5)$usemodReady=false;
-    if(!($ids=q("SELECT c.ID FROM addr_contacts c JOIN addr_ContactsAccess ca ON c.ID=ca.Contacts_ID JOIN addr_access a ON ca.Access_ID=a.ID WHERE a.Category='{system}' AND Name='Admin'", O_COL)))$usemodReady=false;
+	if($f1 || $f2 || $f4 || $f5) $usemodReady=false;
+    if(!($ids=q("SELECT c.ID FROM addr_contacts c JOIN addr_ContactsAccess ca ON c.ID=ca.Contacts_ID JOIN addr_access a ON ca.Access_ID=a.ID WHERE a.Category='{system}' AND Name='Admin'", O_COL))) $usemodReady=false;
 
-    $GLOBALS['qx']['useRemediation'] = $currentRemediation;
-    ob_end_clean();
+    $qx['useRemediation'] = $currentRemediation;
 
     //translation for component
 	$usemod=array(

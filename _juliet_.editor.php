@@ -37,7 +37,12 @@ body{
 	padding:10px;
 	}
 input.myform, textarea.myform, select.myform { 
-	padding: 5px 10px; border-width: 2px; border-style: solid; color: #333; background: #fff; font-size: 14px;
+	padding: 5px 10px;
+    border-width: 2px;
+    border-style: solid;
+    color: #333;
+    background: #fff;
+    font-size: 14px;
 	margin-top:2px;
 }
 input.myform:focus, textarea.myform:focus, select.myform:focus { 
@@ -81,9 +86,6 @@ form{
 
 <script language="javascript" type="text/javascript">
 /* periwinkle coding */
-var browser='<?php echo $browser;?>';
-var count='<?php echo $nullCount?>';
-var ab='<?php echo $nullAbs?>';
 CMSBEditorURL='cms3.01.php';
 var isEscapable=1;
 AddOnkeypressCommand('PropKeyPress(e)');

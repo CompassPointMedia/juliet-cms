@@ -849,7 +849,8 @@ if($mode=='componentEditor'){
 	<br>
 	<?php
 	get_contents_tabsection('Settings');
-	require($JULIET_COMPONENT_ROOT.'/products._help_.php');?>
+	require($JULIET_COMPONENT_ROOT.'/products._help_.php');
+	?>
 	<?php
 	get_contents_tabsection('help');
 	tabs_enhanced(
@@ -869,7 +870,9 @@ if($mode=='componentEditor'){
 			'automation'=>array(
 				'label'=>'Automation',
 			),
-			'Settings'=>array(),
+			'Settings'=>array(
+			    'label' => 'Settings',
+            ),
 			'help'=>array(
 				'label'=>'Help',
 			),

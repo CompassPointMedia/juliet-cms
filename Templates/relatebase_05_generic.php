@@ -490,7 +490,7 @@ if(!empty($_SERVER['REDIRECT_URL']) && empty($gen_nodes) && !$recognizedModules 
 }
 
 
-
+/* review: logged-in should be a concept, and what handles that should be something else.  Middleware is commonly used for this but ultimately middleware does a poor job when the page may want to show part of an article (WSJ) and then direct a user to log in and then immediately just populate the rest.  So, any "MIDDLEWARE" must also be aware of the demands of the page below it, so we need to hook the middleware up (by definition) to a greater Juliet location */
 if(isset($Settings) && $Settings['ViewLoggedIn'] && empty($_SESSION['cnx'][$MASTER_USERNAME]['identity'])){
 	header('Location: /cgi/usemod?src='.urlencode('/'.($thisfolder?$thisfolder.'/':'').($thissubfolder?$thissubfolder.'/':'').$thispage.($QUERY_STRING?'?'.$QUERY_STRING:'')));
 }
@@ -506,6 +506,7 @@ if(isset($Settings) && ($a = trim($Settings['BlockSuppressionOverride']))){
 	$Settings['BlockSuppressionOverride']=$a;
 }
 
+/* review: this was first defined in /config.php - the thispage value must uniquely match an article name currently */
 if(isset($pJInBlogMode)){
 	require($_SERVER['DOCUMENT_ROOT'].'/components-juliet/articles.php');
 	if(rand(1,10)==5)mail($developerEmail, 'articles still has no control; Error file '.__FILE__.', line '.__LINE__,get_globals('articles still has no control; need ability to configure as with cgi, and there could be many articles and we need to be able to "hook into" this with gen_nodes - work this out'),$fromHdrBugs);
@@ -580,87 +581,94 @@ foreach($pJLocalCSSLinks as $n=>$v){
 $pJCSSLink=ob_get_contents();
 ob_end_clean();
 
-if(empty($pJModalInclusion)){ //----------------------- begin walrus -------------------------
+if(empty($pJModalInclusion)){
 
-if(empty($thisfolder) && ($thispage=='juliet-site-editor')){
-	if($logout=='1'){
+    if(empty($thisfolder) && ($thispage=='juliet-site-editor')){
+        if($logout=='1'){
 
-	    if(empty($src) || strstr($src, 'juliet-site-editor')){
-	        $src = '/'; // Home page
+            if(empty($src) || strstr($src, 'juliet-site-editor')){
+                $src = '/'; // Home page
 
+            }
+            unset($_SESSION['special'][$acct]['adminMode']);
+            header('Location: '.$src);
+            ?>
+            redirecting..
+            <script language="javascript" type="text/javascript">
+				window.location='<?php echo $src?>';
+            </script><?php
+            exit;
+        }else if($julietsiteeditor_UN==$MASTER_USERNAME && $julietsiteeditor_PW==$MASTER_PASSWORD){
+            $_SESSION['special'][$acct]['adminMode']=($_COOKIE['setAdminMode'] ? $_COOKIE['setAdminMode'] : 2);
+            $location=(!empty($src) ? $src : '/');
+            header('Location: '.$location);
+            ?><script>window.location='<?php echo $location?>'</script><?php
+            exit;
+        }else if(strlen($UN.$PW)){
+            $error=true;
         }
-		unset($_SESSION['special'][$acct]['adminMode']);
-		header('Location: '.$src);
-		?>
-		redirecting..
-		<script language="javascript" type="text/javascript">
-		window.location='<?php echo $src?>';
-		</script><?php
-		exit;
-	}else if($julietsiteeditor_UN==$MASTER_USERNAME && $julietsiteeditor_PW==$MASTER_PASSWORD){
-		$_SESSION['special'][$acct]['adminMode']=($_COOKIE['setAdminMode'] ? $_COOKIE['setAdminMode'] : 2);
-		$location=(!empty($src) ? $src : '/');
-		header('Location: '.$location);
-		?><script>window.location='<?php echo $location?>'</script><?php
-		exit;
-	}else if(strlen($UN.$PW)){
-		$error=true;
-	}
-}else if(!$thisfolder && ($thispage=='products.php' || $thispage=='products')){
-	if($adminMode && $_GET['Priority_y']){
-		$dir=($Priority_y<9?1:-1);
-		$thiscategory=q("SELECT ID FROM finan_items WHERE Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!='' ORDER BY Priority ASC", O_COL);
-		$max=q("SELECT MAX(Priority) FROM finan_items WHERE Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''", O_VALUE);
-	
-		$current=q("SELECT Priority FROM finan_items WHERE ID=$ID", O_VALUE);
-		if($dir==1){
-			if($absolute){
-				q("UPDATE finan_items SET Priority=Priority+1 WHERE Priority<=$current AND Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
-				q("UPDATE finan_items SET Priority=1 WHERE ID=$ID");
-			}else{
-				q("UPDATE finan_items SET Priority=Priority+1 WHERE Priority+1=$current AND Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
-				q("UPDATE finan_items SET Priority=$current-1 WHERE ID=$ID");
-			}
-		}else{
-			if($absolute){
-				q("UPDATE finan_items SET Priority=Priority-1 WHERE Priority>=$current AND Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
-				q("UPDATE finan_items SET Priority=$max WHERE ID=$ID");
-			}else{
-				q("UPDATE finan_items SET Priority=Priority-1 WHERE Priority-1=$current AND Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
-				q("UPDATE finan_items SET Priority=$current+1 WHERE ID=$ID");
-			}
-		}
-		//re-index as needed
-		$min=q("SELECT MIN(Priority) FROM finan_items WHERE Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''", O_VALUE);
-		if($min==0){
-			q("UPDATE finan_items SET Priority=Priority+1 WHERE Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
-		}
-		header('Location: products.php?Function='.urlencode(stripslashes($Function)).'&SubFunction='.urlencode(stripslashes($SubFunction)));
-		exit;
-	}
-}else if(!$thisfolder && ($thispage=='search.php' || $thispage=='search')){
-	if(!$q){
-		header('Location: /');
-		exit;
-	}
-	//this is the weighting of each part of the record proportionately
-	$nodeRanks=array(
-		'Name'=>3,
-		'Description'=>1,
-		'LongDescription'=>1,
-		'Keywords'=>7,
-		'Category'=>1,
-		'SubCategory'=>1,
-		'SKU'=>2
-	);
-	$nodeEvaluators=array(
-		'Keywords'=>'search_precedence'
-	);
-	$q=trim(preg_replace('/\s+/',' ',$q));
-	$qa=explode(' ',$q);
-	if(!function_exists('search_precedence'))require($FUNCTION_ROOT.'/function_search_suite_v100.php');
-	
-	if($a=q("SELECT * FROM finan_items WHERE
+    }else if(!$thisfolder && ($thispage=='products.php' || $thispage=='products')){
+        if($adminMode && $_GET['Priority_y']){
+            $dir=($Priority_y<9?1:-1);
+            $thiscategory=q("SELECT ID FROM finan_items WHERE Function='".$Function."' AND 
+            Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!='' ORDER BY Priority ASC", O_COL);
+            $max=q("SELECT MAX(Priority) FROM finan_items WHERE Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''", O_VALUE);
+
+            $current=q("SELECT Priority FROM finan_items WHERE ID=$ID", O_VALUE);
+            if($dir==1){
+                if($absolute){
+                    q("UPDATE finan_items SET Priority=Priority+1 WHERE Priority<=$current AND 
+Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
+                    q("UPDATE finan_items SET Priority=1 WHERE ID=$ID");
+                }else{
+                    q("UPDATE finan_items SET Priority=Priority+1 WHERE Priority+1=$current AND 
+Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
+                    q("UPDATE finan_items SET Priority=$current-1 WHERE ID=$ID");
+                }
+            }else{
+                if($absolute){
+                    q("UPDATE finan_items SET Priority=Priority-1 WHERE Priority>=$current AND 
+Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
+                    q("UPDATE finan_items SET Priority=$max WHERE ID=$ID");
+                }else{
+                    q("UPDATE finan_items SET Priority=Priority-1 WHERE Priority-1=$current AND 
+Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
+                    q("UPDATE finan_items SET Priority=$current+1 WHERE ID=$ID");
+                }
+            }
+            //re-index as needed
+            $min=q("SELECT MIN(Priority) FROM finan_items WHERE Function='".$Function."' AND 
+            Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''", O_VALUE);
+            if($min==0){
+                q("UPDATE finan_items SET Priority=Priority+1 WHERE Function='".$Function."' AND 
+                Function!='' AND SubFunction='".$SubFunction."' AND SubFunction!=''");
+            }
+            header('Location: products.php?Function='.urlencode(stripslashes($Function)).'&SubFunction='.urlencode(stripslashes($SubFunction)));
+            exit;
+        }
+    }else if(!$thisfolder && ($thispage=='search.php' || $thispage=='search')){
+        if(!$q){
+            header('Location: /');
+            exit;
+        }
+        //this is the weighting of each part of the record proportionately
+        $nodeRanks=array(
+            'Name'=>3,
+            'Description'=>1,
+            'LongDescription'=>1,
+            'Keywords'=>7,
+            'Category'=>1,
+            'SubCategory'=>1,
+            'SKU'=>2
+        );
+        $nodeEvaluators=array(
+            'Keywords'=>'search_precedence'
+        );
+        $q=trim(preg_replace('/\s+/',' ',$q));
+        $qa=explode(' ',$q);
+        if(!function_exists('search_precedence'))require($FUNCTION_ROOT.'/function_search_suite_v100.php');
+
+        if($a=q("SELECT * FROM finan_items WHERE
 		(
 		Name LIKE '%$q%' OR 
 		Description LIKE '%$q%' OR 
@@ -671,69 +679,70 @@ if(empty($thisfolder) && ($thispage=='juliet-site-editor')){
 		SubCategory LIKE '%$q%' OR 
 		SKU LIKE '%$q%'
 		) AND Active=1", O_ARRAY)){
-		$i=0;
-		foreach($a as $v){
-			/*
-			note: need to consider the length of the search, rank the locations the item is found
-			*/
-			$relevance=array();//set to zero
-			foreach($nodeRanks as $field=>$weight){
-				if(!trim($v[$field]))continue;
-				if($function = $nodeEvaluators[$field]){
-					$relevance[$field] = $weight * $function($q, $v[$field]);
-				}else if(strtolower(stripslashes($q)) == strtolower($v[$field])){
-					//exact match
-					$relevance[$field] = $weight * 1;
-				}else if(stristr(strtolower($v[$field]), strtolower(stripslashes($q)))){
-					//exact pattern in field
-					$relevance[$field] = $weight * .75;
-				}
-			}
-			//now build the array - handle duplicates.  The $crit array will be used to handle
-			$i++;
-			$searchResults[$i]=array_merge($v,array('relevance'=>array_sum($relevance), 'relevanceSummary'=>$relevance));
-		}
-		//resort the array
-		$searchResults=subkey_sort($searchResults,'relevance', array(
-			'sortType'=>'standard',
-			'reindex'=>true,
-			'sort'=>'desc',
-		));
-		//we handle range in post-eval of the return
-		if(!$position)$position=1;
-		if(!$batch)$batch=30;
-		$qq=get_navstats(count($searchResults), $position, $batch);
-		if(count($searchResults)){
-			$_SESSION['special']['searchQuery']=$QUERY_STRING;
-		}else{
-			$_SESSION['special']['searchQuery']='reset=1';
-		}
-	}
-}
+            $i=0;
+            foreach($a as $v){
+                /*
+                note: need to consider the length of the search, rank the locations the item is found
+                */
+                $relevance=array();//set to zero
+                foreach($nodeRanks as $field=>$weight){
+                    if(!trim($v[$field]))continue;
+                    if($function = $nodeEvaluators[$field]){
+                        $relevance[$field] = $weight * $function($q, $v[$field]);
+                    }else if(strtolower(stripslashes($q)) == strtolower($v[$field])){
+                        //exact match
+                        $relevance[$field] = $weight * 1;
+                    }else if(stristr(strtolower($v[$field]), strtolower(stripslashes($q)))){
+                        //exact pattern in field
+                        $relevance[$field] = $weight * .75;
+                    }
+                }
+                //now build the array - handle duplicates.  The $crit array will be used to handle
+                $i++;
+                $searchResults[$i]=array_merge($v,array('relevance'=>array_sum($relevance), 'relevanceSummary'=>$relevance));
+            }
+            //resort the array
+            $searchResults=subkey_sort($searchResults,'relevance', array(
+                'sortType'=>'standard',
+                'reindex'=>true,
+                'sort'=>'desc',
+            ));
+            //we handle range in post-eval of the return
+            /* review: we had search results as well, and some fairly interesting ideas there */
+            if(!$position)$position=1;
+            if(!$batch)$batch=30;
+            $qq=get_navstats(count($searchResults), $position, $batch);
+            if(count($searchResults)){
+                $_SESSION['special']['searchQuery']=$QUERY_STRING;
+            }else{
+                $_SESSION['special']['searchQuery']='reset=1';
+            }
+        }
+    }
 
-//2012-05-06: buffer the document, but don't bother flushing unless an on-the-fly component needs to access the document <head>
-ob_start('pJ_modify_document_callback'); //'pJ_modify_document_callback'
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <?php if(file_exists($_SERVER['DOCUMENT_ROOT'].'/favicon.ico')){ ?>
-        <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
-    <?php } ?>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    //2012-05-06: buffer the document, but don't bother flushing unless an on-the-fly component needs to access the document <head>
+    ob_start('pJ_modify_document_callback'); //'pJ_modify_document_callback'
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <?php if(file_exists($_SERVER['DOCUMENT_ROOT'].'/favicon.ico')){ ?>
+            <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+        <?php } ?>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?php echo !empty($headRegionTitle) ? h($headRegionTitle) : metatags_i1('title');?></title>
-    <?php echo metatags_i1('meta');?>
-    <link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
-    <?php
-    echo $pJCSSLink;
-    echo "\n";
-    ?><style type="text/css">
+        <title><?php echo !empty($headRegionTitle) ? h($headRegionTitle) : metatags_i1('title');?></title>
+        <?php echo metatags_i1('meta');?>
+        <link href="/Library/css/cssreset01.css" type="text/css" rel="stylesheet" />
         <?php
-        if($pJLocalCSS)
-        foreach($pJLocalCSS as $n=>$v){
-            ?>/* ----------- Module CSS <?php echo $n;?> ------------ */<?php echo "\n";
+        echo $pJCSSLink;
+        echo "\n";
+        ?><style type="text/css">
+            <?php
+            if($pJLocalCSS)
+            foreach($pJLocalCSS as $n=>$v){
+                ?>/* ----------- Module CSS <?php echo $n;?> ------------ */<?php echo "\n";
             echo trim($v)."\n\n";
             unset($pJLocalCSS[$n]);
         }
@@ -743,356 +752,354 @@ ob_start('pJ_modify_document_callback'); //'pJ_modify_document_callback'
             echo $Settings['CustomCSS'];
         }
         ?>
-    </style>
+        </style>
 
 
-    <script language="javascript" type="text/javascript" src="/Library/js/jquery.js"></script>
-    <script src="/Library/js/global_04_i1.js" language="javascript" type="text/javascript"></script>
-    <script src="/Library/js/common_04_i1.js" language="javascript" type="text/javascript"></script>
-    <script src="/Library/js/forms_04_i1.js" language="JavaScript" type="text/javascript"></script>
-    <script src="/Library/js/loader_04_i1.js" language="JavaScript" type="text/javascript"></script>
-    <?php if(!empty($pJulietBalanceColumns)){ ?>
-        <script src="/Library/js/matching_columns_m_v100.js" language="JavaScript" type="text/javascript"></script>
-    <?php } ?>
-    <script language="JavaScript" type="text/javascript">
-        /* periwinkle coding */
-		var thispage='<?php echo $thispage?>';
-		var thisfolder='<?php echo $thisfolder?>';
-            <?php
-            //2011-09-01 note the addition of thissubfolder which breaks apart thisfolder from now on
-            if(!empty($thissubfolder)){ ?>var thissubfolder='<?php echo $thissubfolder;?>';<?php echo "\n"; }
-            if(!empty($thisnode)){ ?>var thisnode='<?php echo $thisnode;?>';<?php echo "\n"; }
-            ?>		var ctime='<?php echo $ctime?>';
-		var PHPSESSID='<?php echo $_COOKIE['PHPSESSID']?>';
-		//for nav feature
-		var count='<?php echo isset($nullCount) ? $nullCount : '';?>';
-		var ab='<?php echo isset($nullAbs) ? $nullAbs : '';?>';
-		CMSBEditorURL='cms3.11.php';
-    </script>
-    <?php
-
-    if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.js')){
-        echo "\n";
-        ?><script language="javascript" type="text/javascript" src="/site-local/<?php echo $acct.'.'.$templateName.'.global.js';?>"></script><?php
-    }
-
-    //added 2011-09-21 for adding the cart region
-    if(!empty($invokeCartLayout)){ ?><relatebaseheadarea /><?php }
-
-    ?>
-</head>
-<?php ob_start();?>
-<body>
-<?php 
-//set unique id for each page, plus classes
-$out=ob_get_contents();
-ob_end_clean();
-$out=str_replace('<body>','<body id="'.$thispage.'">',$out);
-if(!empty($gen_nodes['Class']) || !empty($pJBodyClass)){
-	$str=' class="';
-	$str.=$gen_nodes['Class'];
-	if($gen_nodes['Class'] && $pJBodyClass)$str.=' ';
-	if($pJBodyClass)$str.=implode(' ',$pJBodyClass);
-	$str.='"';
-	$out=str_replace('>',$str.'>',$out);
-}
-echo $out;
-/* all "god-like" components for Juliet are in components-juliet and start with .settings */
-if($adminMode)require($JULIET_COMPONENT_ROOT.'/.settings.toolbar.php');
-?>
-<div id="mainWrap" <?php pJCSS('mainWrap');?>><?php
-//2012-04-16: this is somewhat hard-coded still
-$pJCurrentContentRegion='mainWrap';
-$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
-
-if(!$suppressWrappers['mainWrapSub']){ ?><div id="mainWrapSub" <?php pJCSS('mainWrapSub');?>><?php }
-
-
-//---------------------------------------
-/*
-How do I get that this content is meant for the top region?
-Maybe to it on a name basis? topRegion(Whatever) so "WHERE LIKE 'topRegion%'"
-Loop through(for position)/output buffer gotten divs
-Modify existing logic to be appropriate for database information.
-*/
-
-
-
-
-if(!empty($pJTopBlocks)){ /* OR we can go with "I am in ADMIN_MODE_DESIGNER and let's just outlay the templateDefinedBlocks inside of mainWrap (still hard-coded)" */
-	foreach($pJTopBlocks as $pJCurrentContentRegion=>$_bsr_v){
-
-		//setting for level of editability
-		$pJEditability= (empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? '' : $pJBlocks[$pJCurrentContentRegion]['settings']['editability']);
-
-		//pass on blank regions
-		ob_start();
-		if(isset($$pJCurrentContentRegion)){
-			echo $$pJCurrentContentRegion;
-		}else{
-			if($_bsr_v['Name']!='topRegion'){
-				?><div id="<?php echo isset($_bsr_v['Name']) ? $_bsr_v['Name'] : ''?>" <?php pJCSS(isset($_bsr_v['Name']) ? $_bsr_v['Name'] : '');?>><?php
-			}
-			$pJEditability = isset($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
-            eval(' ?>'.$pJTopBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-			if($_bsr_v['Name']!='topRegion'){
-				?></div><?php
-			}			
-			$pJTopBlocks[$pJCurrentContentRegion]['Content']=ob_get_contents();
-		}
-		ob_end_clean();
-	}
-}
-?><div id="topRegion"><?php
-$pJEditability=$pJBlocks['topRegion']['settings']['editability'];
-echo $pJTopBlocks['topRegion']['Content'];
-/*
-
-2011-07-18 this might not be the best place for it but it is here for now; and it is hardcoded
-
-*/
-
-$pJCurrentContentRegion='topRegion';
-
-unset($str1,$str2);
-//we declare the absolutely positioned elements 2nd
-if(count($pJTopBlocks))
-foreach($pJTopBlocks as $_bsr_n=>$_bsr_v){
-	if($_bsr_n=='topRegion')continue;
-	if($_bsr_v['Position']=='absolute'){
-		$str2.=$_bsr_v['Content']."\n";
-	}else{
-		$str1.=$_bsr_v['Content']."\n";
-	}
-}
-echo $str1.$str2;
-?></div>
-<div id="mainRegion" <?php pJCSS('mainRegion');?>>
-	<?php
-	$pJCurrentContentRegion='mainRegionIntro';
-	if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionIntro_end;
-	?>
-	<div id="mainRegionIntro" <?php pJCSS($pJCurrentContentRegion);?>>
-	<?php
-	$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-	
-	if(isset($$pJCurrentContentRegion)){
-		echo $$pJCurrentContentRegion;      
-	}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-		eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-	}else{
-		CMSB($pJCurrentContentRegion.'_1');
-	} 
-	?>
-	</div><?php mainRegionIntro_end: //end block ?>
-	<?php /*del 2013-07-16: pJWrap('mainRegionWide')*/?>
-
-
-
-
-	<div id="mainRegionCenter" <?php pJCSS('mainRegionCenter');?>>
-		<?php
-		$pJCurrentContentRegion='mainRegionCenterIntro';
-		if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionCenterIntro_end;
-		$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-		?>
-		<div id="mainRegionCenterIntro" <?php pJCSS($pJCurrentContentRegion);?>>
-            <?php
-            if($invokeCartLayout){
-                //nothing
-            }else if(isset($$pJCurrentContentRegion)){
-                echo $$pJCurrentContentRegion;
-            }else if($a=$pJBlocks[$pJCurrentContentRegion]['Content']){
-                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-            }else{
-                CMSB($pJCurrentContentRegion.'_1');
-            }
-            ?>
-		</div><?php mainRegionCenterIntro_end: //end block?>
-		<div id="mainRegionCenterContent" <?php pJCSS('mainRegionCenterContent');?>>
-			<?php
-
-			//2013-07-23 relocate inset
-			if($pJCenterContentInsetWide)ob_start();
-
-			$pJCurrentContentRegion='mainRegionCenterContentInset';
-			if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionCenterContentInset_end;
-			$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-			?>
-			<div id="mainRegionCenterContentInset" <?php pJCSS($pJCurrentContentRegion);?>>
-			<?php
-			if($rtest==17)exit('test');
-			if($invokeCartLayout){
-				//nothing
-			}else if(isset($$pJCurrentContentRegion)){
-				echo $$pJCurrentContentRegion;
-			}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-				eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-			}else{
-				if($test==17)echo '<!-- begin CMS -->';
-				CMSB($pJCurrentContentRegion.'_1');
-				if($test==17)echo '<!-- end CMS -->';
-			}
-			?>
-			</div><?php mainRegionCenterContentInset_end: //end block?>
-			<?php
-
-
-
-			//2013-07-23 - buffer inset
-			if($pJCenterContentInsetWide){
-				$mainRegionCenterContentInset=ob_get_contents();
-				ob_end_clean();
-			}
-
-			/* you always have to do this if you have an interspersed div that calls pJCSS.. */
-			$pJCurrentContentRegion='mainRegionCenterContent';
-			$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
-			if($invokeCartLayout){
-				?><relatebasecartarea><?php
-			}else if(isset($$pJCurrentContentRegion)){
-#				if($test==17)exit('at 1');
-				echo $$pJCurrentContentRegion;
-			}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-				if($test==17)exit('at 2');
-				eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-			}else if($thisfolder=='' && $thispage=='juliet-site-editor'){
-				?>
-                <h1>Juliet Site Editor</h1>
-				<?php if($error){ ?>
-				<div style="color:darkred;font-weight:bold;">Your username or password is incorrect</div>
-				<?php } ?>
-				<p>Enter this site's account username and password:</p>
-				<form name="form1" id="form1" method="post" action="juliet-site-editor">
-					<input name="julietsiteeditor_UN" type="text" id="UN" />
-					<br />
-					<input name="julietsiteeditor_PW" type="password" id="PW" />
-					<input type="hidden" name="src" value="<?php echo h(stripslashes($src));?>" id="src" />
-					<br />
-					<input type="submit" name="Submit" value="Sign In" />
-				</form>
+        <script language="javascript" type="text/javascript" src="/Library/js/jquery.js"></script>
+        <script src="/Library/js/global_04_i1.js" language="javascript" type="text/javascript"></script>
+        <script src="/Library/js/common_04_i1.js" language="javascript" type="text/javascript"></script>
+        <script src="/Library/js/forms_04_i1.js" language="JavaScript" type="text/javascript"></script>
+        <script src="/Library/js/loader_04_i1.js" language="JavaScript" type="text/javascript"></script>
+        <?php if(!empty($pJulietBalanceColumns)){ ?>
+            <script src="/Library/js/matching_columns_m_v100.js" language="JavaScript" type="text/javascript"></script>
+        <?php } ?>
+        <script language="JavaScript" type="text/javascript">
+            /* periwinkle coding */
+			var thispage='<?php echo $thispage?>';
+			var thisfolder='<?php echo $thisfolder?>';
                 <?php
-			}else{
-				CMSB($pJCurrentContentRegion.'_1');
-			}
-			?>
-		</div>
-		<?php
-		if($pJCenterContentInsetWide==1)echo $mainRegionCenterContentInset;
-		?>
-	</div>
-	<?php
-	if($pJCenterContentInsetWide==2)echo $mainRegionCenterContentInset;
-	?>
-
-
-    <?php
-    $pJCurrentContentRegion='mainRegionLeft';
-    if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionLeft_end;
-    ?>
-    <div id="mainRegionLeft" <?php pJCSS($pJCurrentContentRegion);?>>
+                //2011-09-01 note the addition of thissubfolder which breaks apart thisfolder from now on
+                if(!empty($thissubfolder)){ ?>var thissubfolder='<?php echo $thissubfolder;?>';<?php echo "\n"; }
+                if(!empty($thisnode)){ ?>var thisnode='<?php echo $thisnode;?>';<?php echo "\n"; }
+            ?>		var ctime='<?php echo $ctime?>';
+			var PHPSESSID='<?php echo $_COOKIE['PHPSESSID']?>';
+			//for nav feature
+			var count='<?php echo isset($nullCount) ? $nullCount : '';?>';
+			var ab='<?php echo isset($nullAbs) ? $nullAbs : '';?>';
+			CMSBEditorURL='cms3.11.php';
+        </script>
         <?php
-        $pJCurrentContentRegion='mainRegionLeftIntro';
-        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+
+        if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.'.global.js')){
+            echo "\n";
+            ?><script language="javascript" type="text/javascript" src="/site-local/<?php echo $acct.'.'.$templateName.'.global.js';?>"></script><?php
+        }
+
+        //added 2011-09-21 for adding the cart region
+        if(!empty($invokeCartLayout)){ ?><relatebaseheadarea /><?php }
+
         ?>
-        <div id="mainRegionLeftIntro" <?php pJCSS($pJCurrentContentRegion);?>>
-            <?php
-            if(isset($$pJCurrentContentRegion)){
-                echo $$pJCurrentContentRegion;
-            }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-            }else{
-                CMSB($pJCurrentContentRegion.'_1');
+    </head>
+    <?php ob_start();?>
+    <body>
+    <?php
+    //set unique id for each page, plus classes
+    $out=ob_get_contents();
+    ob_end_clean();
+    $out=str_replace('<body>','<body id="'.$thispage.'">',$out);
+    if(!empty($gen_nodes['Class']) || !empty($pJBodyClass)){
+        $str=' class="';
+        $str.=$gen_nodes['Class'];
+        if($gen_nodes['Class'] && $pJBodyClass)$str.=' ';
+        if($pJBodyClass)$str.=implode(' ',$pJBodyClass);
+        $str.='"';
+        $out=str_replace('>',$str.'>',$out);
+    }
+    echo $out;
+    /* all "god-like" components for Juliet are in components-juliet and start with .settings */
+    if($adminMode)require($JULIET_COMPONENT_ROOT.'/.settings.toolbar.php');
+    ?>
+    <div id="mainWrap" <?php pJCSS('mainWrap');?>><?php
+        //2012-04-16: this is somewhat hard-coded still
+        $pJCurrentContentRegion='mainWrap';
+        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+
+
+        if(!$suppressWrappers['mainWrapSub']){ ?><div id="mainWrapSub" <?php pJCSS('mainWrapSub');?>><?php }
+
+
+            //---------------------------------------
+            /*
+            How do I get that this content is meant for the top region?
+            Maybe to it on a name basis? topRegion(Whatever) so "WHERE LIKE 'topRegion%'"
+            Loop through(for position)/output buffer gotten divs
+            Modify existing logic to be appropriate for database information.
+            */
+
+
+
+
+            if(!empty($pJTopBlocks)){ /* OR we can go with "I am in ADMIN_MODE_DESIGNER and let's just outlay the templateDefinedBlocks inside of mainWrap (still hard-coded)" */
+                foreach($pJTopBlocks as $pJCurrentContentRegion=>$_bsr_v){
+
+                    //setting for level of editability
+                    $pJEditability= (empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? '' : $pJBlocks[$pJCurrentContentRegion]['settings']['editability']);
+
+                    //pass on blank regions
+                    ob_start();
+                    if(isset($$pJCurrentContentRegion)){
+                        echo $$pJCurrentContentRegion;
+                    }else{
+                        if($_bsr_v['Name']!='topRegion'){
+                            ?><div id="<?php echo isset($_bsr_v['Name']) ? $_bsr_v['Name'] : ''?>" <?php pJCSS(isset($_bsr_v['Name']) ? $_bsr_v['Name'] : '');?>><?php
+                        }
+                        $pJEditability = isset($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
+                        eval(' ?>'.$pJTopBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                        if($_bsr_v['Name']!='topRegion'){
+                            ?></div><?php
+                        }
+                        $pJTopBlocks[$pJCurrentContentRegion]['Content']=ob_get_contents();
+                    }
+                    ob_end_clean();
+                }
             }
-            ?>
-        </div>
-        <div id="mainRegionLeftContent" <?php pJCSS('mainRegionLeftContent');?>>
+            ?><div id="topRegion"><?php
+                $pJEditability=$pJBlocks['topRegion']['settings']['editability'];
+                echo $pJTopBlocks['topRegion']['Content'];
+                /*
+
+                2011-07-18 this might not be the best place for it but it is here for now; and it is hardcoded
+
+                */
+
+                $pJCurrentContentRegion='topRegion';
+
+                unset($str1,$str2);
+                //we declare the absolutely positioned elements 2nd
+                if(count($pJTopBlocks))
+                    foreach($pJTopBlocks as $_bsr_n=>$_bsr_v){
+                        if($_bsr_n=='topRegion')continue;
+                        if($_bsr_v['Position']=='absolute'){
+                            $str2.=$_bsr_v['Content']."\n";
+                        }else{
+                            $str1.=$_bsr_v['Content']."\n";
+                        }
+                    }
+                echo $str1.$str2;
+                ?></div>
+            <div id="mainRegion" <?php pJCSS('mainRegion');?>>
+                <?php
+                $pJCurrentContentRegion='mainRegionIntro';
+                if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionIntro_end;
+                ?>
+                <div id="mainRegionIntro" <?php pJCSS($pJCurrentContentRegion);?>>
+                    <?php
+                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+
+                    if(isset($$pJCurrentContentRegion)){
+                        echo $$pJCurrentContentRegion;
+                    }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                        eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                    }else{
+                        CMSB($pJCurrentContentRegion.'_1');
+                    }
+                    ?>
+                </div><?php mainRegionIntro_end: //end block ?>
+                <?php /*del 2013-07-16: pJWrap('mainRegionWide')*/?>
+
+
+
+
+                <div id="mainRegionCenter" <?php pJCSS('mainRegionCenter');?>>
+                    <?php
+                    $pJCurrentContentRegion='mainRegionCenterIntro';
+                    if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionCenterIntro_end;
+                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+                    ?>
+                    <div id="mainRegionCenterIntro" <?php pJCSS($pJCurrentContentRegion);?>>
+                        <?php
+                        if($invokeCartLayout){
+                            //nothing
+                        }else if(isset($$pJCurrentContentRegion)){
+                            echo $$pJCurrentContentRegion;
+                        }else if($a=$pJBlocks[$pJCurrentContentRegion]['Content']){
+                            eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                        }else{
+                            CMSB($pJCurrentContentRegion.'_1');
+                        }
+                        ?>
+                    </div><?php mainRegionCenterIntro_end: //end block?>
+                    <div id="mainRegionCenterContent" <?php pJCSS('mainRegionCenterContent');?>>
+                        <?php
+
+                        //2013-07-23 relocate inset
+                        if($pJCenterContentInsetWide)ob_start();
+
+                        $pJCurrentContentRegion='mainRegionCenterContentInset';
+                        if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionCenterContentInset_end;
+                        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+                        ?>
+                        <div id="mainRegionCenterContentInset" <?php pJCSS($pJCurrentContentRegion);?>>
+                            <?php
+                            if($rtest==17)exit('test');
+                            if($invokeCartLayout){
+                                //nothing
+                            }else if(isset($$pJCurrentContentRegion)){
+                                echo $$pJCurrentContentRegion;
+                            }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                            }else{
+                                if($test==17)echo '<!-- begin CMS -->';
+                                CMSB($pJCurrentContentRegion.'_1');
+                                if($test==17)echo '<!-- end CMS -->';
+                            }
+                            ?>
+                        </div><?php mainRegionCenterContentInset_end: //end block?>
+                        <?php
+
+
+
+                        //2013-07-23 - buffer inset
+                        if($pJCenterContentInsetWide){
+                            $mainRegionCenterContentInset=ob_get_contents();
+                            ob_end_clean();
+                        }
+
+                        /* you always have to do this if you have an interspersed div that calls pJCSS.. */
+                        $pJCurrentContentRegion='mainRegionCenterContent';
+                        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+
+                        if($invokeCartLayout){
+                        ?><relatebasecartarea><?php
+                            }else if(isset($$pJCurrentContentRegion)){
+#				if($test==17)exit('at 1');
+                                echo $$pJCurrentContentRegion;
+                            }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                                if($test==17)exit('at 2');
+                                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                            }else if($thisfolder=='' && $thispage=='juliet-site-editor'){
+                                ?>
+                                <h1>Juliet Site Editor</h1>
+                                <?php if($error){ ?>
+                                    <div style="color:darkred;font-weight:bold;">Your username or password is incorrect</div>
+                                <?php } ?>
+                                <p>Enter this site's account username and password:</p>
+                                <form name="form1" id="form1" method="post" action="juliet-site-editor">
+                                    <input name="julietsiteeditor_UN" type="text" id="UN" />
+                                    <br />
+                                    <input name="julietsiteeditor_PW" type="password" id="PW" />
+                                    <input type="hidden" name="src" value="<?php echo h(stripslashes($src));?>" id="src" />
+                                    <br />
+                                    <input type="submit" name="Submit" value="Sign In" />
+                                </form>
+                                <?php
+                            }else{
+                                CMSB($pJCurrentContentRegion.'_1');
+                            }
+                            ?>
+                    </div>
+                    <?php
+                    if($pJCenterContentInsetWide==1)echo $mainRegionCenterContentInset;
+                    ?>
+                </div>
+                <?php
+                if($pJCenterContentInsetWide==2)echo $mainRegionCenterContentInset;
+                ?>
+
+
+                <?php
+                $pJCurrentContentRegion='mainRegionLeft';
+                if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionLeft_end;
+                ?>
+                <div id="mainRegionLeft" <?php pJCSS($pJCurrentContentRegion);?>>
+                    <?php
+                    $pJCurrentContentRegion='mainRegionLeftIntro';
+                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+                    ?>
+                    <div id="mainRegionLeftIntro" <?php pJCSS($pJCurrentContentRegion);?>>
+                        <?php
+                        if(isset($$pJCurrentContentRegion)){
+                            echo $$pJCurrentContentRegion;
+                        }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                            eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                        }else{
+                            CMSB($pJCurrentContentRegion.'_1');
+                        }
+                        ?>
+                    </div>
+                    <div id="mainRegionLeftContent" <?php pJCSS('mainRegionLeftContent');?>>
+                        <?php
+                        $pJCurrentContentRegion='mainRegionLeftContent';
+                        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+
+                        if(isset($$pJCurrentContentRegion)){
+                            echo $$pJCurrentContentRegion;
+                        }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                            eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                        }else{
+                            CMSB($pJCurrentContentRegion.'_1');
+                        }
+                        ?>
+                    </div>
+                </div>
+                <?php mainRegionLeft_end: //end block?>
+
+
+                <div class="cb0"> </div>
+            </div>
+            <?php /*del 2013-07-16: pJWrap('mainRegionWide')*/?>
+            <?php if($pJBottomRegionWide)ob_start(); ?>
+            <div id="bottomRegion" <?php pJCSS('bottomRegion');?>>
+                <div id="footer" <?php pJCSS('footer');?>><!-- now a div inside of bottomRegion -->
+                    <?php
+                    $pJCurrentContentRegion='footer';
+                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+
+                    if(isset($$pJCurrentContentRegion)){
+                        echo $$pJCurrentContentRegion;
+                    }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
+                        eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
+                    }else{
+                        if(file_exists($local=$JULIET_COMPONENT_ROOT.'/'.$acct.'.footer.php')){
+                            require($local);
+                        }else{
+                            require($JULIET_COMPONENT_ROOT.'/footer.php');
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
             <?php
-            $pJCurrentContentRegion='mainRegionLeftContent';
-            $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
-            if(isset($$pJCurrentContentRegion)){
-                echo $$pJCurrentContentRegion;
-            }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-                eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-            }else{
-                CMSB($pJCurrentContentRegion.'_1');
+            if($pJBottomRegionWide){
+                $_bottomRegion_=ob_get_contents();
+                ob_end_clean();
             }
-            ?>
+            if(!$suppressWrappers['mainWrapSub']){ ?></div><?php } ?>
+        <?php
+        //place bottomRegion between mainWrap and mainWrapSub
+        if($pJBottomRegionWide==1)echo $_bottomRegion_;
+        ?>
+    </div><!-- end of mainWrap -->
+    <?php
+    //place bottomRegion entirely out of wraps
+    if($pJBottomRegionWide==2)echo $_bottomRegion_;
+    ?>
+    <?php if($adminMode){ ?>
+        <div id="showTester" title="Javascript Tester" onClick="g('tester').style.display='block';">&nbsp;</div>
+        <div id="tester" >
+            <a href="#" onClick="g('ctrlSection').style.display='block';return false;">Show Control Section</a><br />
+            <textarea name="test" cols="65" rows="4" id="test">clear_form();</textarea><br />
+            <input type="button" name="button" value="Test" onClick="jsEval(g('test').value);"><br />
+            <textarea id="result" name="result" cols="65" rows="3" ></textarea>
         </div>
-    </div>
-    <?php mainRegionLeft_end: //end block?>
+    <?php } ?>
+    <?php if(!$hideCtrlSection){ ?>
+        <div id="ctrlSection" style="display:none;">
+            <iframe name="w1" src="/Library/js/blank.htm"></iframe>
+            <iframe name="w2" src="<?php if($returnAction=='getDoc' && $document){
+                //get the requested document
+                echo '/index_01_exe.php?suppressPrintEnv=1&mode=getDoc&document='.$document;
+            }else{
+                echo '/blank.htm';
+            }?>"></iframe>
+        </div>
+    <?php } ?>
+    </body>
+    </html><?php
+
+    //2012-05-05 see above
+    ob_end_flush();
 
 
-    <div class="cb0"> </div>
-</div>
-<?php /*del 2013-07-16: pJWrap('mainRegionWide')*/?>
-<?php if($pJBottomRegionWide)ob_start(); ?>
-<div id="bottomRegion" <?php pJCSS('bottomRegion');?>>
-	<div id="footer" <?php pJCSS('footer');?>><!-- now a div inside of bottomRegion -->
-		<?php
-		$pJCurrentContentRegion='footer';
-		$pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
-		if(isset($$pJCurrentContentRegion)){
-			echo $$pJCurrentContentRegion;
-		}else if($pJBlocks[$pJCurrentContentRegion]['Content']){
-			eval(' ?>'.$pJBlocks[$pJCurrentContentRegion]['Content'].'<?php ');
-		}else{
-			if(file_exists($local=$JULIET_COMPONENT_ROOT.'/'.$acct.'.footer.php')){
-				require($local);
-			}else{
-				require($JULIET_COMPONENT_ROOT.'/footer.php');
-			}
-		}
-		?>
-	</div>
-</div>
-<?php
-if($pJBottomRegionWide){
-	$_bottomRegion_=ob_get_contents();
-	ob_end_clean();
+    page_end();
 }
-if(!$suppressWrappers['mainWrapSub']){ ?></div><?php } ?>
-<?php
-//place bottomRegion between mainWrap and mainWrapSub
-if($pJBottomRegionWide==1)echo $_bottomRegion_;
-?>
-</div><!-- end of mainWrap -->
-<?php
-//place bottomRegion entirely out of wraps
-if($pJBottomRegionWide==2)echo $_bottomRegion_;
-?>
-<?php if($adminMode){ ?>
-<div id="showTester" title="Javascript Tester" onClick="g('tester').style.display='block';">&nbsp;</div>
-<div id="tester" >
-	<a href="#" onClick="g('ctrlSection').style.display='block';return false;">Show Control Section</a><br />
-	<textarea name="test" cols="65" rows="4" id="test">clear_form();</textarea><br />
-	<input type="button" name="button" value="Test" onClick="jsEval(g('test').value);"><br />
-	<textarea id="result" name="result" cols="65" rows="3" ></textarea>
-</div>
-<?php } ?>
-<?php if(!$hideCtrlSection){ ?>
-<div id="ctrlSection" style="display:none;">
-	<iframe name="w1" src="/Library/js/blank.htm"></iframe>
-	<iframe name="w2" src="<?php if($returnAction=='getDoc' && $document){
-		//get the requested document
-		echo '/index_01_exe.php?suppressPrintEnv=1&mode=getDoc&document='.$document;
-	}else{
-		echo '/blank.htm';
-	}?>"></iframe>
-</div>
-<?php } ?>
-</body>
-</html><?php
-
-//2012-05-05 see above
-ob_end_flush();
-
-
-page_end();
-}
-//---------------------------------- end walrus -------------------------------
-?>
