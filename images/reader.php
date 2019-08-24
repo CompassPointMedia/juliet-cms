@@ -6,17 +6,18 @@ $scriptDisposition='imagereader';
 
 //code to begin on line 40 for consistency
 $path=tree_id_to_path($Tree_ID);
-if($src){
+
+if(!empty($src)){
 	//not developed	
 }else if($path && $Key){
 	$Key=str_replace('_','',$Key);
 	if(preg_match('#/'.$Key.'_#',$path) || $Key==md5($Tree_ID.$MASTER_PASSWORD)){
-		if($thumbnail=='default'){
+		if(!empty($thumbnail) && $thumbnail=='default'){
 			//added 2011-02-23:
 			$path=explode('/',$path);
 			$file=array_pop($path);
 			$path=implode('/',$path).'/.thumbs.dbr/'.$file;
-		}else if($disposition){
+		}else if(!empty($disposition)){
 			//allow passage of _x300 or 300x_ where _ means "large"
 			$d=preg_split('/x/i',$disposition);
 			if(!$d[0])$d[0]=12000;
@@ -124,7 +125,7 @@ if($src){
 			$path=$target;
 		}
 
-		$ext=strtolower(end(explode('.',$path)));
+		$ext=strtolower(@end(explode('.',$path)));
 		if(!in_array($ext, array('jpg','gif','png','svg'))){
 			//can't show a non-image
 			exit;
