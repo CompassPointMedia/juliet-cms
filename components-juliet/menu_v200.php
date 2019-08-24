@@ -26,7 +26,7 @@ $handle='navMenu';
 
 //pull parameters for this component file
 if($Parameters=q("SELECT Parameters FROM gen_templates_blocks WHERE Templates_ID=$Templates_ID AND Name='$pJCurrentContentRegion'", O_VALUE)){
-    $pJ['componentFiles'][$handle]=unserialize(base64_decode($Parameters));
+    $pJ['componentFiles'][$handle]=@unserialize(base64_decode($Parameters));
 
     /* nodes include: forms; data; format.  forms is unused right now, and data[default] means "across all pages" and is the only part developed */
 }
@@ -35,7 +35,7 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
     /*
     2012-03-09: this is an example of precedence confusion; there are many different things happening - we need to extract key field data for site display but also we are passing this to a exe page which is loading different data- THINK!!! and improve on this
     */
-    if(!$Menus_ID)$Menus_ID=pJ_getdata('Menus_ID');
+    if(empty($Menus_ID)) $Menus_ID=pJ_getdata('Menus_ID');
 
     $menuBgColor=pJ_getdata('menuBgColor','#ccc');
     $menuPaddingAround=pJ_getdata('menuPaddingAround','7px 10px');
@@ -106,7 +106,7 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
 
     $pJLocalCSS[$handle]=trim($str)."\n".trim($menuAdditionalCSS);
 
-    if($mode=='componentEditor'){
+    if(!empty($mode) && $mode == 'componentEditor'){
         if($Parameters=q("SELECT Parameters FROM gen_templates_blocks WHERE Templates_ID=$Templates_ID AND Name='$pJCurrentContentRegion'", O_VALUE)){
             $a=unserialize(base64_decode($Parameters));
         }else{
@@ -168,7 +168,7 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
         //------------ __i__ break loop ---------------
         break;
 
-    }else if($formNode=='menu' /* ok this is something many component files will contain */){
+    }else if(!empty($formNode) && $formNode=='menu' /* ok this is something many component files will contain */){
         ?>
         <script language="javascript" type="text/javascript">
 			var Menus_ID=<?php echo $Menus_ID?$Menus_ID:"''";?>;
@@ -312,7 +312,7 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
         //------------ __i__ break loop ---------------
         break;
 
-    }else if($formNode=='layout'){
+    }else if(!empty($formNode) && $formNode=='layout'){
         ?>
         <p>
             Background color: <input name="layout[menuBgColor]" type="text" id="menuBgColor" onchange="dChge(this);" value="<?php echo $menuBgColor;?>" size="9" />
@@ -329,17 +329,17 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
 
     }
 
-    if(!$menuDef)
-        $menuDef=array(
+    if(empty($menuDef)) {
+        $menuDef = array(
             array(
-                'settings'=>array(
-                    'navID'=>q("SELECT * FROM gen_nodes WHERE Type='Group' AND Category='Navigation Menu' ORDER BY IF(ID='$Menus_ID',1,2)", O_VALUE),
-                    'displayMethod'=>'image',
-                    'maxLevel'=>1,
+                'settings' => array(
+                    'navID'         => q("SELECT * FROM gen_nodes WHERE Type='Group' AND Category='Navigation Menu' ORDER BY IF(ID='$Menus_ID',1,2)", O_VALUE),
+                    'displayMethod' => 'image',
+                    'maxLevel'      => 1,
                 ),
             ),
         );
-
+    }
 
     ?>
     <script language="javascript" type="text/javascript">
@@ -461,12 +461,14 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
             // ------------- end create_menu_nav ----------------
             create_menu_nav($nav,1,'root');
         ?></ul></span><?php
-
+        $f = __FILE__;
+        $f = explode('/', $f);
+        $f = end($f);
         pJ_call_edit(array(
             'formNode'=>'menu',
             'level'=>ADMIN_MODE_DESIGNER,
             'location'=>'JULIET_COMPONENT_ROOT',
-            'file'=>end(explode('/',__FILE__)),
+            'file'=>$f,
             'label'=>'edit menu',
         ));
         if($adminMode)echo '&nbsp;&nbsp;';
@@ -474,7 +476,7 @@ for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin __i__ break loop --
             'formNode'=>'layout',
             'level'=>ADMIN_MODE_DESIGNER,
             'location'=>'JULIET_COMPONENT_ROOT',
-            'file'=>end(explode('/',__FILE__)),
+            'file'=>$f,
             'label'=>'edit layout',
         ));
 
