@@ -1051,7 +1051,25 @@ switch(true){
 				return strtoupper($fn,0,1).strtolower($fn,1,100).($mn ? ' '.strtoupper($mn,0,1).strtolower($mn,1,100) : '').' '.strtoupper($ln,0,1).strtolower($ln,1,100);
 			}
 		}
-		q("UPDATE finan_clients SET 
+
+        //get all custom fields
+        $localCustomFieldsString = [];
+        foreach([ 'finan_clients', 'addr_contacts' ] as $table){
+            $localCustomFieldsString[$table] = '';
+            //we gather these fields broadly
+            $fields = q('EXPLAIN ' . $table, O_ARRAY);
+            foreach($fields as $field){
+                $idx = $field['Field'];
+                if(preg_match('/^([A-Z]+)_([a-zA-Z0-9]+)$/', $idx, $a) && isset($$idx)){
+                    //custom field
+                    $localCustomFieldsString[$table] .= $idx . '=\'' . $$idx . '\', ';
+                }
+            }
+        }
+
+
+
+    q("UPDATE finan_clients SET 
 		ResourceType=1,
 		Active=$Active,
 		
@@ -1064,7 +1082,11 @@ switch(true){
 		''
 		)."
 		
-		".(isset($Terms_ID) ? "Terms_ID='$Terms_ID'," : '')."
+		".
+
+            $localCustomFieldsString['finan_clients']
+
+         .(isset($Terms_ID) ? "Terms_ID='$Terms_ID'," : '')."
 		".(isset($Statuses_ID) ? "Statuses_ID='$Statuses_ID'," : '')."
 		".(isset($ClientAccountNumber) ? "ClientAccountNumber='$ClientAccountNumber'," : '')."
 		".($mode==$updateMode ? "Editor='".$_SESSION['systemUserName']."'," : '')."

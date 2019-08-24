@@ -26,17 +26,32 @@ $dataset='Member';
 /*
 -- section #2: this should be abstracted for specific purposes --
 customFieldsPrefixes
-customFields
+$customFields is declared in ../private/config.php
 */
-if($fields=q('EXPLAIN addr_contacts', O_ARRAY)){
-	foreach($fields as $v){
-		if(preg_match('/^([a-z0-9]+)_([a-z0-9]+)$/i',$v['Field'],$a) && !preg_match('/ID|UserName/i',$a[2])){
-			if(!$customFieldsPrefixes[strtoupper($a[1])])$customFieldsPrefixes[strtoupper($a[1])]=strtoupper($a[1]);
-			$customFields[$v['Field']]=$v;
-		}
-	}
-}else{
-	mail($developerEmail, 'error file '.__FILE__.', line '.__LINE__,get_globals(),$fromHdrBugs);
+
+//for this page
+$custom = [
+    'finan_clients' => 'a',
+    'addr_contacts' => 'c',
+];
+
+//get all custom fields
+$localCustomFields = [];
+$localCustomFieldsString = '';
+foreach($custom as $table => $alias){
+    //we gather these fields broadly
+    $fields = q('EXPLAIN ' . $table, O_ARRAY);
+    foreach($fields as $field){
+        $idx = $field['Field'];
+        if(preg_match('/^([A-Z]+)_([a-zA-Z0-9]+)$/', $idx, $a)){
+            //custom field
+            $localCustomFields[$idx] = array_merge($field, ['alias' => $alias]);
+            if(!empty($customFields[$table][$idx])){
+                $localCustomFields[$idx] = array_merge($localCustomFields[$idx], $customFields[$table][$idx]);
+            }
+            $localCustomFieldsString .= ', ' . $localCustomFields[$idx]['alias'] . '.`' . $idx . '`';
+        }
+    }
 }
 
 
@@ -82,9 +97,14 @@ if($nullCount){
 	$nullAbs=1;
 }
 //note the coding to on ResourceToken - this will allow a submitted page to come up again if the user Refreshes the browser
-if(strlen($$object) || $$object=q("SELECT ID FROM finan_clients WHERE ResourceToken!='' AND ResourceToken='$ResourceToken' AND ResourceType IS NOT NULL", O_VALUE)){
+if(strlen($$object) || $$object=q("SELECT ID 
+    FROM finan_clients 
+    WHERE 
+    ResourceToken!='' AND 
+    ResourceToken='$ResourceToken' AND 
+    ResourceType IS NOT NULL", O_VALUE)){
 	//get the record for the object
-	if($record=q("SELECT 
+    $sql = "SELECT 
 		a.*, c.Title, c.FirstName, c.MiddleName, c.LastName, c.Suffix, b.Contacts_ID, 
 		c.HomePhone, c.HomeMobile, c.UserName, c.Email AS PersonalEmail, 
 		c.HomeAddress, c.HomeCity, c.HomeState, c.HomeZip, c.HomeCountry, c.WholesaleAccess,
@@ -93,11 +113,12 @@ if(strlen($$object) || $$object=q("SELECT ID FROM finan_clients WHERE ResourceTo
 		c.Spouse, c.Gender, c.Birthday, c.Anniversary, c.Children,
 		c.Notes, c.Salesreps_ID, c.PasswordMD5, c.EnrollmentAuthToken, c.EnrollmentAuthDuration,
 		c.NewsletterOK
-		".($customFields ? ', '.implode(', ',array_keys($customFields)) : '')."
+		" . $localCustomFieldsString . "
 		FROM 
 		finan_clients a LEFT JOIN finan_ClientsContacts b ON a.ID=b.Clients_ID AND b.Type='Primary'
 		LEFT JOIN addr_contacts c ON b.Contacts_ID=c.ID
-		WHERE a.ID=$Clients_ID",O_ROW)){
+		WHERE a.ID=$Clients_ID";
+	if($record = q($sql, O_ROW)){
 		$mode=$updateMode;
 		$bufferClients_ID=$record['Clients_ID']; //parent object heirarchy in table
 		unset($record['Clients_ID']);
@@ -116,17 +137,14 @@ if(strlen($$object) || $$object=q("SELECT ID FROM finan_clients WHERE ResourceTo
 }
 //--------------------------- end coding --------------------------------
 
-$states=q("SELECT st_code, st_name FROM aux_states",O_COL_ASSOC, $public_cnx);
-$countries=q("SELECT ct_code, ct_name FROM aux_countries",O_COL_ASSOC, $public_cnx);
+$states=q("SELECT st_code, st_name FROM aux_states", O_COL_ASSOC, $public_cnx);
+$countries=q("SELECT ct_code, ct_name FROM aux_countries", O_COL_ASSOC, $public_cnx);
 
 $hideCtrlSection=false;
 
 $PageTitle=($mode==$updateMode?'Update member information':'Add new member/customer');
 $AutoCreatePassword=true;
 
-//----------------------------------- beginning new modularization project 2010-12-15 ----------------------------
-#ob_start(); huh?
-//----------------------------------------------------------------------------------------------------------------
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/reports_i1.dwt.php" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -190,7 +208,7 @@ $(document).ready(function(){
 	});
 });
 function copyAddr(n){
-	var a={'Address1':'Address','Address2':'Address2','City':'City','State':'State','Zip':'Zip','Country':'Country'};
+	var a={'Address1':'Address', 'Address2':'Address2', 'City':'City', 'State':'State', 'Zip':'Zip', 'Country':'Country'};
 	for(var i in a){
 		b=(n==1?'Shipping'+a[i]:i);
 		c=(n==1?i:'Shipping'+a[i]);
@@ -329,7 +347,7 @@ Status:
 <?php
 ob_start(); //------------------ start first tab -------------------
 ?>
-<label> <input type="checkbox" name="Inactive" id="Inactive" value="1" <?php echo $mode==$updateMode && !$Active ? 'checked' : ''?> onchange="dChge(this);" /> Inactive Company</label> (cannot log into website if checked)
+<label> <input type="checkbox" name="Inactive" id="Inactive" value="1" <?php echo $mode==$updateMode && !$Active ? 'checked' : ''?> onchange="dChge(this);" /> Inactive Client</label> (cannot log into website if checked)
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>Full Company Name:<br /> 
@@ -655,49 +673,109 @@ General Notes:<br />
 
 
 <?php
-//account-specific fields - see todo 6/17/09
-if(count($customFields))
-foreach($customFields as $n=>$v){
-	preg_match('/^([a-z]+)(\([^)]+\))*/',$v['Type'],$a);
-	$type=$a[1];
-	$params=trim($a[2],'()');
-	if($type=='enum'){
-		//dropdown
-		$options=trim(preg_replace('/^enum\(/','',$v['Type']),'()');
-		$rand=md5(time());
-		$options=preg_replace('/(^\')|(\'$)/','',str_replace("\'",$rand,$options));
-		$options=explode("','",$options);
-		foreach($options as $o=>$w)$options[$o]=str_replace($rand,"'",$w);
-		if(!count($options))$options=array();
-		?>
-		<?php echo preg_replace('/([a-z])([A-Z])/','$1 $2',preg_replace('/^[A-Z]+_/','',$n));?>: <select name="<?php echo $v['Field']?>" id="<?php echo $v['Field']?>" onchange="dChge(this)">
-		<?php
-		foreach($options as $w){
-			?><option value="<?php echo h($w);?>" <?php if($w==$$v['Field'])echo 'selected';?>><?php echo h($w);?></option><?php
-		}
-		?>
-		</select>
-		<br />
-		<?php
-	}else if($type=='text' || $type=='longtext'){
-		//textarea
-		echo preg_replace('/([a-z])([A-Z])/','$1 $2',preg_replace('/^[A-Z]+_/','',$n));
-		?><br /><textarea name="<?php echo $v['Field']?>" id="<?php echo $v['Field']?>" cols="45" rows="4" onchange="dChge(this);"><?php echo h($$v['Field']);?></textarea><br />
-		<?php
-	}else{
-		?>
-		<?php echo preg_replace('/([a-z])([A-Z])/','$1 $2',preg_replace('/^[A-Z]+_/','',$n));?>: <input name="<?php echo $v['Field']?>" type="text" id="<?php echo $v['Field']?>" value="<?php 
-		if($type=='time'){
-			echo t($$v['Field'], f_t);
-		}else if($type=='date' || $type=='time' || $type=='datetime'){
-			echo t($$v['Field']);
-		}else{
-			echo h($$v['Field']);
-		}
-		?>" <?php if($type=='char' || $type=='varchar'){ ?>maxlength="<?php echo $params?>"<?php }?> onchange="dChge(this);" />
-		<br />
-		<?php
-	}
+if(!empty($localCustomFields)){
+    ?><h3>Custom Fields</h3><?php
+    /* ?><table><?php */
+    foreach($localCustomFields as $field => $v){
+        preg_match('/^([a-z]+)(\([^)]+\))*/', $v['Type'], $a);
+        $type = $a[1];
+        $params = trim($a[2], '()');
+
+        /* echo "\n";
+        ?><tr><?php */
+
+        //current value
+        $current = $$field;
+        if(preg_match('/int/', $type)){
+            $current = (int) $current;
+        }
+
+        //default value
+        if($v['default_value']){
+            $default = $v['default'];
+        }else if($v['Default']){
+            $default = $v['Default'];
+        }else{
+            $default = ''; //this has problems in the case of date or numeric field type
+        }
+
+        //label
+        if($v['label']){
+            $label = $v['label'];
+        }else{
+            $label = preg_replace('/([a-z])([A-Z])/','$1 $2',preg_replace('/^[A-Z]+_/','',$field));
+        }
+            /*
+            echo "\n";
+            ?><td>
+            <?php */
+            echo $label . ': ';
+            /* ?>
+            </td>
+            <td><?php */
+
+        if($v['form_element'] === 'select' || $type === 'enum'){
+            //options
+            if(!empty($v['values'])){
+                $options = $v['values'];
+            }else{
+                $options = trim(preg_replace('/^enum\(/', '', $v['Type']), '()');
+                $rand = md5(time());
+                $options=preg_replace('/(^\')|(\'$)/','', str_replace("\\'", $rand, $options));
+                $options=explode("','",$options);
+                foreach($options as $o => $w) $options[$o] = str_replace($rand, "'", $w);
+            }
+
+            ?>
+            <select name="<?php echo $field;?>" id="<?php echo $field;?>" onchange="dChge(this);">
+                <option value="">&lt;Select..&gt;</option>
+                <?php
+                if(!in_array($current, $options)){
+                    //unlisted value
+                    ?><option value="<?php echo $current;?>" selected><?php echo $current; ?></option><?php
+                }
+                foreach($options as $w){
+                    ?><option value="<?php echo h($w);?>" <?php if($w === $current) echo 'selected';?>><?php
+                    echo h($w);
+                    ?></option><?php
+                }
+                ?>
+            </select>
+            <?php
+        }else if($v['form_element'] === 'textarea' || $type == 'text' || $type == 'longtext'){
+            //textarea
+            ?>
+            <br />
+            <textarea name="<?php echo $v['Field']?>" id="<?php echo $v['Field']?>" cols="45" rows="4" onchange="dChge(this);"><?php echo h($current);?></textarea>
+            <?php
+        }else{
+            ?>
+            <input name="<?php echo $field?>" type="text" id="<?php echo $field?>" value="<?php
+            if($type === 'time'){
+                echo t($current, f_t);
+            }else if($type === 'date' || $type === 'datetime'){
+                echo t($current);
+            }else{
+                echo h($current);
+            }
+            ?>" <?php if($type=='char' || $type=='varchar'){ ?>maxlength="<?php echo $params?>"<?php }?> onchange="dChge(this);" />
+            <?php
+        }
+        if(!empty($v['comment'])){
+            ?> &nbsp; <span class="gray">(<?php echo $v['comment'];?>)</span> <?php
+        }
+        echo "\n";
+        ?><br /><?php
+
+            /* echo "\n";
+            ?></td><?php */
+
+        /* echo "\n";
+        ?></tr><?php */
+
+    }
+    /* echo "\n";
+    ?></table><?php */
 }
 ?>
 <?php
