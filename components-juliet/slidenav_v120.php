@@ -680,14 +680,14 @@ ob_start();
 pJ_call_edit(array(
 	'level'=>ADMIN_MODE_DESIGNER,
 	'location'=>'JULIET_COMPONENT_ROOT',
-	'file'=>end(explode('/',__FILE__)),
+	'file'=>@end(explode('/',__FILE__)),
 	'thisnode'=>$thisnode,
-	'thissection'=>$thissection,
+	'thissection'=> !empty($thissection) ? $thissection : '',
 ));
 if(pJ_getdata('slideShowPreText')){
 	CMSB('slideShowPreText');
 }
-if(pJ_getdata('slideShowSource')=='folder' && $$subFolderVariable){
+if(pJ_getdata('slideShowSource')=='folder' && !empty($$subFolderVariable)){
 	?><h1 class="galleryTitle"><?php
 	echo $$subFolderVariable;
 	?></h1><?php
@@ -697,7 +697,7 @@ if(pJ_getdata('slideShowSource')=='folder' && $$subFolderVariable){
 	<?php
 	if(pJ_getdata('slideShowSource')=='folder'){
 		$rootFolder=pJ_getdata('rootFolder');
-		$path='images/'.$rootFolder.($$subFolderVariable ? '/'.$$subFolderVariable : '');
+		$path='images/'.$rootFolder.(!empty($$subFolderVariable) ? '/'.$$subFolderVariable : '');
 		$ssPictures=get_file_assets($_SERVER['DOCUMENT_ROOT'].'/'.$path);
 		foreach($ssPictures as $n=>$v){
 			$ssPictures[$n]['path']=$path;
@@ -924,14 +924,17 @@ if(pJ_getdata('slideShowSource')=='folder' && $$subFolderVariable){
 	<span id="thumbsWrap" <?php echo !$sNavShowThumbs?'style="display:none;"':''?>><div id="thumbs" class="navigation" style="font-style:italic;">
 		<ul class="thumbs noscript">
 		<?php
-		#print_r($ssPictures);
-		#exit;
+
 		if($ssPictures){
 			$i=0;
 			foreach($ssPictures as $n=>$v){
 				$i++;
 				//for linked url's
-				if($o=trim(pJ_getdata(array('field'=>'sNavImgURL','subKey'=>$n,'default'=>$n)))){
+				if($o=trim(pJ_getdata([
+				    'field' => 'sNavImgURL',
+				    'subKey' => $n,
+				    'default' => $n
+                ]))){
 					$ssURLs[$i]=$o;
 				}
 				if($v['resize']){
@@ -949,7 +952,7 @@ if(pJ_getdata('slideShowSource')=='folder' && $$subFolderVariable){
 				}
 				$descr=pJ_getdata(array('field'=>'sNavImgDescription','subKey'=>$n,'default'=>$n));
 				?><li>
-				<a class="thumb" href="<?php echo $href;?>" title="<?php echo $v['Title'];?>">
+				<a class="thumb" href="<?php echo $href;?>" title="<?php if(!empty($v['Title'])) echo $v['Title'];?>">
 				<img src="<?php echo $src;?>" alt="<?php echo $descr ? h($descr) : $v['name'];?>" /></a>
 				<div class="caption">
 					<div class="image-title"><?php echo h(pJ_getdata(array('field'=>'sNavImgTitle','subKey'=>$n,'default'=>$n)));?></div>
@@ -963,7 +966,7 @@ if(pJ_getdata('slideShowSource')=='folder' && $$subFolderVariable){
 		?>
 		</ul>
 		<script language="javascript" type="text/javascript"><?php
-		if($ssURLs)echo 'var ssURLs='. json_encode($ssURLs);
+		if(!empty($ssURLs))echo 'var ssURLs='. json_encode($ssURLs);
 		?></script>
 	</div></span>
 	<?php

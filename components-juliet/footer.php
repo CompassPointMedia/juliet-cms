@@ -19,7 +19,7 @@ if($Parameters=q("SELECT Parameters FROM gen_templates_blocks WHERE Templates_ID
 if(empty($doSomething))$doSomething=pJ_getdata('doSomething',true);
 
 //default CSS
-if(!empty($thisComponentAdditionalCSS))$pJLocalCSS[$handle]=$thisComponentAdditionalCSS;
+if(!empty($thisComponentAdditionalCSS)) $pJLocalCSS[$handle]=$thisComponentAdditionalCSS;
 
 //for local css links in head of document
 if(false)$pJLocalCSSLinks[$handle]='/site-local/somefile.css';
@@ -86,15 +86,15 @@ ob_start();
 		'level'=>ADMIN_MODE_DESIGNER,
 		'location'=>'JULIET_COMPONENT_ROOT',
 		'file'=>$f,
-		'thisnode'=>$thisnode,
+		'thisnode'=>!empty($thisnode) ? $thisnode : '',
 	));
 
 	pJ_call_edit(array(
 		'formNode'=>'folders',
 		'level'=>ADMIN_MODE_DESIGNER,
-		'thisnode'=>$thisnode,
-		'location'=>'JULIET_COMPONENT_ROOT',
-		'file'=>$f,
+        'location'=>'JULIET_COMPONENT_ROOT',
+        'file'=>$f,
+        'thisnode'=>!empty($thisnode) ? $thisnode : '',
 		'parameters'=>array(
 			'slide'=>!empty($thisslide) ? $thisslide : '',
 		),
