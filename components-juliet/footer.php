@@ -16,17 +16,17 @@ if($Parameters=q("SELECT Parameters FROM gen_templates_blocks WHERE Templates_ID
 	/* nodes include: forms; data; format.  forms is unused right now, and data[default] means "across all pages" and is the only part developed */
 }
 //default variables
-if(!$doSomething)$doSomething=pJ_getdata('doSomething',true);
+if(empty($doSomething))$doSomething=pJ_getdata('doSomething',true);
 
 //default CSS
-if($thisComponentAdditionalCSS)$pJLocalCSS[$handle]=$thisComponentAdditionalCSS;
+if(!empty($thisComponentAdditionalCSS))$pJLocalCSS[$handle]=$thisComponentAdditionalCSS;
 
 //for local css links in head of document
 if(false)$pJLocalCSSLinks[$handle]='/site-local/somefile.css';
 
 for($__i__=1; $__i__<=1; $__i__++){ //---------------- begin i break loop ---------------
 
-if($mode=='componentEditor'){
+if(!empty($mode) && $mode=='componentEditor'){
 	//be sure and fulfill null checkbox fields
 	/*
 	2012-03-12: this is universal code which should be updated on ALL components.  The objective is that 
@@ -64,10 +64,10 @@ if($mode=='componentEditor'){
 		prn($qr);
 	}
 	break;
-}else if($formNode=='default' /* ok this is something many component files will contain */){
+}else if(!empty($formNode) && $formNode=='default' /* ok this is something many component files will contain */){
 	?><p>Default Settings Form Here</p><?php
 	break;
-}else if($formNode=='additional'){
+}else if(!empty($formNode) && $formNode=='additional'){
 	?><p>Additional Settings Form Here</p><?php
 	break;
 }
@@ -79,10 +79,13 @@ ob_start();
 /* output here */
 
 	//sample calls
+    $f = __FILE__;
+    $f = (explode('/', $f));
+    $f = end($f);
 	pJ_call_edit(array(
 		'level'=>ADMIN_MODE_DESIGNER,
 		'location'=>'JULIET_COMPONENT_ROOT',
-		'file'=>end(explode('/',__FILE__)),
+		'file'=>$f,
 		'thisnode'=>$thisnode,
 	));
 
@@ -91,16 +94,16 @@ ob_start();
 		'level'=>ADMIN_MODE_DESIGNER,
 		'thisnode'=>$thisnode,
 		'location'=>'JULIET_COMPONENT_ROOT',
-		'file'=>end(explode('/',__FILE__)),
+		'file'=>$f,
 		'parameters'=>array(
-			'slide'=>$thisslide,
+			'slide'=>!empty($thisslide) ? $thisslide : '',
 		),
 	));
 
 	if($adminMode>=ADMIN_MODE_DESIGNER){
 		pJ_call_edit(array(
 			'formNode'=>'layout',
-			'file'=>end(explode('/',__FILE__)),
+			'file'=>$f,
 			'location'=>'JULIET_COMPONENT_ROOT',
 			
 		));
@@ -117,4 +120,3 @@ echo $footer;
 
 
 }//---------------- end i break loop ---------------
-?>

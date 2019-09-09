@@ -79,10 +79,6 @@ extract($config);
 
 if(!empty($fromCRON)) goto compend;
 
-if(empty($pJulietTemplate)){
-    $pJulietTemplate=$_SERVER['DOCUMENT_ROOT'].'/Templates/relatebase_05_generic.php';
-}
-
 // Responsible for session_start();
 require($_SERVER['DOCUMENT_ROOT'].'/components/master_config_v103.php');
 

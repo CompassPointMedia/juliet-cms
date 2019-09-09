@@ -573,7 +573,7 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/site-local/'.$acct.'.'.$templateName.
 	echo "\n";
 	?><link href="/site-local/<?php echo $acct.'.'.$templateName.'.global.css';?>" type="text/css" rel="stylesheet" /><?php
 }
-if($pJLocalCSSLinks)
+if(!empty($pJLocalCSSLinks))
 foreach($pJLocalCSSLinks as $n=>$v){
 	echo is_int($n) ? '' : "\n<!-- ".'CSS Link: '.$n." -->\n";
 	?><link href="<?php echo $v;?>" type="text/css" rel="stylesheet" /><?php
@@ -740,14 +740,14 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
         echo "\n";
         ?><style type="text/css">
             <?php
-            if($pJLocalCSS)
+            if(!empty($pJLocalCSS))
             foreach($pJLocalCSS as $n=>$v){
                 ?>/* ----------- Module CSS <?php echo $n;?> ------------ */<?php echo "\n";
             echo trim($v)."\n\n";
             unset($pJLocalCSS[$n]);
         }
         echo $pJLocalCSSPlaceholder='/* -- on-the-fly pJLocalCSS placeholder -- */'."\n";
-        if($Settings['CustomCSS']){
+        if(!empty($Settings['CustomCSS'])){
             ?>/* ----------- Custom CSS per page ---------------- */<?php echo "\n";
             echo $Settings['CustomCSS'];
         }
@@ -812,8 +812,7 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
     <div id="mainWrap" <?php pJCSS('mainWrap');?>><?php
         //2012-04-16: this is somewhat hard-coded still
         $pJCurrentContentRegion='mainWrap';
-        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
+        $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
 
         if(!$suppressWrappers['mainWrapSub']){ ?><div id="mainWrapSub" <?php pJCSS('mainWrapSub');?>><?php }
 
@@ -854,7 +853,7 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                 }
             }
             ?><div id="topRegion"><?php
-                $pJEditability=$pJBlocks['topRegion']['settings']['editability'];
+                $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
                 echo $pJTopBlocks['topRegion']['Content'];
                 /*
 
@@ -864,7 +863,7 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
 
                 $pJCurrentContentRegion='topRegion';
 
-                unset($str1,$str2);
+                $str1 = $str2 = '';
                 //we declare the absolutely positioned elements 2nd
                 if(count($pJTopBlocks))
                     foreach($pJTopBlocks as $_bsr_n=>$_bsr_v){
@@ -884,7 +883,7 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                 ?>
                 <div id="mainRegionIntro" <?php pJCSS($pJCurrentContentRegion);?>>
                     <?php
-                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+                    $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
 
                     if(isset($$pJCurrentContentRegion)){
                         echo $$pJCurrentContentRegion;
@@ -904,11 +903,11 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                     <?php
                     $pJCurrentContentRegion='mainRegionCenterIntro';
                     if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionCenterIntro_end;
-                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+                    $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
                     ?>
                     <div id="mainRegionCenterIntro" <?php pJCSS($pJCurrentContentRegion);?>>
                         <?php
-                        if($invokeCartLayout){
+                        if(!empty($invokeCartLayout)){
                             //nothing
                         }else if(isset($$pJCurrentContentRegion)){
                             echo $$pJCurrentContentRegion;
@@ -923,16 +922,16 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                         <?php
 
                         //2013-07-23 relocate inset
-                        if($pJCenterContentInsetWide)ob_start();
+                        if(!empty($pJCenterContentInsetWide)) ob_start();
 
                         $pJCurrentContentRegion='mainRegionCenterContentInset';
                         if(pJ_suppress_block($pJCurrentContentRegion))goto mainRegionCenterContentInset_end;
-                        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+                        $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
                         ?>
                         <div id="mainRegionCenterContentInset" <?php pJCSS($pJCurrentContentRegion);?>>
                             <?php
-                            if($rtest==17)exit('test');
-                            if($invokeCartLayout){
+
+                            if(!empty($invokeCartLayout)){
                                 //nothing
                             }else if(isset($$pJCurrentContentRegion)){
                                 echo $$pJCurrentContentRegion;
@@ -950,16 +949,15 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
 
 
                         //2013-07-23 - buffer inset
-                        if($pJCenterContentInsetWide){
+                        if(!empty($pJCenterContentInsetWide)) {
                             $mainRegionCenterContentInset=ob_get_contents();
                             ob_end_clean();
                         }
 
                         /* you always have to do this if you have an interspersed div that calls pJCSS.. */
                         $pJCurrentContentRegion='mainRegionCenterContent';
-                        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
-                        if($invokeCartLayout){
+                        $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
+                        if(!empty($invokeCartLayout)) {
                         ?><relatebasecartarea><?php
                             }else if(isset($$pJCurrentContentRegion)){
 #				if($test==17)exit('at 1');
@@ -989,11 +987,11 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                             ?>
                     </div>
                     <?php
-                    if($pJCenterContentInsetWide==1)echo $mainRegionCenterContentInset;
+                    if(!empty($pJCenterContentInsetWide) && $pJCenterContentInsetWide==1)echo $mainRegionCenterContentInset;
                     ?>
                 </div>
                 <?php
-                if($pJCenterContentInsetWide==2)echo $mainRegionCenterContentInset;
+                if(!empty($pJCenterContentInsetWide) && $pJCenterContentInsetWide==2)echo $mainRegionCenterContentInset;
                 ?>
 
 
@@ -1004,7 +1002,7 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                 <div id="mainRegionLeft" <?php pJCSS($pJCurrentContentRegion);?>>
                     <?php
                     $pJCurrentContentRegion='mainRegionLeftIntro';
-                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
+                    $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
                     ?>
                     <div id="mainRegionLeftIntro" <?php pJCSS($pJCurrentContentRegion);?>>
                         <?php
@@ -1020,8 +1018,7 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                     <div id="mainRegionLeftContent" <?php pJCSS('mainRegionLeftContent');?>>
                         <?php
                         $pJCurrentContentRegion='mainRegionLeftContent';
-                        $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
+                        $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
                         if(isset($$pJCurrentContentRegion)){
                             echo $$pJCurrentContentRegion;
                         }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
@@ -1038,13 +1035,12 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                 <div class="cb0"> </div>
             </div>
             <?php /*del 2013-07-16: pJWrap('mainRegionWide')*/?>
-            <?php if($pJBottomRegionWide)ob_start(); ?>
+            <?php if(!empty($pJBottomRegionWide)) ob_start(); ?>
             <div id="bottomRegion" <?php pJCSS('bottomRegion');?>>
                 <div id="footer" <?php pJCSS('footer');?>><!-- now a div inside of bottomRegion -->
                     <?php
                     $pJCurrentContentRegion='footer';
-                    $pJEditability=$pJBlocks[$pJCurrentContentRegion]['settings']['editability'];
-
+                    $pJEditability = !empty($pJBlocks[$pJCurrentContentRegion]['settings']['editability']) ? $pJBlocks[$pJCurrentContentRegion]['settings']['editability'] : '';
                     if(isset($$pJCurrentContentRegion)){
                         echo $$pJCurrentContentRegion;
                     }else if($pJBlocks[$pJCurrentContentRegion]['Content']){
@@ -1060,19 +1056,19 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
                 </div>
             </div>
             <?php
-            if($pJBottomRegionWide){
+            if(!empty($pJBottomRegionWide)) {
                 $_bottomRegion_=ob_get_contents();
                 ob_end_clean();
             }
             if(!$suppressWrappers['mainWrapSub']){ ?></div><?php } ?>
         <?php
         //place bottomRegion between mainWrap and mainWrapSub
-        if($pJBottomRegionWide==1)echo $_bottomRegion_;
+        if(!empty($pJBottomRegionWide) && $pJBottomRegionWide==1)echo $_bottomRegion_;
         ?>
     </div><!-- end of mainWrap -->
     <?php
     //place bottomRegion entirely out of wraps
-    if($pJBottomRegionWide==2)echo $_bottomRegion_;
+    if(!empty($pJBottomRegionWide) && $pJBottomRegionWide==2)echo $_bottomRegion_;
     ?>
     <?php if($adminMode){ ?>
         <div id="showTester" title="Javascript Tester" onClick="g('tester').style.display='block';">&nbsp;</div>
@@ -1083,10 +1079,10 @@ Function='".$Function."' AND Function!='' AND SubFunction='".$SubFunction."' AND
             <textarea id="result" name="result" cols="65" rows="3" ></textarea>
         </div>
     <?php } ?>
-    <?php if(!$hideCtrlSection){ ?>
+    <?php if(empty($hideCtrlSection)){ ?>
         <div id="ctrlSection" style="display:none;">
             <iframe name="w1" src="/Library/js/blank.htm"></iframe>
-            <iframe name="w2" src="<?php if($returnAction=='getDoc' && $document){
+            <iframe name="w2" src="<?php if(!empty($returnAction) && $returnAction=='getDoc' && $document){
                 //get the requested document
                 echo '/index_01_exe.php?suppressPrintEnv=1&mode=getDoc&document='.$document;
             }else{
